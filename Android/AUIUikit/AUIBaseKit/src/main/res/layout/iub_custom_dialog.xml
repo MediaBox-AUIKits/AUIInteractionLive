@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/iub_bg_white_radius_8dp"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingLeft="17dp"
+    android:paddingTop="17dp"
+    android:paddingRight="17dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        tools:ignore="SmallSp"
+        tools:text="#333333#333333#333333#333333#333333#333333#333333#333333#333333#333333#333333#333333#333333" />
+
+    <RadioGroup
+        android:id="@+id/optionGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="-4dp"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <RadioButton
+            android:id="@+id/option0"
+            style="@style/DialogOption"
+            android:visibility="gone"
+            tools:text="option0"
+            tools:visibility="visible" />
+
+        <RadioButton
+            android:id="@+id/option1"
+            style="@style/DialogOption"
+            android:visibility="gone"
+            tools:text="option1"
+            tools:visibility="visible" />
+
+        <RadioButton
+            android:id="@+id/option2"
+            style="@style/DialogOption"
+            android:visibility="gone"
+            tools:text="option2"
+            tools:visibility="visible" />
+
+        <RadioButton
+            android:id="@+id/option3"
+            style="@style/DialogOption"
+            android:visibility="gone"
+            tools:text="option3"
+            tools:visibility="visible" />
+
+        <RadioButton
+            android:id="@+id/option4"
+            style="@style/DialogOption"
+            android:visibility="gone"
+            tools:text="option4"
+            tools:visibility="visible" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/inputHint"
+        style="@style/SingleLineEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/optionGroup"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp"
+        android:textColor="#333333"
+        android:textSize="10sp"
+        android:visibility="gone"
+        tools:text="input text"
+        tools:visibility="visible" />
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/optionGroup"
+        android:layout_marginBottom="8dp"
+        android:layout_toRightOf="@+id/inputHint"
+        android:background="@drawable/iub_bg_dialog_input"
+        android:padding="8dp"
+        android:textColor="@color/colorGray333"
+        android:visibility="gone"
+        tools:text="input text"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/input">
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="17dp"
+            android:paddingBottom="17dp"
+            android:text="取消"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            tools:ignore="SmallSp" />
+
+        <TextView
+            android:id="@+id/confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="17dp"
+            android:paddingBottom="17dp"
+            android:text="确定"
+            android:textColor="@color/colorfulText"
+            android:textSize="16sp"
+            tools:ignore="SmallSp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

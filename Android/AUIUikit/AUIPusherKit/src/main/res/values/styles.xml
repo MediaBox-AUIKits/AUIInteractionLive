@@ -1,0 +1,11 @@
+<resources>
+
+    <!-- 直播间Activity主题 -->
+
+    <!-- 加载进度条样式 -->
+    <style name="LiveLoadingStyle" parent="@android:style/Widget.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/ilr_loading</item>
+    </style>
+
+    <!-- 更多能力样式 -->
+</resources>

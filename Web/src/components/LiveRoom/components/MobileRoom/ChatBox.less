@@ -1,0 +1,114 @@
+@import './base.less';
+
+.chat-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 0.28rem;
+  padding: 0 0.32rem 0.4rem;
+  z-index: 10;
+  padding-bottom: calc(0.4rem + constant(safe-area-inset-bottom)); /* 兼容 iOS < 11.2 */
+  padding-bottom: calc(0.4rem + env(safe-area-inset-bottom)); /* 兼容 iOS >= 11.2 */
+}
+
+.chat-list {
+  max-height: 40vh;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+}
+
+.chat-item {
+  max-width: 70%;
+  display: inline-block;
+  background-color: @block-background-color;
+  margin-bottom: 0.1rem;
+  padding: 0.04rem 0.16rem;
+  border-radius: 2px;
+  align-self: flex-start;
+  word-break: normal;
+  line-height: 0.44rem;
+
+  a {
+    color: #66b1f7;
+    text-decoration: underline;
+  }
+}
+
+.chat-item-notice {
+  color: #A4E0A7;
+}
+
+.operations-wrap {
+  display: flex;
+  width: 100%;
+}
+
+.chat-input-form {
+  flex-grow: 1;
+}
+
+.chat-input {
+  color: @info-text-color;
+  background-color: @block-background-color;
+  border: none;
+  outline: none;
+  border-radius: 0.5rem;
+  width: 100%;
+  height: 0.72rem;
+  padding: 0 0.24rem;
+  font-size: 0.28rem;
+  
+  &::-webkit-input-placeholder {
+    color: @info-text-color;
+    font-size: 0.28rem;
+  }
+}
+
+.operation-btn-wrap {
+  position: relative;
+  box-sizing: content-box;
+  margin-left: 0.24rem;
+}
+
+.operation-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.72rem;
+  height: 0.72rem;
+  font-size: 0.52rem;
+  text-align: center;
+  background-color: @block-background-color;
+  border-radius: 50%;
+  cursor: pointer;
+
+  :global {
+    .active {
+      color: #E91E63;
+    }
+  }
+}
+
+.like-anime-container {
+  position: absolute;
+  bottom: 80%;
+  width: 120%;
+  height: 2rem;
+  left: 0;
+  pointer-events: none;
+}
+
+.bullet-list {
+  position: absolute;
+  bottom: 100%;
+  left: 0.2rem;
+  right: 0.2rem;
+  display: flex;
+  flex-direction: column;
+}

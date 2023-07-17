@@ -1,0 +1,68 @@
+@mixin text-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-item-wrap {
+  display: inline-block;
+  width: 50%;
+  padding: 0 6px 12px;
+}
+
+.room-item {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  background-image: url('https://img.alicdn.com/imgextra/i3/O1CN0128ag5B1ydJDetF7o5_!!6000000006601-2-tps-165-165.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  color: #FCFCFD;
+  font-weight: 400;
+  font-size: 0.24rem;
+  line-height: 1.5;
+}
+
+.room-item-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.08rem 0.16rem;
+  background-image: linear-gradient(180deg, rgba(20,20,22,0.00) 0%, rgba(20,20,22,0.70) 100%);
+}
+
+.room-item-title {
+  @include text-overflow();
+  margin-bottom: 0.04rem;
+  font-size: 0.28rem;
+}
+
+.room-item-id {
+  @include text-overflow();
+}
+
+.room-item-top {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 4px 0 4px 0;
+  background-color: rgba(28,29,34,0.4);
+}
+
+.room-item-top-icon {
+  border-radius: 4px 0 4px 0;
+  font-size: 1.5em;
+  background-color: $uni-color-primary;
+}
+
+.room-item-top-data {
+	display: inline-block;
+	vertical-align: middle;
+	padding-left: 0.1rem;
+	padding-right: 0.2rem;
+}

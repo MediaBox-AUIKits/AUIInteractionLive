@@ -1,0 +1,982 @@
+definitions:
+  auth.authResponse:
+    properties:
+      expire:
+        type: string
+      token:
+        type: string
+    type: object
+  auth.login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  handler.CreateRequest:
+    properties:
+      anchor:
+        description: 主播id
+        example: 主播userId
+        type: string
+      anchor_nick:
+        description: 主播Nick
+        example: 主播nick
+        type: string
+      extends:
+        description: 扩展字段，通常是JSON格式字符串
+        example: 扩展字段，通常是JSON格式字符串
+        type: string
+      mode:
+        default: 0
+        description: 模式，默认0 普通直播，1 连麦直播
+        example: 0
+        type: integer
+      notice:
+        description: 直播公告
+        example: 直播公告
+        type: string
+      title:
+        description: 直播标题
+        example: 直播标题
+        type: string
+    required:
+    - anchor
+    - title
+    type: object
+  handler.DeleteRequest:
+    properties:
+      id:
+        example: uuid，直播房间id
+        type: string
+      user_id:
+        example: 当前用户id
+        type: string
+    required:
+    - id
+    - user_id
+    type: object
+  handler.GetMeetingInfoRequest:
+    properties:
+      id:
+        example: 直播Id
+        type: string
+    type: object
+  handler.GetRequest:
+    properties:
+      id:
+        example: uuid，直播房间id
+        type: string
+      user_id:
+        example: 当前用户id
+        type: string
+    required:
+    - id
+    - user_id
+    type: object
+  handler.ListRequest:
+    properties:
+      page_num:
+        example: 1
+        type: integer
+      page_size:
+        example: 10
+        type: integer
+      user_id:
+        type: string
+    required:
+    - page_num
+    - page_size
+    - user_id
+    type: object
+  handler.LiveStatusRequest:
+    properties:
+      id:
+        example: uuid，直播房间id
+        type: string
+      user_id:
+        example: 当前用户id
+        type: string
+    required:
+    - id
+    - user_id
+    type: object
+  handler.MeetingActionRequest:
+    properties:
+      id:
+        example: 直播Id
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/models.MeetingMember'
+        type: array
+    type: object
+  handler.TokenRequest:
+    properties:
+      device_id:
+        example: 设备id：DEVICE-ID
+        type: string
+      device_type:
+        example: 设备类型：android/ios/web/win/mac
+        type: string
+      user_id:
+        example: 用户id:foo
+        type: string
+    required:
+    - device_id
+    - device_type
+    - user_id
+    type: object
+  handler.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  handler.UpdateRequest:
+    properties:
+      extends:
+        description: 扩展字段，通常是JSON格式字符串
+        example: 扩展字段，通常是JSON格式字符串
+        type: string
+      id:
+        example: 直播Id
+        type: string
+      notice:
+        description: 直播公告
+        example: 直播公告
+        type: string
+      title:
+        description: 直播标题
+        example: 直播标题
+        type: string
+    type: object
+  live.PullLiveInfo:
+    properties:
+      flv_lhd_url:
+        description: 高清
+        type: string
+      flv_lld_url:
+        description: 流畅
+        type: string
+      flv_lsd_url:
+        description: 标清
+        type: string
+      flv_lud_url:
+        description: 超清
+        type: string
+      flv_oriaac_url:
+        description: 原画
+        type: string
+      flv_url:
+        type: string
+      hls_lhd_url:
+        description: 高清
+        type: string
+      hls_lld_url:
+        description: 流畅
+        type: string
+      hls_lsd_url:
+        description: 标清
+        type: string
+      hls_lud_url:
+        description: 超清
+        type: string
+      hls_oriaac_url:
+        description: 原画
+        type: string
+      hls_url:
+        type: string
+      rtmp_lhd_url:
+        description: 高清
+        type: string
+      rtmp_lld_url:
+        description: 流畅
+        type: string
+      rtmp_lsd_url:
+        description: 标清
+        type: string
+      rtmp_lud_url:
+        description: 超清
+        type: string
+      rtmp_oriaac_url:
+        description: 原画
+        type: string
+      rtmp_url:
+        type: string
+      rts_lhd_url:
+        description: 高清
+        type: string
+      rts_lld_url:
+        description: 流畅
+        type: string
+      rts_lsd_url:
+        description: 标清
+        type: string
+      rts_lud_url:
+        description: 超清
+        type: string
+      rts_oriaac_url:
+        description: 原画
+        type: string
+      rts_url:
+        type: string
+    type: object
+  models.AuthTokenRequest:
+    properties:
+      app_server:
+        type: string
+      live_id:
+        type: string
+      token:
+        type: string
+      user_id:
+        type: string
+      user_name:
+        type: string
+    required:
+    - live_id
+    - user_id
+    type: object
+  models.AuthTokenResponse:
+    properties:
+      login_token:
+        type: string
+    type: object
+  models.JumpUrlRequest:
+    properties:
+      live_id:
+        type: string
+      user_id:
+        type: string
+      user_name:
+        type: string
+    required:
+    - live_id
+    - user_id
+    type: object
+  models.JumpUrlResponse:
+    properties:
+      live_jump_url:
+        type: string
+    type: object
+  models.LinkInfo:
+    properties:
+      cdn_pull_info:
+        allOf:
+        - $ref: '#/definitions/live.PullLiveInfo'
+        description: 普通观众CDN拉流地址
+      rtc_pull_url:
+        description: 拉流地址
+        type: string
+      rtc_push_url:
+        description: 推流地址
+        type: string
+    type: object
+  models.MeetingInfo:
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/models.MeetingMember'
+        type: array
+    type: object
+  models.MeetingMember:
+    properties:
+      camera_opened:
+        description: 摄像头状态
+        type: boolean
+      mic_opened:
+        description: 麦克风状态
+        type: boolean
+      rtc_pull_url:
+        description: 连麦拉流地址
+        type: string
+      user_avatar:
+        description: 用户头像
+        type: string
+      user_id:
+        description: 用户Id
+        type: string
+      user_nick:
+        description: 用户Nick
+        type: string
+    type: object
+  models.Metrics:
+    properties:
+      like_count:
+        type: integer
+      online_count:
+        type: integer
+      pv:
+        type: integer
+      uv:
+        type: integer
+    type: object
+  models.PlayInfo:
+    properties:
+      bit_depth:
+        description: 颜色位深。取值为整数。
+        type: integer
+      bit_rate:
+        description: 媒体流码率。单位：Kbps。
+        type: string
+      creation_time:
+        description: 创建时间 音/视频创建时间。格式为：yyyy-MM-ddTHH:mm:ssZ（UTC时间）。
+        type: string
+      definition:
+        description: 视频流清晰度定义。取值： FD：流畅。 LD：标清。 SD：高清。 HD：超清 OD：原画。 2K：2K。 4K：4K。
+          SQ：普通音质。 HQ：高音质。 AUTO：自适应码率。
+        type: string
+      duration:
+        description: 媒体流长度。单位：秒。
+        type: string
+      encrypt:
+        description: 媒体流是否加密流，取值：0：否。1 是。
+        type: integer
+      encrypt_type:
+        description: '媒体流加密类型。取值: AliyunVoDEncryption：阿里云视频加密。AliyunVoDEncryption：阿里云视频加密。'
+        type: string
+      format:
+        description: 媒体流格式。 若媒体文件为视频则取值： mp4、 m3u8。
+        type: string
+      fps:
+        description: 媒体流帧率。单位：帧/每秒。
+        type: string
+      hdr_type:
+        description: '媒体流HDR类型。取值: HDR,HDR10,HLG,DolbyVision,HDRVivid,HDRVivid'
+        type: string
+      height:
+        description: 媒体流高度。单位：px。
+        type: integer
+      play_url:
+        description: 媒体流宽度。单位：px。
+        type: string
+      size:
+        description: 媒体流宽度。单位：px。
+        type: integer
+      status:
+        description: 媒体流状态，Normal：正常状态，标记的是每种清晰度和格式的一路最新转码完成的流的状态。Invisible：不可见状态，当每种清晰度和格式有多路重复的转码流时，除了最新的一路流会被标记为正常状态，其他流会被标记为不可见状态。
+        type: string
+      stream_type:
+        description: 媒体流类型。 若媒体流为视频则取值：video，若是纯音频则取值：audio。
+        type: string
+      watermark_id:
+        description: 当前媒体流关联的水印ID。
+        type: string
+      width:
+        description: 媒体流宽度。单位：px。
+        type: integer
+    type: object
+  models.PushLiveInfo:
+    properties:
+      rtmp_url:
+        type: string
+      rts_url:
+        type: string
+      srt_url:
+        type: string
+    type: object
+  models.RoomInfo:
+    properties:
+      anchor_id:
+        description: 主播Id
+        type: string
+      anchor_nick:
+        description: 主播Nick
+        type: string
+      chat_id:
+        description: 群组Id
+        type: string
+      cover_url:
+        description: 直播封面
+        type: string
+      created_at:
+        description: 创建时间
+        type: string
+      extends:
+        description: 扩展字段
+        type: string
+      id:
+        description: 直播Id
+        type: string
+      link_info:
+        allOf:
+        - $ref: '#/definitions/models.LinkInfo'
+        description: 连麦PK 等信息， 动态生成
+      meeting_id:
+        description: 连麦Id
+        type: string
+      meeting_info:
+        description: 连麦成员信息（json序列化）
+        type: string
+      metrics:
+        allOf:
+        - $ref: '#/definitions/models.Metrics'
+        description: 直播间统计
+      mode:
+        description: 直播模式 0-普通直播, 1-连麦直播，2-PK直播
+        type: integer
+      notice:
+        description: 直播公告
+        type: string
+      pull_url_info:
+        allOf:
+        - $ref: '#/definitions/live.PullLiveInfo'
+        description: 拉流相关地址信息，动态生成
+      push_url_info:
+        allOf:
+        - $ref: '#/definitions/models.PushLiveInfo'
+        description: 推流相关地址信息，动态生成
+      started_at:
+        description: 直播开始时间
+        type: string
+      status:
+        description: 直播状态，0-准备中，1-已开始，2-已结束
+        type: integer
+      stopped_at:
+        description: 直播结束时间
+        type: string
+      title:
+        description: 直播标题
+        type: string
+      updated_at:
+        description: 更新时间
+        type: string
+      user_status:
+        allOf:
+        - $ref: '#/definitions/models.UserStatus'
+        description: 用户状态
+      vod_id:
+        description: 点播Id
+        type: string
+      vod_info:
+        allOf:
+        - $ref: '#/definitions/models.VodInfo'
+        description: 直播转录制，点播信息
+    type: object
+  models.Status:
+    properties:
+      code:
+        type: integer
+      details: {}
+      message:
+        type: string
+    type: object
+  models.UserStatus:
+    properties:
+      mute:
+        type: boolean
+      mute_source:
+        items:
+          type: string
+        type: array
+    type: object
+  models.VodInfo:
+    properties:
+      playlist:
+        items:
+          $ref: '#/definitions/models.PlayInfo'
+        type: array
+      status:
+        description: 状态  0 准备中，1 成功，2 失败
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /create:
+    post:
+      consumes:
+      - application/json
+      description: 创建直播房间
+      operationId: create
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.RoomInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建直播房间
+  /delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除房间
+      operationId: delete
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.DeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.RoomInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除房间
+  /get:
+    post:
+      consumes:
+      - application/json
+      description: 获取直播房间详情
+      operationId: get
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.GetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.RoomInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取直播房间详情
+  /getLiveJumpUrl:
+    post:
+      consumes:
+      - application/json
+      description: 生成桌面工具链接地址
+      operationId: liveJumpUrl
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.JumpUrlRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.JumpUrlResponse'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 生成桌面工具链接地址
+  /getMeetingInfo:
+    post:
+      consumes:
+      - application/json
+      description: 全量获取连麦信息
+      operationId: GetMeetingInfo
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.GetMeetingInfoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.MeetingInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 全量获取连麦信息
+  /list:
+    post:
+      consumes:
+      - application/json
+      description: 获取直播房间列表
+      operationId: list
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ListRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/models.RoomInfo'
+            type: array
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取直播房间列表
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: App用户登陆
+      operationId: login
+      parameters:
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/auth.authResponse'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      summary: App用户登陆
+  /pause:
+    post:
+      consumes:
+      - application/json
+      description: 暂停直播
+      operationId: pause
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LiveStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.RoomInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 暂停直播
+  /start:
+    post:
+      consumes:
+      - application/json
+      description: 开始直播
+      operationId: start
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LiveStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.RoomInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 开始直播
+  /stop:
+    post:
+      consumes:
+      - application/json
+      description: 停止直播
+      operationId: stop
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LiveStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.RoomInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 停止直播
+  /token:
+    post:
+      consumes:
+      - application/json
+      description: 获取token
+      operationId: token
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.TokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/handler.TokenResponse'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取TOKEN
+  /update:
+    post:
+      consumes:
+      - application/json
+      description: 更新房间详情
+      operationId: update
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.RoomInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新房间详情
+  /updateMeetingInfo:
+    post:
+      consumes:
+      - application/json
+      description: 全量更新直播连麦人员信息
+      operationId: UpdateMeetingInfo
+      parameters:
+      - description: Bearer your-token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.MeetingActionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.MeetingInfo'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      security:
+      - ApiKeyAuth: []
+      summary: 全量更新直播连麦人员信息
+  /verifyAuthToken:
+    post:
+      consumes:
+      - application/json
+      description: 桌面工具链接验签接口
+      parameters:
+      - description: 请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.AuthTokenResponse'
+        "400":
+          description: 4xx, 客户端错误
+          schema:
+            $ref: '#/definitions/models.Status'
+        "500":
+          description: 5xx, 请求失败
+          schema:
+            $ref: '#/definitions/models.Status'
+      summary: 桌面工具链接验签接口
+swagger: "2.0"

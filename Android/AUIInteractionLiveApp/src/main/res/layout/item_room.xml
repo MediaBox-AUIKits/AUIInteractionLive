@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="165dp"
+    android:layout_margin="3.5dp"
+    android:clickable="true"
+    android:focusable="true"
+    tools:layout_width="165dp">
+
+    <ImageView
+        android:id="@+id/item_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/live_item_bg"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_gray_radius_10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/live_status_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/ic_live"></ImageView>
+
+        <TextView
+            android:id="@+id/live_pv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/live_status_icon"
+            android:layout_marginLeft="6dp"
+            android:text="1.3w观看"
+            android:textColor="@color/white"
+            android:textSize="10dp">
+
+        </TextView>
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="9dp"
+        android:paddingStart="7dp"
+        android:paddingEnd="7dp">
+
+        <TextView
+            android:id="@+id/item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxWidth="100dp"
+            android:maxLines="1"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:textColor="#ffffff"
+            android:textSize="14dp"
+            tools:text="房间标题房间标题房间标题房间标题房间标题" />
+
+        <!--        <TextView-->
+        <!--            android:id="@+id/item_is_owner"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="3dp"-->
+        <!--            android:layout_toRightOf="@+id/item_title"-->
+        <!--            android:background="@drawable/iub_bg_orange_button"-->
+        <!--            android:lines="1"-->
+        <!--            android:maxLines="1"-->
+        <!--            android:paddingStart="3dp"-->
+        <!--            android:paddingTop="1dp"-->
+        <!--            android:paddingEnd="3dp"-->
+        <!--            android:paddingBottom="1dp"-->
+        <!--            android:text="房主"-->
+        <!--            android:textColor="#ffffff"-->
+        <!--            android:textSize="12dp"-->
+        <!--            android:visibility="gone"-->
+        <!--            tools:ignore="HardcodedText,SmallSp"-->
+        <!--            tools:visibility="visible" />-->
+
+        <TextView
+            android:id="@+id/item_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_title"
+            android:layout_alignStart="@+id/item_title"
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lines="1"
+            android:maxLines="1"
+            android:textColor="#f2f2f2"
+            android:textSize="12dp"
+            tools:text="sauyvbflkasojfpoasiofaisjkf" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,85 @@
+
+.room-list-page {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+}
+
+.room-list-header {
+	display: flex;
+	flex-direction: column-reverse;
+	flex-shrink: 0;
+	box-sizing: content-box;
+	/* 小程序 */
+	height: 60px;
+	width: 100%;
+}
+
+.room-list-header-content {
+	position: relative;
+	font-size: 16px;
+	line-height: 32px;
+	text-align: center;
+}
+
+.room-list-header-back {
+	position: absolute;
+	left: 16px;
+	font-size: 24px;
+	line-height: 32px;
+}
+
+.scroll-list {
+	box-sizing: border-box;
+	flex-shrink: 0;
+	position: relative;
+	width: 100%;
+	height: calc(100vh - 60px);
+}
+
+.room-list-content {
+	position: relative;
+	padding: 12px 10px;
+	margin-bottom: 20px;
+	font-size: 0;
+}
+
+.room-list-last {
+	position: absolute;
+	top: 100px;
+	right: 0;
+	padding: 0 0.2rem;
+	font-size: 0.28rem;
+	line-height: 0.52rem;
+	color: $uni-color-primary;
+	background-color: #fff;
+	z-index: 100;
+	border-top-left-radius: 0.26rem;
+	border-bottom-left-radius: 0.26rem;
+	box-shadow: 0 2px 6px 0 rgba(116,122,140,0.20);
+	
+	.auiicon-LeftOutline {
+		margin-left: 0.08rem;
+		transform: rotate(180deg);
+		font-size: 0.32rem;
+		line-height: 0.52rem;
+	}
+}
+
+.room-list-empty {
+  position: absolute;
+  top: 33.3vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  padding-top: 132px;
+  font-size: 0.32rem;
+  color: #b2b7c4;
+  text-align: center;
+  background-image: url('https://img.alicdn.com/imgextra/i3/O1CN01ed5rr11k5VMw50ml4_!!6000000004632-2-tps-180-116.png');
+  background-repeat: no-repeat;
+  background-position-x: center;
+}

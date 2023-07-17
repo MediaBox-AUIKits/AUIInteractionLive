@@ -1,0 +1,29 @@
+@import '../../uni.scss';
+
+.primary-btn {
+	padding-top: 0.20rem;
+	padding-bottom: 0.20rem;
+	font-size: 0.32rem;
+	line-height: 1.5;
+	color: #fcfcfd;
+	text-align: center;
+	background-color: $uni-color-primary;
+	border-radius: 0.44rem;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	
+	&::after {
+		  display: none;
+	}
+	
+	&.disabled {
+		background-color: $uni-color-primary-disable;
+		cursor: not-allowed;
+	}
+	
+	&.loading {
+		background-color: $uni-color-primary-disable;
+		cursor: not-allowed;
+	}
+}

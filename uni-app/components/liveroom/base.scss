@@ -1,0 +1,9 @@
+$room-background: linear-gradient(90deg, #2f1d17 0%, #1e2326 100%);
+$block-backgroud-color: rgba(28,29,34,0.4);
+$info-text-color: #FCFCFD;
+
+@mixin text-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

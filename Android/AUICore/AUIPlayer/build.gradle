@@ -1,0 +1,43 @@
+apply plugin: 'com.android.library'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        google()
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.2'
+    }
+}
+android {
+    compileSdkVersion 31
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation project(':AUIBaseKits:AUICommon')
+
+    api "com.aliyun.aio:AliVCSDK_PremiumLive:6.2.0"
+}
+

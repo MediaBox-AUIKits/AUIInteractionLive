@@ -1,0 +1,497 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1F48A7D682F775938E94C904 /* libPods-AUILiveDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AE079F70418AA88343945183 /* libPods-AUILiveDemo.a */; };
+		4104B73F29F91D4A00526C7B /* AUILoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4104B73329F91D4A00526C7B /* AUILoginViewController.m */; };
+		4104B74029F91D4A00526C7B /* AUIHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4104B73429F91D4A00526C7B /* AUIHomeViewController.m */; };
+		4104B74129F91D4A00526C7B /* AUILiveCreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4104B73A29F91D4A00526C7B /* AUILiveCreateViewController.m */; };
+		4104B74229F91D4A00526C7B /* AUILiveListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4104B73B29F91D4A00526C7B /* AUILiveListViewController.m */; };
+		4104B74329F91D4A00526C7B /* AUILiveManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4104B73C29F91D4A00526C7B /* AUILiveManager.m */; };
+		4104B74429F91D4A00526C7B /* Resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4104B73E29F91D4A00526C7B /* Resource.bundle */; };
+		41F38267291110390034CE1E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F38266291110390034CE1E /* AppDelegate.m */; };
+		41F382722911103B0034CE1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 41F382712911103B0034CE1E /* Assets.xcassets */; };
+		41F382752911103B0034CE1E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 41F382732911103B0034CE1E /* LaunchScreen.storyboard */; };
+		41F382782911103B0034CE1E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F382772911103B0034CE1E /* main.m */; };
+		41F382822911158E0034CE1E /* license.crt in Resources */ = {isa = PBXBuildFile; fileRef = 41F382802911158E0034CE1E /* license.crt */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4104B73329F91D4A00526C7B /* AUILoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AUILoginViewController.m; sourceTree = "<group>"; };
+		4104B73429F91D4A00526C7B /* AUIHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AUIHomeViewController.m; sourceTree = "<group>"; };
+		4104B73529F91D4A00526C7B /* AUILoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUILoginViewController.h; sourceTree = "<group>"; };
+		4104B73729F91D4A00526C7B /* AUILiveListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUILiveListViewController.h; sourceTree = "<group>"; };
+		4104B73829F91D4A00526C7B /* AUILiveCreateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUILiveCreateViewController.h; sourceTree = "<group>"; };
+		4104B73929F91D4A00526C7B /* AUILiveManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUILiveManager.h; sourceTree = "<group>"; };
+		4104B73A29F91D4A00526C7B /* AUILiveCreateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AUILiveCreateViewController.m; sourceTree = "<group>"; };
+		4104B73B29F91D4A00526C7B /* AUILiveListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AUILiveListViewController.m; sourceTree = "<group>"; };
+		4104B73C29F91D4A00526C7B /* AUILiveManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AUILiveManager.m; sourceTree = "<group>"; };
+		4104B73D29F91D4A00526C7B /* AUIHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUIHomeViewController.h; sourceTree = "<group>"; };
+		4104B73E29F91D4A00526C7B /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Resource.bundle; sourceTree = "<group>"; };
+		41F38262291110390034CE1E /* AUILiveDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AUILiveDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		41F38265291110390034CE1E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		41F38266291110390034CE1E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		41F382712911103B0034CE1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		41F382742911103B0034CE1E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		41F382762911103B0034CE1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		41F382772911103B0034CE1E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		41F382802911158E0034CE1E /* license.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license.crt; sourceTree = "<group>"; };
+		41F382832911186D0034CE1E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		AE079F70418AA88343945183 /* libPods-AUILiveDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AUILiveDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7E94A4C133366A9B9A29B3B /* Pods-AUILiveDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUILiveDemo.debug.xcconfig"; path = "Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		EFBD0CDF006EA3EE4879CA5D /* Pods-AUILiveDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUILiveDemo.release.xcconfig"; path = "Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		41F3825F291110390034CE1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F48A7D682F775938E94C904 /* libPods-AUILiveDemo.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4104B73229F91D4A00526C7B /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				4104B73E29F91D4A00526C7B /* Resource.bundle */,
+				4104B73629F91D4A00526C7B /* Live */,
+				4104B73529F91D4A00526C7B /* AUILoginViewController.h */,
+				4104B73329F91D4A00526C7B /* AUILoginViewController.m */,
+				4104B73D29F91D4A00526C7B /* AUIHomeViewController.h */,
+				4104B73429F91D4A00526C7B /* AUIHomeViewController.m */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		4104B73629F91D4A00526C7B /* Live */ = {
+			isa = PBXGroup;
+			children = (
+				4104B73929F91D4A00526C7B /* AUILiveManager.h */,
+				4104B73C29F91D4A00526C7B /* AUILiveManager.m */,
+				4104B73829F91D4A00526C7B /* AUILiveCreateViewController.h */,
+				4104B73A29F91D4A00526C7B /* AUILiveCreateViewController.m */,
+				4104B73729F91D4A00526C7B /* AUILiveListViewController.h */,
+				4104B73B29F91D4A00526C7B /* AUILiveListViewController.m */,
+			);
+			path = Live;
+			sourceTree = "<group>";
+		};
+		41F38259291110390034CE1E = {
+			isa = PBXGroup;
+			children = (
+				41F38264291110390034CE1E /* AUILiveDemo */,
+				41F38263291110390034CE1E /* Products */,
+				56ED37974638E6B9896E27FA /* Pods */,
+				6A64CD9EF1130CE5293C4E9F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		41F38263291110390034CE1E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41F38262291110390034CE1E /* AUILiveDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		41F38264291110390034CE1E /* AUILiveDemo */ = {
+			isa = PBXGroup;
+			children = (
+				4104B73229F91D4A00526C7B /* Home */,
+				41F382802911158E0034CE1E /* license.crt */,
+				41F38265291110390034CE1E /* AppDelegate.h */,
+				41F38266291110390034CE1E /* AppDelegate.m */,
+				41F382712911103B0034CE1E /* Assets.xcassets */,
+				41F382732911103B0034CE1E /* LaunchScreen.storyboard */,
+				41F382762911103B0034CE1E /* Info.plist */,
+				41F382772911103B0034CE1E /* main.m */,
+			);
+			path = AUILiveDemo;
+			sourceTree = "<group>";
+		};
+		56ED37974638E6B9896E27FA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D7E94A4C133366A9B9A29B3B /* Pods-AUILiveDemo.debug.xcconfig */,
+				EFBD0CDF006EA3EE4879CA5D /* Pods-AUILiveDemo.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		6A64CD9EF1130CE5293C4E9F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AE079F70418AA88343945183 /* libPods-AUILiveDemo.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		41F38261291110390034CE1E /* AUILiveDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 41F3827B2911103B0034CE1E /* Build configuration list for PBXNativeTarget "AUILiveDemo" */;
+			buildPhases = (
+				3D6726D4B1845113AE28A81E /* [CP] Check Pods Manifest.lock */,
+				41F3825E291110390034CE1E /* Sources */,
+				41F3825F291110390034CE1E /* Frameworks */,
+				41F38260291110390034CE1E /* Resources */,
+				0569D83C46EEE232FD38814B /* [CP] Embed Pods Frameworks */,
+				AEDD18E123BB219BDFCE3B9F /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AUILiveDemo;
+			productName = AUILiveDemo;
+			productReference = 41F38262291110390034CE1E /* AUILiveDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		41F3825A291110390034CE1E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1330;
+				TargetAttributes = {
+					41F38261291110390034CE1E = {
+						CreatedOnToolsVersion = 13.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 41F3825D291110390034CE1E /* Build configuration list for PBXProject "AUILiveDemo" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = 41F38259291110390034CE1E;
+			productRefGroup = 41F38263291110390034CE1E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				41F38261291110390034CE1E /* AUILiveDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		41F38260291110390034CE1E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41F382752911103B0034CE1E /* LaunchScreen.storyboard in Resources */,
+				41F382822911158E0034CE1E /* license.crt in Resources */,
+				41F382722911103B0034CE1E /* Assets.xcassets in Resources */,
+				4104B74429F91D4A00526C7B /* Resource.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0569D83C46EEE232FD38814B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3D6726D4B1845113AE28A81E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AUILiveDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AEDD18E123BB219BDFCE3B9F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AUILiveDemo/Pods-AUILiveDemo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		41F3825E291110390034CE1E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4104B74229F91D4A00526C7B /* AUILiveListViewController.m in Sources */,
+				41F38267291110390034CE1E /* AppDelegate.m in Sources */,
+				4104B74129F91D4A00526C7B /* AUILiveCreateViewController.m in Sources */,
+				4104B74329F91D4A00526C7B /* AUILiveManager.m in Sources */,
+				4104B74029F91D4A00526C7B /* AUIHomeViewController.m in Sources */,
+				4104B73F29F91D4A00526C7B /* AUILoginViewController.m in Sources */,
+				41F382782911103B0034CE1E /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		41F382732911103B0034CE1E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				41F382742911103B0034CE1E /* Base */,
+				41F382832911186D0034CE1E /* zh-Hans */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		41F382792911103B0034CE1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		41F3827A2911103B0034CE1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		41F3827C2911103B0034CE1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D7E94A4C133366A9B9A29B3B /* Pods-AUILiveDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K6329CYD7G;
+				ENABLE_BITCODE = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AUILiveDemo/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "AUI直播Demo";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要使用摄像头进行直播";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要使用麦克风进行直播";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aliyun.interaction.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		41F3827D2911103B0034CE1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EFBD0CDF006EA3EE4879CA5D /* Pods-AUILiveDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K6329CYD7G;
+				ENABLE_BITCODE = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AUILiveDemo/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "AUI直播Demo";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要使用摄像头进行直播";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要使用麦克风进行直播";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aliyun.interaction.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		41F3825D291110390034CE1E /* Build configuration list for PBXProject "AUILiveDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41F382792911103B0034CE1E /* Debug */,
+				41F3827A2911103B0034CE1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		41F3827B2911103B0034CE1E /* Build configuration list for PBXNativeTarget "AUILiveDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41F3827C2911103B0034CE1E /* Debug */,
+				41F3827D2911103B0034CE1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 41F3825A291110390034CE1E /* Project object */;
+}

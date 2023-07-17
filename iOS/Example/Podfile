@@ -1,0 +1,56 @@
+#use_frameworks!
+install! 'cocoapods', :deterministic_uuids => false
+source 'https://github.com/CocoaPods/Specs.git'
+
+platform :ios, '10.0'
+
+LIVE_SDK ='AliVCSDK_PremiumLive'
+QUEEN_SPEC=LIVE_SDK
+
+def aliyun_video_sdk
+    # 根据自己的业务场景，集成合适的音视频终端SDK
+    # 如果你的APP中还需要频短视频编辑功能，可以使用音视频终端全功能SDK（AliVCSDK_Premium），可以把本文件中的所有AliVCSDK_PremiumLive替换为AliVCSDK_Premium
+    pod 'AliVCSDK_PremiumLive', '~> 6.2.0'
+end
+
+def aliyun_aui_interaction_live
+    # 基础UI组件
+    pod 'AUIFoundation/All', :path => "../AUIBaseKits/AUIFoundation/"
+    
+    # 美颜UI组件，如果终端SDK使用的是AliVCSDK_Premium，需要AliVCSDK_PremiumLive替换为AliVCSDK_Premium
+    pod 'AUIBeauty/AliVCSDK_PremiumLive', :path => "../AUIBaseKits/AUIBeauty/"
+    
+    # 互动消息组件
+    pod 'AUIMessage/Alivc', :path => "../AUIBaseKits/AUIMessage/"
+    
+    # 互动直播UI组件，如果终端SDK使用的是AliVCSDK_Premium，需要AliVCSDK_PremiumLive替换为AliVCSDK_Premium
+    pod 'AUIInteractionLive/AliVCSDK_PremiumLive',  :path => "../"
+end
+
+
+def aliyun_aui_enterprise_live
+    # 基础UI组件
+    pod 'AUIFoundation/All', :path => "../AUIBaseKits/AUIFoundation/"
+    
+    # 互动消息组件
+    pod 'AUIMessage/Alivc', :path => "../AUIBaseKits/AUIMessage/"
+    
+    # 企业直播UI组件，如果终端SDK使用的是AliVCSDK_Premium，需要AliVCSDK_PremiumLive替换为AliVCSDK_Premium
+    pod 'AUIEnterpriseLive/AliVCSDK_PremiumLive',  :path => "../"
+end
+
+def common_demo_pods
+    pod 'Masonry'
+    pod 'MJRefresh'
+    pod 'SDWebImage'
+end
+
+
+target 'AUILiveDemo' do
+  
+    common_demo_pods
+    aliyun_aui_interaction_live
+    aliyun_video_sdk
+
+end
+

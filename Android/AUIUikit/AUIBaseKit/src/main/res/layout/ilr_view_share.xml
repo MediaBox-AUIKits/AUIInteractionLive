@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:layout_height="40dp"
+    tools:layout_width="40dp"
+    tools:parentTag="android.widget.FrameLayout">
+
+
+    <RelativeLayout
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="@drawable/ilr_bg_oval"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ilr_share_icon"
+            android:contentDescription="@null" />
+    </RelativeLayout>
+
+
+</merge>

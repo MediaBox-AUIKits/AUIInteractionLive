@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@drawable/ilr_bg_linkmic_action"
+    tools:gravity="center_vertical"
+    tools:ignore="HardcodedText"
+    tools:layout_gravity="end|center"
+    tools:layout_height="32dp"
+    tools:layout_marginEnd="16dp"
+    tools:layout_width="wrap_content"
+    tools:orientation="horizontal"
+    tools:paddingHorizontal="4dp"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <ImageView
+        android:id="@+id/link_mic_action_main_icon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/ilr_icon_linkmic_action_not_connect"
+        android:contentDescription="@null"
+        android:visibility="visible"
+        tools:visibility="gone" />
+
+    <!-- 操作菜单布局(含麦克风开关、摄像头开关、前后置切换) -->
+    <LinearLayout
+        android:id="@+id/link_mic_action_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/link_mic_action_mic"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ilr_icon_linkmic_action_mic" />
+
+        <ImageView
+            android:id="@+id/link_mic_action_camera"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ilr_icon_linkmic_action_camera" />
+
+        <ImageView
+            android:id="@+id/link_mic_action_camera_switch"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ilr_icon_linkmic_action_camera_switch" />
+    </LinearLayout>
+
+    <!-- 文字部分 -->
+    <LinearLayout
+        android:id="@+id/link_mic_text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:background="#66FCFCFD" />
+
+        <TextView
+            android:id="@+id/link_mic_action_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="申请连麦"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</merge>

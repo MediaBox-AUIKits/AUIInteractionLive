@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@drawable/ilr_bg_anchor_profile"
+    tools:layout_gravity="center"
+    tools:layout_height="40dp"
+    tools:layout_width="wrap_content"
+    tools:parentTag="android.widget.RelativeLayout">
+
+    <!-- 主播头像 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/avatar_container"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="4dp"
+        app:cardCornerRadius="17dp"
+        app:cardElevation="3dp">
+
+        <ImageView
+            android:id="@+id/avatar_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+    </androidx.cardview.widget.CardView>
+
+    <FrameLayout
+        android:id="@+id/title_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toEndOf="@id/avatar_container">
+
+        <!-- 房间标题 -->
+        <TextView
+            android:id="@+id/view_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxEms="5"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="一二三四五六七八九十" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <!-- 主播昵称 -->
+            <TextView
+                android:id="@+id/view_anchor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                tools:text="cfiusanda" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/force_view"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:layout_toEndOf="@id/title_layout"
+        android:background="@drawable/ilr_bg_orange_button_radius_selector"
+        android:gravity="center"
+        android:text="+关注"
+        android:textColor="@android:color/white"
+        android:textSize="12dp"
+        tools:ignore="HardcodedText,SpUsage" />
+</merge>

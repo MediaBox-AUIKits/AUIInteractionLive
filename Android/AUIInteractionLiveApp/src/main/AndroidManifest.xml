@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.aliyun.aliinteraction.app">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application
+        android:name="com.aliyun.interaction.app.InteractionLiveApplication"
+        android:allowBackup="true"
+        android:icon="${appIcon}"
+        android:label="${appLabel}"
+        android:roundIcon="${appIconRound}"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:icon,android:label,android:theme"
+        tools:targetApi="m">
+        <activity
+            android:name="com.aliyun.interaction.app.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.aliyun.interaction.app.LiveActivity"
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme4LiveActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name="com.aliyun.interaction.app.RoomListActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.aliyun.interaction.app.ChooseRoomTypeActivity"
+            android:screenOrientation="portrait" />
+
+        <meta-data
+            android:name="com.aliyun.alivc_license.licensekey"
+            android:value=""
+            tools:node="replace" />
+        <meta-data
+            android:name="com.aliyun.alivc_license.licensefile"
+            android:value="assets/cert/release.crt"
+            tools:node="replace" />
+    </application>
+
+</manifest>

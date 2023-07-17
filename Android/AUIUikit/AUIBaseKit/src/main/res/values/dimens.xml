@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="alivc_common_1">1dp</dimen>
+    <dimen name="alivc_common_2">2dp</dimen>
+    <dimen name="alivc_common_3">3dp</dimen>
+    <dimen name="alivc_common_4">4dp</dimen>
+    <dimen name="alivc_common_10">10dp</dimen>
+    <dimen name="alivc_common_12">12dp</dimen>
+    <dimen name="alivc_common_14">14dp</dimen>
+    <dimen name="alivc_common_17">17dp</dimen>
+    <dimen name="alivc_common_20">20dp</dimen>
+    <dimen name="alivc_common_22">22dp</dimen>
+    <dimen name="alivc_common_24">24dp</dimen>
+    <dimen name="alivc_common_26">26dp</dimen>
+    <dimen name="alivc_common_28">28dp</dimen>
+    <dimen name="alivc_common_30">30dp</dimen>
+    <dimen name="alivc_common_35">35dp</dimen>
+    <dimen name="alivc_common_34">34dp</dimen>
+    <dimen name="alivc_common_40">40dp</dimen>
+    <dimen name="alivc_common_41">41dp</dimen>
+    <dimen name="alivc_common_42">42dp</dimen>
+    <dimen name="alivc_common_43">43dp</dimen>
+    <dimen name="alivc_common_45">45dp</dimen>
+    <dimen name="alivc_common_46">46dp</dimen>
+    <dimen name="alivc_common_47">47dp</dimen>
+    <dimen name="alivc_common_50">50dp</dimen>
+    <dimen name="alivc_common_52">52dp</dimen>
+    <dimen name="alivc_common_57">57dp</dimen>
+    <dimen name="alivc_common_66">66dp</dimen>
+    <dimen name="alivc_common_70">70dp</dimen>
+    <dimen name="alivc_common_71">71dp</dimen>
+    <dimen name="alivc_common_78">78dp</dimen>
+    <dimen name="alivc_common_21">21dp</dimen>
+    <dimen name="alivc_common_90">90dp</dimen>
+    <dimen name="alivc_common_116">116dp</dimen>
+    <dimen name="alivc_common_144">144dp</dimen>
+    <dimen name="alivc_common_165">165dp</dimen>
+    <dimen name="alivc_common_260">260dp</dimen>
+    <dimen name="room_bottom_layout_margin_bottom">20dp</dimen>
+
+    <dimen name="scene_item_general_gap">10dp</dimen>
+</resources>

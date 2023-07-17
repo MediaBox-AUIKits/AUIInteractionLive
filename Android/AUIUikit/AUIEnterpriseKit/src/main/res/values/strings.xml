@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AUIEnterpriseKit</string>
+    <string name="new_message_tips">您有新消息</string>
+</resources>

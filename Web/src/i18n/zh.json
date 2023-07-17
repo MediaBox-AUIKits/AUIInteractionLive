@@ -1,0 +1,16 @@
+{
+  "page_title": "阿里云互动直播",
+  "confirm": "确定",
+  "nickname_tip": "昵称（请输入英文字母、数字）",
+  "nickname_error": "昵称只支持英文字母、数字",
+  "enter": "进入",
+  "logging": "登录中，请稍后",
+  "login_fail": "登录失败",
+  "liveroom_type": "直播间类型",
+  "enterprise_live": "企业直播",
+  "interaction_live": "互动直播",
+  "liveroom-list": "直播间列表",
+  "liveroom_empty": "暂无直播",
+  "last-live": "上场直播",
+  "views": "观看"
+}

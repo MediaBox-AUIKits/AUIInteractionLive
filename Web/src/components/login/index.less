@@ -1,0 +1,92 @@
+.login-page {
+  min-height: 100%;
+  position: relative;
+}
+
+.login-form {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 812px;
+  padding: 14.5vh 0.64rem 0;
+  background-image: url(https://img.alicdn.com/imgextra/i3/O1CN01apvXtk1ztcwwE1SaI_!!6000000006772-2-tps-812-441.png);
+  background-repeat: no-repeat;
+  background-position-x: center;
+}
+
+.logo {
+  width: 0.96rem;
+  height: 0.64rem;
+  margin-bottom: 0.4rem;
+}
+
+.login-title {
+  font-size: 0.52rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  line-height: 0.74rem;
+  color: #3a3d48;
+  user-select: none;
+}
+
+.nick-block {
+  position: relative;
+  border-bottom: 1px solid #E6E7EC;
+
+  :global {
+    .adm-input {
+      padding: 12px 0;
+    }
+  }
+}
+
+.nick-tip {
+  position: absolute;
+  left: 0;
+  bottom: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #747a8c;
+  pointer-events: none;
+  transition: all 0.25s ease-in-out;
+
+  &:global(.focus) {
+    bottom: 38px;
+    font-size: 12px;
+  }
+}
+
+.room-mode {
+  margin-top: 0.4rem;
+  font-size: 0.24rem;
+  color: #747a8c;
+
+  .room-mode-label {
+    display: inline-flex;
+    vertical-align: text-bottom;
+  }
+
+  :global {
+    .adm-radio {
+      --icon-size: 0.32rem;
+      --font-size: 0.24rem;
+      --gap: 0.12rem;
+      margin-left: 0.24rem;
+    }
+  }
+}
+
+.login-btn {
+  margin-top: 1.28rem;
+  :global {
+    .adm-button.adm-button-large {
+      padding-top: 0.2rem;
+      padding-bottom: 0.2rem;
+      font-size: 0.32rem;
+      line-height: 1.5;
+      --border-width: 0;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="generalAlphaGrayBg">#4d000000</color>
+    <color name="bus_login_status_bar_color">#F86939</color>
+
+    <color name="colorGray333">#333333</color>
+    <color name="colorGray999">#999999</color>
+
+    <color name="liveNotStartCurtainBg">#96000000</color>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#FF442C</color>
+
+</resources>

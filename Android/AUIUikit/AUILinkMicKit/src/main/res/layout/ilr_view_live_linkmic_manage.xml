@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:layout_gravity="center"
+    tools:layout_height="40dp"
+    tools:layout_width="40dp"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:src="@drawable/ilr_icon_linkmic_manage" />
+
+    <TextView
+        android:id="@+id/manage_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_gravity="end"
+        android:background="@drawable/ilr_bg_manage_counter"
+        android:gravity="center"
+        android:paddingHorizontal="4dp"
+        android:textColor="#ffffff"
+        android:textSize="12sp"
+        android:visibility="gone"
+        tools:text="3"
+        tools:visibility="visible" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ilr_bg_room_bottom_action" />
+</merge>

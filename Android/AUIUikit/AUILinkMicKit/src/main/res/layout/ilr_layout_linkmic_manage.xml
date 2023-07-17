@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="540dp"
+    android:background="#55000000"
+    android:orientation="vertical"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <!-- Tab栏 -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/manage_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        app:tabIconTint="#FF5722"
+        app:tabIndicatorColor="#FF5722"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorHeight="2dp"
+        app:tabRippleColor="#FF5722"
+        app:tabSelectedTextColor="#333333"
+        app:tabTextAppearance="@style/TabLayoutTextStyle"
+        app:tabTextColor="#666666" />
+
+    <!-- 列表面板 -->
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/manage_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:overScrollMode="never" />
+</LinearLayout>

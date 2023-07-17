@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="live_ban_all_tips">主播已开启全员禁言…</string>
+    <string name="live_ban_tips">你被主播禁言</string>
+    <string name="live_input_default_tips">说点什么~</string>
+    <string name="live_not_start_curtain_text">直播未开始～</string>
+
+</resources>

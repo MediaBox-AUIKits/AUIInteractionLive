@@ -1,0 +1,120 @@
+@import './base.scss';
+
+.banner-wrap {
+	position: absolute;
+	top: 40px;
+	left: 0;
+	right: 0;
+	height: 40px;
+	padding: 0 16px;
+	z-index: 100;
+}
+
+.info-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+	margin-bottom: 0.16rem;
+}
+
+.close-btn {
+	width: 0.48rem;
+	height: 0.48rem;
+	line-height: 0.48rem;
+	font-size: 0.4rem;
+	text-align: center;
+	border-radius: 50%;
+	background-color: $block-backgroud-color;
+	
+	.auiicon-LeftOutline {
+		vertical-align: inherit;
+	}
+}
+
+.info-block {
+	display: flex;
+	align-items: center;
+	min-width: 3rem;
+	max-width: calc(100% - 0.68rem);
+	margin-left: 0.2rem;
+	padding: 0.08rem;
+	border-radius: 0.4rem;
+	background-color: $block-backgroud-color;
+	font-size: 0.24rem;
+}
+
+.info-avatar {
+  width: 0.64rem;
+  height: 0.64rem;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.info-title-wrap {
+	width: calc(100% - 1.64rem);
+	padding: 0 0.16rem 0 0.08rem;
+}
+
+.info-title {
+	font-size: 0.28rem;
+	line-height: 0.36rem;
+	@include text-overflow();
+}
+
+.info-name {
+	font-size: 0.2rem;
+	line-height: 0.28rem;
+	@include text-overflow();
+}
+
+.info-follow-btn {
+	width: 1rem;
+	padding: 0;
+	line-height: 0.44rem;
+	text-align: center;
+	border: none;
+	border-radius: 0.22rem;
+	background-color: $uni-color-primary;
+}
+
+.info-audience {
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 0 0.08rem 0 0.52rem;
+	line-height: 0.48rem;
+	font-size: 0.24rem;
+	border-radius: 0.24rem;
+	background-color: $block-backgroud-color;
+	background-image: url('https://img.alicdn.com/imgextra/i1/O1CN01GC0HVZ1kWz8bvu0KX_!!6000000004692-2-tps-36-36.png');
+	background-position: 0.08rem center;
+	background-repeat: no-repeat;
+	background-size: 0.32rem 0.32rem;
+}
+
+.info-notice {
+	max-width: 3rem;
+	font-size: 0.24rem;
+	background-color: $block-backgroud-color;
+	border-radius: 0.24rem;
+}
+
+.info-notice-header {
+	padding: 0 0.08rem 0 0.52rem;
+	line-height: 0.48rem;
+	background-image: url('https://img.alicdn.com/imgextra/i2/O1CN01V4BeA91PtmvVGLMND_!!6000000001899-2-tps-36-36.png');
+	background-position: 0.08rem center;
+	background-repeat: no-repeat;
+	background-size: 0.32rem 0.32rem;
+}
+
+.info-notice-arrow {
+	display: inline-block;
+	font-size: 0.32rem;
+	margin-left: 0.08rem;
+}
+
+.info-notice-content {
+	padding: 0 0.08rem 0.08rem;
+}

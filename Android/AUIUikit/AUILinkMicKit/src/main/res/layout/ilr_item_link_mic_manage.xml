@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ilr_link_mic_online_item_height"
+    android:paddingHorizontal="16dp"
+    tools:ignore="HardcodedText">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ilr_linkmic_manager_default_avatar" />
+
+        <TextView
+            android:id="@+id/item_nick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText"
+            tools:text="Puke"
+            tools:visibility="visible" />
+
+        <!-- 拒绝&同意 -->
+        <LinearLayout
+            android:id="@+id/item_apply_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <TextView
+                android:id="@+id/item_reject"
+                android:layout_width="50dp"
+                android:layout_height="22dp"
+                android:background="@drawable/ilr_bg_manage_reject"
+                android:gravity="center"
+                android:text="拒绝"
+                android:textColor="#333333"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/item_agree"
+                android:layout_width="50dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/ilr_bg_manage_agree"
+                android:gravity="center"
+                android:text="同意"
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- 麦上操作 -->
+        <LinearLayout
+            android:id="@+id/item_online_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/item_mic"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ilr_icon_manage_mic" />
+
+            <ImageView
+                android:id="@+id/item_camera"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ilr_icon_manage_camera" />
+
+            <TextView
+                android:id="@+id/item_kick"
+                android:layout_width="50dp"
+                android:layout_height="22dp"
+                android:background="@drawable/ilr_bg_manage_reject"
+                android:gravity="center"
+                android:text="下麦"
+                android:textColor="#333333"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_gravity="bottom"
+        android:background="#d4d4d4" />
+</FrameLayout>

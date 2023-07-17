@@ -1,0 +1,327 @@
+"Features"="Features";
+"FaceBeauty"="Retouch";
+"FaceShaping"="Face Shaping";
+"Filters"="Filters";
+"Makeup"="Makeup";
+"Stickers"="Stickers";
+"ScreenMatting"="Screen Matting";
+"LiveMatting"="Live-action Matting";
+"Gestures"="Gestures";
+"BodyShaping"="Body Shaping";
+"FaceExpression"="Face Expression";
+"ARPainting"="AR Painting";
+"DyeHair"="Dye Hair";
+"General"="General";
+"GesturesDetect"="Gestures";
+"FutureFeature"="Future Feature";
+
+"DetectedGesture"="Detected Gesture";
+"DetectedGestureNone"="None";
+"DetectedGestureOthers"="Others";
+"DetectedGestureNumber1"="Number1";
+"DetectedGestureNumber2"="Number2";
+"DetectedGestureNumber3"="Number3";
+"DetectedGestureNumber4"="Number4";
+"DetectedGestureNumber5"="Number5";
+"DetectedGestureNumber6"="Number6";
+"DetectedGestureNumber7"="Number7";
+"DetectedGestureNumber8"="Number8";
+"DetectedGestureNumber9"="Number9";
+"DetectedGestureFist"="Fist";
+"DetectedGestureOK"="OK";
+"DetectedGestureHeart"="Heart";
+"DetectedGestureThumbUp"="ThumbUp";
+"DetectedGestureRingPinky"="RingPinky";
+"DetectedGesturePinky"="Pinky";
+"DetectedGestureGun"="Gun";
+"DetectedGestureILoveyRock"="I Lovey Rock";
+"DetectedGesturePaw"="Paw";
+"DetectedGestureMidFinger"="MidFinger";
+"DetectedGestureVulcanSalute"="VulcanSalute";
+"DetectedGestureMidTip"="MidTip";
+"DetectedGestureRingTip"="RingTip";
+"DetectedGestureCup"="Cup";
+"DetectedGestureSnake"="Snake";
+"DetectedGestureFingersTogether"="FingersTogether";
+
+"DetectedAction"="Detected Action";
+"DetectedActionLeft"="Left";
+"DetectedActionRight"="Right";
+"DetectedActionGoodbye"="Goodbye";
+"DetectedActionSwipLeft"="SwipLeft";
+"DetectedActionSwipRight"="SwipRight";
+"DetectedActionSwipUp"="SwipUp";
+"DetectedActionSwipDown"="SwipDown";
+"DetectedActionThumbUpDynamic"="ThumbUpDynamic";
+"DetectedActionZoomIn"="ZoomIn";
+"DetectedActionZoomOut"="ZoomOut";
+
+"Original"="Original";
+
+"SuperModel"="Super Model";
+"AutoBodyRetouch"="Auto Body Retouch";
+"FullBody"="Full Body";
+"LongLag"="Long Lag";
+"SmallHead"="Small Head";
+"ThinLag"="Thin Lag";
+"LongNeck"="Long Neck";
+"ThinWaist"="Thin Waist";
+"EnhanceBreast"="Enhance Breast";
+"ThinArm"="Thin Arm";
+
+"BackgroundProcessOriginal"="Original";
+"BackgroundProcessBlur"="Blur";
+"BackgroundProcessTransparent"="Transparent";
+"BackgroundProcessGallery"="Gallery";
+"BackgroundProcessRed"="Red";
+"BackgroundProcessCantonTower"="Canton Tower";
+
+"RetouchBasic"="Basic";
+"RetouchPopular"="Popular";
+"RetouchCharm"="Charm";
+"RetouchCute"="Cute";
+"RetouchGirl"="Girl";
+"AutoRetouch"="Auto Retouch";
+"RetouchWhiten"="Whiten";
+"RetouchPolish"="Polish";
+"RetouchPolishNatural"="Natural";
+"RetouchPolishHigh"="High";
+"RetouchSharpen"="Sharpen";
+"RetouchWhitenTeeth"="Whiten Teeth";
+"RetouchNasolabialFolds"="Nasolabial Folds";
+"RetouchEyeBags"="Eye Bags";
+"RetouchBrightenEyes"="Brighten Eyes";
+"RetouchBlusher"="Blusher";
+"RetouchShine"="Shine";
+"RetouchLipStick"="LipStick";
+"RetouchLipStickColor"="LipStick Color";
+"RetouchLipstickGloss"="Lipstick Gloss";
+"RetouchLipstickBrightness"="Lipstick Brightness";
+"RetouchWrinkles"="Wrinkles";
+"RetouchBrightenSkin"="Brighten Skin";
+"RetouchNeck"="Neck";
+"RetouchForehead"="Forehead";
+"RetouchSaturation"="Saturation";
+"RetouchContrast"="Contrast";
+
+"AutoFaceShaping"="AI";
+"FaceShapeElegant"="Elegant";
+"FaceShapeExquisite"="Exquisite";
+"FaceShapePopular"="Popular";
+"FaceShapeCute"="Cute";
+"FaceShapeBaby"="Baby";
+"AutoShape"="Auto Shape";
+"FaceShapeEnlargeEyes"="Enlarge Eyes";
+"FaceShapeSlimFace"="Slim Face";
+"FaceShapeFaceLength"="Face Length";
+"FaceShapeNarrowFace"="Narrow Face";
+"FaceShapeChin"="Chin";
+"FaceShapeMouthShape"="Mouth Shape";
+"FaceShapeSlimNose"="Slim Nose";
+"FaceShapeJaw"="Jaw";
+"FaceShapeCheekbones"="Cheekbones";
+"FaceShapeSlimChin"="Slim Chin";
+"FaceShapeEyeDistance"="Eye Distance";
+"FaceShapeCanthus"="Canthus";
+"FaceShapeNoseWings"="Nose Wings";
+"FaceShapeNoseLength"="Nose Length";
+"FaceShapeLipThickness"="Lip Thickness";
+"FaceShapePhiltrum"="Philtrum";
+"FaceShapeHairline"="Hairline";
+"FaceShapeSmile"="Smile";
+"FaceShapeModeBaseline"="Base";
+"FaceShapeModeMain"="Main";
+"FaceShapeModeHigh"="High";
+"FaceShapeModeMax"="Max";
+
+"ManualAdjustment"="Manual Adjustment";
+"Back"="Back";
+
+"Filterly1"="Innocent";
+"Filterly2"="Detached";
+"Filterly3"="Nostalgic";
+"Filterly4"="Blues";
+"Filterly5"="Romantic";
+"Filterly6"="Fresh";
+"Filterly7"="Lively";
+
+"ScreenMattingOriginal"="Original";
+"ScreenMattingGreenScreen"="Green";
+"ScreenMattingBlueScreen"="Blue";
+"ScreenMattingGreenScreenAuto"="Green (Auto)";
+"ScreenMattingBlueScreenAuto"="Blue (Auto)";
+
+"FeatureOff"="Off";
+"FeatureOn"="On";
+
+"MakeupSuYan"="01";
+"MakeupQingChun"="02";
+"MakeupFuGu"="03";
+"MakeupShuNv"="04";
+"AutoMakeup"="Auto Makeup";
+
+"MakeupOriginal"="Original";
+
+"MakeupSticker"="Sticker";
+"MakeupStickerStyle1"="01";
+"MakeupStickerStyle2"="02";
+"MakeupStickerStyle3"="03";
+"MakeupStickerStyle4"="04";
+"MakeupStickerStyle5"="05";
+"MakeupStickerStyle6"="06";
+"MakeupStickerStyle7"="07";
+"MakeupStickerStyle8"="08";
+"MakeupStickerStyle9"="09";
+"MakeupStickerStyle10"="10";
+"MakeupStickerStyle11"="11";
+"MakeupStickerStyle12"="12";
+"MakeupStickerMode1"="S1";
+"MakeupStickerMode2"="S2";
+"MakeupStickerMode3"="S3";
+
+"MakeupEyeShadow"="EyeShadow";
+"MakeupEyeShadowStyle1"="01";
+"MakeupEyeShadowStyle2"="02";
+"MakeupEyeShadowStyle3"="03";
+"MakeupEyeShadowStyle4"="04";
+"MakeupEyeShadowStyle5"="05";
+"MakeupEyeShadowStyle6"="06";
+"MakeupEyeShadowStyle7"="07";
+"MakeupEyeShadowStyle8"="08";
+"MakeupEyeShadowStyle9"="09";
+"MakeupEyeShadowStyle10"="10";
+"MakeupEyeShadowStyle11"="11";
+
+"MakeupEyebrow"="Eyebrow";
+"MakeupEyebrowStyle1"="01";
+"MakeupEyebrowStyle2"="02";
+"MakeupEyebrowStyle3"="03";
+"MakeupEyebrowStyle4"="04";
+"MakeupEyebrowStyle5"="05";
+"MakeupEyebrowStyle6"="06";
+"MakeupEyebrowStyle7"="07";
+"MakeupEyebrowStyle8"="08";
+"MakeupEyebrowStyle9"="09";
+"MakeupEyebrowStyle10"="10";
+"MakeupEyebrowMode1"="S1";
+"MakeupEyebrowMode2"="S2";
+
+"MakeupEyeliner"="Eyeliner";
+"MakeupEyelinerStyle1"="01";
+"MakeupEyelinerStyle2"="02";
+"MakeupEyelinerStyle3"="03";
+"MakeupEyelinerStyle4"="04";
+"MakeupEyelinerStyle5"="05";
+"MakeupEyelinerStyle6"="06";
+"MakeupEyelinerStyle7"="07";
+"MakeupEyelinerStyle8"="08";
+"MakeupEyelinerStyle9"="09";
+"MakeupEyelinerStyle10"="10";
+
+"MakeupEyelash"="Eyelash";
+"MakeupEyelashStyle1"="01";
+"MakeupEyelashStyle2"="02";
+"MakeupEyelashStyle3"="03";
+"MakeupEyelashStyle4"="04";
+"MakeupEyelashStyle5"="05";
+"MakeupEyelashStyle6"="06";
+"MakeupEyelashStyle7"="07";
+"MakeupEyelashStyle8"="08";
+"MakeupEyelashStyle9"="09";
+"MakeupEyelashStyle10"="10";
+
+"MakeupEyeball"="Eyeball";
+"MakeupEyeballStyle1"="01";
+"MakeupEyeballStyle2"="02";
+"MakeupEyeballStyle3"="03";
+"MakeupEyeballStyle4"="04";
+"MakeupEyeballStyle5"="05";
+"MakeupEyeballStyle6"="06";
+"MakeupEyeballStyle7"="07";
+"MakeupEyeballStyle8"="08";
+"MakeupEyeballStyle9"="09";
+"MakeupEyeballStyle10"="10";
+"MakeupEyeballStyle11"="11";
+
+"MakeupBlush"="Blush";
+"MakeupBlushStyle1"="01";
+"MakeupBlushStyle2"="02";
+"MakeupBlushStyle3"="03";
+"MakeupBlushStyle4"="04";
+"MakeupBlushStyle5"="05";
+"MakeupBlushStyle6"="06";
+
+"MakeupWocan"="Lying silkworm";
+"MakeupWocanStyle1"="01";
+
+"MakeupHighLight"="High Light";
+"MakeupHighLightStyle1"="01";
+
+"ARWriting"="Writing";
+"ARPainting"="Painting";
+
+"DyeHairBlue"="Blue";
+"DyeHairPurple"="Purple";
+"DyeHairCyan"="Cyan";
+"DyeHairYellow"="Yellow";
+"DyeHairGreen"="Green";
+"DyeHairBrown"="Brown";
+"DyeHairRed"="Red";
+
+"DetectedExpression"="Current Expression";
+"DetectedExpressionNone"="None";
+"DetectedExpressionBlink"="Blink";
+"DetectedExpressionShakingHead"="Shaking Head";
+"DetectedExpressionEyebrowRaise"="Eyebrow Raise";
+"DetectedExpressionOpenMouth"="Open Mouth";
+"DetectedExpressionSpeaking"="Speaking";
+
+"AutoFaceShapingSuggestion"="Please try to keep your face facing the phone screen.";
+"AutoFaceShapingFinished"="Auto FaceShaping Finished.";
+
+"SupportByQueenMessage"="Support By AliyunQueen SDK";
+"HowToGetQueenSDK"="Get More";
+"AboutQueenSDKHTMLFileName"="copyright_es";
+
+"PoseDetect"="Pose Detect";
+"BodyPoseDetect"="Body Pose";
+"PoseDetectRopeSkipping"="Rope Skipping";
+"PoseDetectJumpingJack"="Jumping Jack";
+"PoseDetectDeepSquat"="Deep Squat";
+"PoseDetectArmCircle"="Arm Circle";
+"PoseDetectUpdownStretching"="Updown Stretching";
+"PoseDetectChestExpanding"="Chest Expanding";
+"PoseDetectSitUp"="Sit Up";
+"PoseDetectPushUp"="Push Up";
+"PoseDetectKneelPushUp"="Kneel Push Up";
+
+"PoseDetectNormal"="Normal";
+"PoseDetectHandsUp"="HandsUp";
+"PoseDetectHandsOnHead"="HandsOnHead";
+"PoseDetectLHandUp"="LHandUp";
+"PoseDetectRHandUp"="RHandUp";
+"PoseDetectHandLeft"="HandLeft";
+"PoseDetectHandRight"="HandRight";
+"PoseDetectDaShape"="DaShape";
+"PoseDetectHandLeft2"="HandLeft2";
+"PoseDetectHandRight2"="HandRight2";
+"PoseDetectSuperLeft"="SuperLeft";
+"PoseDetectSuperRight"="SuperRight";
+"PoseDetectAkimbo"="Akimbo";
+"PoseType"="Pose Type";
+"SportType"="Sport Type";
+"SportCount"="Count";
+
+"FaceEffect"="Face Effects";
+"FaceEffectMocailing"="Mosaicing";
+"sticker_1"="mask1";
+"sticker_2"="mask2";
+
+"face_animoji_bear"="Bear";
+"face_animoji_rabbit"="Rabbit";
+"face_animoji_pumpkin"="Pumpkin";
+"face_animoji_sanxingdui"="SanXingDui";
+"face_animoji_dingsanduo"="Dingsanduo";
+"face_animoji_taogongzai"="TaoGongZai";
+"face_animoji_redpanda"="RedPanda";
+"face_style_cartoon"="Cartoon";

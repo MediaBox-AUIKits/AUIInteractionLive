@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="ilr_link_mic_item_margin">7dp</dimen>
+    <dimen name="ilr_link_mic_online_item_height">64dp</dimen>
+
+</resources>

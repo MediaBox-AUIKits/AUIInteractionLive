@@ -1,0 +1,83 @@
+@import '../../uni.scss';
+
+.login-page {
+	width: 100vw;
+	min-height: 100vh;
+	position: relative;
+	font-size: 0;
+}
+
+.login-form {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 812px;
+  padding-top: 14.5vh;
+  padding-left: 0.64rem;
+  padding-right: 0.64rem;
+  background-image: url('https://img.alicdn.com/imgextra/i3/O1CN01apvXtk1ztcwwE1SaI_!!6000000006772-2-tps-812-441.png');
+  background-repeat: no-repeat;
+  background-position-x: center;
+}
+
+.logo {
+  width: 0.96rem;
+  height: 0.64rem;
+  margin-top: 0;
+  margin-bottom: 0.40rem; 
+}
+
+.login-title {
+  font-size: 0.52rem;
+  margin-bottom: 2.4rem;
+  font-weight: 500;
+  line-height: 0.74rem;
+  color: #3a3d48;
+  user-select: none;
+}
+
+.nick-block {
+  position: relative;
+  margin-bottom: 1.28rem;
+  border-bottom: 1px solid #E6E7EC;
+
+  input {
+	  width: 100%;
+	  height: 1rem;
+	  min-height: 1rem;
+	  font-size: 0.32rem;
+	  background-color: transparent;
+  }
+}
+
+.nick-tip {
+  position: absolute;
+  left: 0;
+  bottom: 0.24rem;
+  font-size: 0.32rem;
+  line-height: 1.5;
+  color: #747a8c;
+  pointer-events: none;
+  transition: all 0.25s ease-in-out;
+
+  &.focus {
+    bottom: 0.76rem;
+    font-size: 0.24rem;
+  }
+}
+
+.login-btn {
+  padding-top: 0.20rem;
+  padding-bottom: 0.20rem;
+  font-size: 0.32rem;
+  line-height: 1.5;
+  color: #fff;
+  background-color: $uni-color-primary;
+  border-radius: 0.44rem;
+  
+  &::after {
+	  display: none;
+  }
+}

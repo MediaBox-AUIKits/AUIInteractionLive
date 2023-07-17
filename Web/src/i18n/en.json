@@ -1,0 +1,16 @@
+{
+  "page_title": "Aliyun Interaction Liveroom",
+  "confirm": "Confirm",
+  "nickname_tip": "Nickname (please enter English letters and numbers)",
+  "nickname_error": "Nickname only supports English letters and numbers.",
+  "enter": "Enter",
+  "logging": "Logging in, please wait",
+  "login_fail": "Login Failed",
+  "liveroom_type": "Liveroom Type",
+  "enterprise_live": "Enterprise",
+  "interaction_live": "Interaction",
+  "liveroom-list": "Live Room List",
+  "liveroom_empty": "No Live Room",
+  "last-live": "Last Live",
+  "views": "Views"
+}

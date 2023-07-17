@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    tools:layout_height="wrap_content"
+    tools:layout_width="match_parent"
+    tools:parentTag="android.widget.FrameLayout">
+    <!-- 顶部tag -->
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/checkbox_introduction"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:button="@null"
+                android:gravity="center"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:text="简介"
+                android:textColor="#3A3D48"
+                android:textSize="14dp" />
+
+            <View
+                android:id="@+id/introduction_line"
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#FF5722" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/chat_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RadioButton
+                    android:id="@+id/checkbox_chat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:text="聊天"
+                    android:textColor="#494F61"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:id="@+id/unread_message_count"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@id/checkbox_chat"
+                    android:background="@drawable/ilr_unread_message_bg"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12dp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/chat_line"
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#FF5722"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </RadioGroup>
+</merge>

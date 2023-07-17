@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:padding="0.5dp"
+    tools:background="#ff0000">
+
+    <FrameLayout
+        android:id="@+id/item_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="#0000ff" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/item_anchor_flag"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/ilr_bg_item_link_mic_anchor_flag"
+            android:gravity="center"
+            android:paddingHorizontal="4dp"
+            android:paddingBottom="1dp"
+            android:text="主播"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:ignore="HardcodedText"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="2dp"
+            android:background="@drawable/ilr_bg_item_link_mic_bottom"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/item_mic"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/ilr_icon_grid_mic"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/item_nick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="#333333"
+                android:textSize="12sp"
+                tools:text="Puke111111" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

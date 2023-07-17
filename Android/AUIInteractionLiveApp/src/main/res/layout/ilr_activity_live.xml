@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/generalAlphaGrayBg"
+    android:clipChildren="false"
+    android:keepScreenOn="true"
+    tools:ignore="HardcodedText,SmallSp">
+
+    <!-- 媒体容器层 -->
+    <com.aliyun.auipusherkit.LiveRenderComponent
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 连麦媒体容器层 -->
+    <com.aliyun.auilinkmickit.LiveLinkMicRenderComponent
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="138dp"
+        android:visibility="gone" />
+
+    <!-- 直播内容图层 -->
+    <com.aliyun.aliinteraction.uikit.component.LiveContentLayerComponent
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 背景幕布 -->
+        <com.aliyun.aliinteraction.uikit.component.LiveCurtainComponent
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- 页头布局 -->
+        <LinearLayout
+            android:id="@+id/room_header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.aliyun.aliinteraction.uikit.component.LiveInfoComponent
+                android:layout_width="wrap_content"
+                android:layout_height="40dp" />
+
+            <androidx.legacy.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.aliyun.aliinteraction.uikit.component.LiveCountInfoComponent
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp" />
+
+            <com.aliyun.aliinteraction.uikit.component.LiveStopComponent
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:contentDescription="@null"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        </LinearLayout>
+
+
+        <!-- 直播公告 -->
+        <com.aliyun.auinoticekit.LiveNoticeComponent
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/room_header_layout"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="8dp" />
+
+        <!-- 推流状态组件 -->
+        <com.aliyun.auipusherkit.LivePusherStatusComponent
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/room_header_layout"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="50dp"
+            tools:layout_height="wrap_content"
+            tools:layout_width="wrap_content" />
+
+        <!-- 直播播放控制 -->
+        <com.aliyun.auiplayerkit.LivePlayerComponent
+            android:id="@+id/room_playback_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            tools:background="#ffffff"
+            tools:layout_height="40dp"
+            tools:visibility="gone" />
+
+        <!-- 页尾布局 -->
+        <com.aliyun.aliinteraction.uikit.component.LiveBottomComponent
+            android:id="@+id/room_bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/room_playback_layout"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="@dimen/room_bottom_layout_margin_bottom">
+
+            <!-- 输入框 -->
+            <com.aliyun.aliinteraction.uikit.component.LiveInputComponent
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="7.5dp" />
+
+            <!-- 占位 -->
+            <androidx.legacy.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- 分享 -->
+            <com.aliyun.aliinteraction.uikit.component.LiveShareComponent
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/ilr_feature_icon_left_margin"
+                android:visibility="visible" />
+
+            <!-- 美颜 -->
+            <com.aliyun.auibeauty.LiveBeautyComponent
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/ilr_feature_icon_left_margin"
+                android:visibility="visible" />
+
+            <!-- 点赞 -->
+            <com.aliyun.auilikekit.LiveLikeComponent
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/ilr_feature_icon_left_margin" />
+
+            <!-- 连麦管理 -->
+            <com.aliyun.auilinkmickit.LiveLinkMicNumComponent
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/ilr_feature_icon_left_margin"
+                android:visibility="gone" />
+
+            <!-- 查看更多 -->
+            <com.aliyun.aliinteraction.uikit.component.LiveMoreComponent
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4.5dp"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+        </com.aliyun.aliinteraction.uikit.component.LiveBottomComponent>
+
+        <!-- 信息面板 -->
+        <com.aliyun.auibarrage.LiveBarrageComponent
+            android:id="@+id/room_message_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/room_bottom_layout"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="79dp"
+            android:layout_marginBottom="11.5dp" />
+
+        <!-- 连麦操作视图 -->
+        <com.aliyun.auilinkmickit.LiveLinkMicActionComponent
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignBottom="@id/room_message_layout"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp" />
+
+        <!-- 直播未开始视图 -->
+        <com.aliyun.aliinteraction.uikit.component.LiveNotStartComponent
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- 美颜模版 -->
+        <com.aliyun.auibeauty.LiveBeautyMenuComponent
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="100dp"
+            android:visibility="gone" />
+    </com.aliyun.aliinteraction.uikit.component.LiveContentLayerComponent>
+
+    <!-- 直播准备图层(控制准备图层显示/隐藏) -->
+    <com.aliyun.auipusherkit.LiveReadyLayerComponent
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 启播页视图 -->
+        <com.aliyun.auipusherkit.LiveStartComponent
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.aliyun.auipusherkit.LiveReadyLayerComponent>
+
+    <!-- Loading组件 -->
+    <com.aliyun.auipusherkit.LiveLoadingComponent
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <!-- 纯逻辑组件 (不含视图部分) -->
+    <com.alivc.auicommon.core.component.ComponentHostContainer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <!-- 按需添加 -->
+    </com.alivc.auicommon.core.component.ComponentHostContainer>
+</RelativeLayout>

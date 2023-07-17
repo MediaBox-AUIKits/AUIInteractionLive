@@ -1,0 +1,26 @@
+*, :after, :before {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background-color: #FFF;
+}
+
+.prism-error-operation {
+  font-size: 14px;
+}
+
+/** 定制 antd mobile 主题 **/
+:root:root {
+  --adm-color-primary: #FF5722;
+}
+.adm-toast-mask .adm-toast-main {
+  padding: 12px 14px;
+  color: #FCFCFD;
+  font-size: 14px;
+  line-height: 22px;
+  background-color: rgba(28,29,34,0.8);
+  border-radius: 8px;
+}

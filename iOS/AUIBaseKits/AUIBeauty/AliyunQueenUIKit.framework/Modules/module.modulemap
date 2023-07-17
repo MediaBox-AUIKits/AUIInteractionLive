@@ -1,0 +1,6 @@
+framework module AliyunQueenUIKit {
+  umbrella header "AliyunQueenUIKit.h"
+
+  export *
+  module * { export * }
+}

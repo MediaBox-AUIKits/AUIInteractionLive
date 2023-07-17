@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    tools:layout_height="wrap_content"
+    tools:layout_width="match_parent"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F4F4F6">
+
+        <com.aliyun.auienterprisekit.AliyunPlayerView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="210dp" />
+
+        <RelativeLayout
+            android:id="@+id/contain_layout"
+            android:layout_width="match_parent"
+            android:layout_height="210dp">
+
+            <RelativeLayout
+                android:id="@+id/playback_render_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/ilr_not_start_bg"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/live_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="直播已结束～"
+                    android:textColor="#747A8C"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/play_back_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/live_status"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="回放"
+                    android:textColor="#747A8C"
+                    android:textSize="16dp" />
+
+                <ImageView
+                    android:id="@+id/play_back_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/live_status"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_toLeftOf="@id/play_back_tv"
+                    android:src="@drawable/ilr_play_back" />
+
+
+            </RelativeLayout>
+
+
+            <ImageView
+                android:id="@+id/shadow"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/ilr_shadow"></ImageView>
+
+
+            <!-- 直播未开始视图 -->
+            <com.aliyun.aliinteraction.uikit.component.LiveNotStartComponent
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ilr_not_start_bg"
+                android:visibility="gone" />
+
+            <com.aliyun.auienterprisekit.ChangeScreenModeComponent
+                android:id="@+id/change_screen"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="17dp" />
+
+
+            <!-- 直播播放控制 -->
+            <com.aliyun.auiplayerkit.LivePlayerComponent
+                android:id="@+id/player_control_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@id/change_screen"
+                android:paddingBottom="4dp"
+                tools:background="#ffffff"
+                tools:layout_height="40dp"
+                tools:visibility="gone" />
+
+
+        </RelativeLayout>
+
+        <!-- 页头布局 -->
+        <RelativeLayout
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.aliyun.aliinteraction.uikit.component.LiveCountInfoComponent
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
+
+            <com.aliyun.aliinteraction.uikit.component.LiveStopComponent
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentLeft="true"
+                android:contentDescription="@null"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/video_view"
+            android:background="#F4F4F6">
+
+            <com.aliyun.auienterprisekit.GroupTabComponet
+                android:id="@+id/group_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.aliyun.auienterprisekit.IntroductionComponet
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/group_id" />
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white" />
+
+            <!-- 页尾布局 -->
+            <com.aliyun.aliinteraction.uikit.component.LiveBottomComponent
+                android:id="@+id/room_bottom_layout"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:layout_alignParentBottom="true"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="@dimen/room_bottom_layout_margin_bottom">
+
+                <!-- 输入框 -->
+                <com.aliyun.aliinteraction.uikit.component.LiveInputComponent
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="7.5dp" />
+
+                <!-- 占位 -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <!-- 分享 -->
+                <com.aliyun.aliinteraction.uikit.component.LiveShareComponent
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="@dimen/ilr_feature_icon_left_margin"
+                    android:visibility="visible" />
+
+                <!-- 点赞 -->
+                <com.aliyun.auilikekit.LiveLikeComponent
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="@dimen/ilr_feature_icon_left_margin"
+                    android:visibility="visible" />
+
+            </com.aliyun.aliinteraction.uikit.component.LiveBottomComponent>
+
+            <com.aliyun.auienterprisekit.ChatComponent
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/group_id"
+                android:layout_marginTop="-10dp"
+                android:layout_marginBottom="80dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:visibility="gone" />
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</merge>

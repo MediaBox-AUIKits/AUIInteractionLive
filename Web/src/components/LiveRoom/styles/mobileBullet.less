@@ -1,0 +1,22 @@
+.aui-bullet-item {
+  align-self: flex-start;
+  display: inline-block;
+  max-width: 85%;
+  margin-bottom: 0.1rem;
+  padding: 0.17rem 0.2rem;
+  border-radius: 7px;
+  background-color: rgba(0, 0, 0, 0.2);
+
+  animation-name: bulletFrames;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in;
+}
+
+@keyframes bulletFrames {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

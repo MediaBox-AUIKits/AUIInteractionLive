@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cp target/*.jar target/webframework.jar
+
+java -Dserver.port=9000 -jar target/webframework.jar

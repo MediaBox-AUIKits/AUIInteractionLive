@@ -1,0 +1,99 @@
+edition: 1.0.0
+name: ApsaraLiveDemo-1226-github
+access: "default" #  秘钥别名
+
+vars: # 全局变量
+  region: "cn-shanghai"
+  serviceName: "ApsaraLive-github-test"
+  functionName: "LiveDemo"
+  imAppId: "${env(liveImAppId)}"
+  liveStreamSchema: "http"
+  liveStreamPushURL: "${env(liveStreamPushURL)}"
+  liveStreamPushAuthKey: "${env(liveStreamPushAuthKey)}"
+  liveStreamPullURL: "${env(liveStreamPullUrl)}"
+  liveStreamPullAuthKey: "${env(liveStreamPullAuthKey)}"
+  liveCallbackAuthKey: "${env(liveCallbackAuthKey)}"
+  liveMicAppId: "${env(liveMicAppId)}"
+  liveMicAppKey: "${env(liveMicAppKey)}"
+  storageType: "mysql"
+  storageUrl: "${env(storageUrl)}"
+  adminPassword: "${env(adminPassword)}"
+services:
+  ApsaraLive:
+    component: fc
+    actions:
+      pre-deploy:
+        - run: go mod tidy
+          path: ./
+        - run: GO111MODULE=on GOOS=linux CGO_ENABLED=0 go build -ldflags '-w -s' -o
+            target/main ./cmd
+          path: ./
+        - run: cp conf/config.json target/config.json
+          path: ./
+    props: # 组件的属性值
+      region: ${vars.region} # 关于变量的使用方法，可以参考：https://www.serverless-devs.com/serverless-devs/yaml#变量赋值
+      service:
+        name: ${vars.serviceName}
+        description: "Serverless Devs Live Service"
+        logConfig: auto
+        role: "acs:ram::1569899459811379:role/aliyunfcdefaultrole"
+#        vpcConfig:                # VPC配置, 配置后function可以访问指定VPC
+#          vpcId: vpc-uf684bpn5l361mqv5888j              # VPC ID
+#          securityGroupId: sg-uf6co4uupifr8z63gv33    # 安全组ID
+#          vswitchIds:             # 交换机 ID 列表
+#            - vsw-uf6x0ztdw941yi6c8i18v
+      function:
+        name: ${vars.functionName}
+        description: 'Serverless Devs Live Service'
+        codeUri: './target'
+        caPort: 7001
+        customRuntimeConfig:
+          command:
+            - ./main
+        environmentVariables: #  为函数配置环境变量
+          TZ: "Asia/Shanghai"
+          SPF_LIVE_IM_APP_ID: ${vars.imAppId}
+          SPF_LIVE_STREAM_SCHEMA: ${vars.liveStreamSchema}
+          SPF_LIVE_STREAM_PUSH_URL: ${vars.liveStreamPushURL}
+          SPF_LIVE_STREAM_PUSH_AUTH_KEY: ${vars.liveStreamPushAuthKey}
+          SPF_LIVE_STREAM_PULL_URL: ${vars.liveStreamPullURL}
+          SPF_LIVE_STREAM_PULL_AUTH_KEY: ${vars.liveStreamPullAuthKey}
+          SPF_LIVE_CALLBACK_AUTH_KEY: ${vars.liveCallbackAuthKey}
+          SPF_LIVE_MIC_APP_ID: ${vars.liveMicAppId}
+          SPF_LIVE_MIC_APP_KEY: ${vars.liveMicAppKey}
+          SPF_STORAGE_TYPE: ${vars.storageType}
+          SPF_STORAGE_URL: ${vars.storageUrl}
+          ADMIN_PASSWORD: ${vars.adminPassword}
+        handler: index.handler
+        instanceConcurrency: 100
+        instanceType: e1
+        memorySize: 1024
+        cpu: 1
+        diskSize: 512
+        runtime: custom
+        timeout: 30
+        internetAccess: true
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
+              - HEAD
+              - PUT
+              - DELETE
+              - OPTIONS
+      customDomains:
+        - domainName: auto
+          protocol: HTTP
+          routeConfigs:
+            - path: /*
+              methods:
+                - GET
+                - POST
+                - HEAD
+                - PUT
+                - DELETE
+                - OPTIONS

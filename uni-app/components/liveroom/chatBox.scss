@@ -1,0 +1,143 @@
+@import './base.scss';
+
+.chat-box {
+	position: absolute;
+	bottom: 35px;
+	left: 0;
+	right: 0;
+	padding: 0 16px;
+	z-index: 100;
+}
+
+.operations-wrap {
+	display: flex;
+	width: 100%;
+	margin-top: 0.14rem;
+}
+
+.chat-input {
+	color: $info-text-color;
+	background-color: $block-backgroud-color;
+	border: none;
+	outline: none;
+	border-radius: 0.5rem;
+	width: 2.76rem;
+	height: 0.72rem;
+	min-height: 0.72rem;
+	margin-right: auto;
+	padding: 0 0.24rem;
+	font-size: 0.28rem;
+	
+	&.fixed {
+		position: fixed;
+		left: 0;
+		right: 0;
+		width: auto;
+		border-radius: 0;
+	}
+	
+	.a-input-wrap {
+		background-color: transparent;
+	}
+}
+
+.chat-input-placeholder {
+	color: $info-text-color;
+	font-size: 0.28rem;
+}
+
+.operation-btn-wrap {
+	position: relative;
+	box-sizing: content-box;
+	margin-left: 0.24rem;
+}
+
+.share-btn {
+	margin-right: 0;
+	padding: 0;
+	color: $info-text-color;
+	background-color: transparent;
+	&::after {
+		border: none;
+	}
+}
+
+.operation-btn {
+	position: relative;
+	display: block;
+	width: 0.72rem;
+	height: 0.72rem;
+	line-height: 0.72rem;
+	font-size: 0.52rem;
+	text-align: center;
+	background-color: $block-backgroud-color;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.chat-list {
+  max-height: 35vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  font-size: 0.28rem;
+  box-sizing: border-box;
+}
+
+.chat-item {
+  max-width: 70%;
+  display: inline-block;
+  background-color: $block-backgroud-color;
+  margin-bottom: 0.1rem;
+  padding: 0.04rem 0.16rem;
+  border-radius: 2px;
+  align-self: flex-start;
+  word-break: normal;
+  line-height: 0.44rem;
+}
+
+.chat-item-notice {
+  color: #A4E0A7;
+}
+
+.chat-item-name {
+	display: inline;
+	margin-right: 2px;
+}
+
+.chat-item-content {
+	display: inline;
+}
+
+.bullet-list {
+  position: absolute;
+  bottom: 100%;
+  left: 0.2rem;
+  right: 0.2rem;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.28rem;
+}
+
+.bullet-item {
+  align-self: flex-start;
+  display: inline-block;
+  max-width: 85%;
+  margin-bottom: 0.1rem;
+  padding: 0.17rem 0.2rem;
+  border-radius: 7px;
+  background-color: $block-backgroud-color;
+
+  animation-name: bulletFrames;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in;
+}
+
+@keyframes bulletFrames {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

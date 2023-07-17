@@ -211,7 +211,7 @@ public class QueenBeautyImpl implements BeautyInterface {
         int retCode = mMediaChainEngine.render();
         isAlgDataRendered = true;
         // Log.i(TAG, Thread.currentThread().getId() + " - " + "render : " + (SystemClock.uptimeMillis() - now) + "ms, hasRunAlg: " + hasRunAlg + ", textureW: " + textureWidth + ", textureH: " + textureHeight + ", outAngle: " + outAngle);
-        if (retCode == -9 || retCode == -10) {
+        if (retCode != 0) {
             Log.e(TAG, "queen error code: " + retCode + ", please ensure license valid!");
             GLES20.glBindFramebuffer(GL_FRAMEBUFFER, oldFboId[0]);
             isLicenseValid = false;

@@ -18,7 +18,6 @@ import com.alibaba.dingpaas.interaction.ImGetGroupStatisticsRsp;
 import com.alibaba.dingpaas.interaction.ImJoinGroupReq;
 import com.alibaba.dingpaas.interaction.ImJoinGroupRsp;
 import com.alibaba.dingpaas.interaction.ImLeaveGroupReq;
-import com.alibaba.dingpaas.interaction.ImLeaveGroupRsp;
 import com.alibaba.dingpaas.interaction.ImMuteAllReq;
 import com.alibaba.dingpaas.interaction.ImMuteAllRsp;
 import com.alibaba.dingpaas.interaction.ImSendLikeReq;
@@ -91,6 +90,9 @@ import java.util.ArrayList;
 public class MessageServiceImpl extends Observable<MessageListener> implements MessageService {
 
     private static final String SPLITTER_TOKEN = "_";
+
+    private static boolean mEngineInitialized = false;
+
     private final InteractionEngine engine;
     private final InteractionService service;
     private final OnMessageListener sOnMessageListener = new DefaultMessageListener();
@@ -168,6 +170,14 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
 
     @Override
     public void setConfig(final AUIMessageConfig config) {
+        // TODO: 兼容IM SDK逻辑，如果在重复init engine，会导致IM SDK抛出错误
+        // 在此层兼容，全局默认只调用一次init engine，因为IM Engine全局单例，且没有destroy方法，伴随app生命周期
+        // 可能导致的问题：用户退出房间后，不再使用IM功能，但是IM Engine还在后台工作。。
+        if (mEngineInitialized) {
+            return;
+        }
+        mEngineInitialized = true;
+
         EngineConfig engineConfig = new EngineConfig();
         engineConfig.deviceId = config.deviceId;
         engineConfig.tokenAccessor = new TokenAccessor() {
@@ -258,16 +268,18 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
 
     @Override
     public void leaveGroup(final LeaveGroupRequest req, final InteractionCallback<LeaveGroupResponse> callback) {
+        // TODO: 兼容IM SDK逻辑，如果在logout异步回调内部将群聊回调置空，会导致IM SDK内部NPE崩溃；
+        // 在此层兼容，默认调用leaveGroup后，返回leaveGroup成功，不再关心IM SDK内部leaveGroup的异步请求结果。
+        // 可能导致的问题：如果退房失败，此时进入其它房间，导致IM SDK内部依然会监听上个房间的消息；
+        engine.setMessageListener(req.groupId, null);
+        if (callback != null) {
+            callback.onSuccess(new LeaveGroupResponse());
+        }
+
         ImLeaveGroupReq leaveGroupReq = new ImLeaveGroupReq();
         leaveGroupReq.groupId = req.groupId;
         leaveGroupReq.broadCastType = BroadcastType.ALL.getValue();
-        service.leaveGroup(leaveGroupReq, new CallbackAdapter<>(callback, new Function<ImLeaveGroupRsp, LeaveGroupResponse>() {
-            @Override
-            public LeaveGroupResponse apply(ImLeaveGroupRsp rsp) {
-                engine.setMessageListener(req.groupId, null);
-                return new LeaveGroupResponse();
-            }
-        }));
+        service.leaveGroup(leaveGroupReq, null);
     }
 
     @Override

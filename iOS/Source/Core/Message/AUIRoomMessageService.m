@@ -104,8 +104,7 @@ static NSError *s_error(AVCIInteractionError *error) {
         config.token = finalToken;
         [self.messageService setConfig:config];
         
-        AUIMessageUserInfo *user = [AUIMessageUserInfo new];
-        user.userId = AUIRoomAccount.me.userId;
+        AUIMessageUserInfo *user = [[AUIMessageUserInfo alloc] init:AUIRoomAccount.me.userId];
         user.userNick = AUIRoomAccount.me.nickName;
         user.userAvatar = AUIRoomAccount.me.avatar;
         [self.messageService login:user callback:^(NSError * _Nullable error) {

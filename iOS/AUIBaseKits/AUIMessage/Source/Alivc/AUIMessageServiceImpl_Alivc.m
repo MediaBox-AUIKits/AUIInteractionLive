@@ -19,7 +19,7 @@
 @property (nonatomic, weak) id<AUIMessageServiceConnectionDelegate> connectionDelegate;
 
 @property (nonatomic, strong) AUIMessageListenerObserver *listenerObserver;
-@property (nonatomic, strong) AUIMessageUserInfo *userInfo;
+@property (nonatomic, strong) id<AUIUserProtocol> userInfo;
 @property (nonatomic, copy) AUIMessageDefaultCallback loginCallback;
 
 
@@ -51,7 +51,7 @@ static NSString *_globalGroupId = nil;
     _loginToken = config.token;
 }
 
-- (AUIMessageUserInfo *)currentUserInfo {
+- (id<AUIUserProtocol>)currentUserInfo {
     if ([self isLogin]) {
         return self.userInfo;
     }
@@ -62,7 +62,7 @@ static NSString *_globalGroupId = nil;
     return self.interactionEngine.isLogin;
 }
 
-- (void)login:(AUIMessageUserInfo *)userInfo callback:(AUIMessageDefaultCallback)callback {
+- (void)login:(id<AUIUserProtocol>)userInfo callback:(AUIMessageDefaultCallback)callback {
     if (self.interactionEngine.isLogin) {
         if (callback) {
             callback(nil);
@@ -431,7 +431,7 @@ static AVCIInteractionEngine *_engine = nil;
 #pragma mark - AVCIInteractionServiceDelegate
 
 - (void)onCustomMessageReceived:(AVCIInteractionGroupMessage *)message {
-    NSLog(@"AUIMessageServiceImpl_Alivc##onCustomMessageReceived:%@, type:%d, gid:%@, uid:%@, nick_name:%@", message.data, message.type, message.groupId, message.senderInfo.userID, message.senderInfo.userNick);
+    NSLog(@"AUIMessageServiceImpl_Alivc##onCustomMessageReceived:%@, data:%@, type:%d, gid:%@, uid:%@, nick_name:%@", message.messageId, message.data, message.type, message.groupId, message.senderInfo.userID, message.senderInfo.userNick);
     if ([message.groupId isEqualToString:self.class.globalGroupId]) {
         message.groupId = @"";
     }
@@ -496,9 +496,8 @@ static AVCIInteractionEngine *_engine = nil;
     return model;
 }
 
-- (AUIMessageUserInfo *)senderFromMessage:(AVCIInteractionGroupMessage *)message {
-    AUIMessageUserInfo *sender = [AUIMessageUserInfo new];
-    sender.userId = message.senderInfo.userID ?: message.senderId;
+- (id<AUIUserProtocol>)senderFromMessage:(AVCIInteractionGroupMessage *)message {
+    id<AUIUserProtocol> sender = [[AUIMessageUserInfo alloc] init:message.senderInfo.userID ?: message.senderId];
     sender.userNick = message.senderInfo.userNick;
     sender.userAvatar = message.senderInfo.userAvatar;
     return sender;

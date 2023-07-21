@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *groupId;
 @property (nonatomic, assign) NSInteger msgType;
 
-@property (nonatomic, strong) AUIMessageUserInfo *sender;
+@property (nonatomic, strong) id<AUIUserProtocol> sender;
 @property (nonatomic, copy) NSDictionary *data;
 
 

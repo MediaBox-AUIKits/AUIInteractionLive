@@ -59,7 +59,7 @@ typedef void(^AUIMessageGetGroupInfoCallback)(AUIMessageGetGroupInfoResponse * _
  * @param userInfo 登录的用户
  * @param callback 登录的结果回调
  */
-- (void)login:(AUIMessageUserInfo *)userInfo callback:(AUIMessageDefaultCallback _Nullable)callback;
+- (void)login:(id<AUIUserProtocol>)userInfo callback:(AUIMessageDefaultCallback _Nullable)callback;
 
 /**
  * 登出
@@ -76,7 +76,7 @@ typedef void(^AUIMessageGetGroupInfoCallback)(AUIMessageGetGroupInfoResponse * _
 /**
  * @return 获取当前登录的用户
  */
-- (AUIMessageUserInfo * _Nullable)currentUserInfo;
+- (id<AUIUserProtocol> _Nullable)currentUserInfo;
 
 /**
  * @return 获取消息观察者

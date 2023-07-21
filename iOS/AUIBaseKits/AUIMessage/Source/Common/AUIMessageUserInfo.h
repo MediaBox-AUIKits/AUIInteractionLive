@@ -9,11 +9,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AUIMessageUserInfo : NSObject
+@protocol AUIUserProtocol <NSObject>
 
-@property (nonatomic, copy) NSString *userId;
+@property (nonatomic, copy, readonly) NSString *userId;
 @property (nonatomic, copy) NSString *userNick;
 @property (nonatomic, copy) NSString *userAvatar;
+
+@end
+
+@interface AUIMessageUserInfo : NSObject<AUIUserProtocol>
+
+- (instancetype)init:(NSString *)userId;
 
 
 @end

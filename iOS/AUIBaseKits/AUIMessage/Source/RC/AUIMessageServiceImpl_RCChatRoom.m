@@ -10,10 +10,12 @@
 
 #import <RongIMLib/RongIMLib.h>
 
+static NSString * const kRCAppKey = @"你的AppKey";
+
 @interface AUIMessageServiceImpl_RCChatRoom () <RCConnectionStatusChangeDelegate, RCChatRoomMemberDelegate, RCIMClientReceiveMessageDelegate, RCChatRoomNotifyEventDelegate>
 
 @property (nonatomic, strong) AUIMessageConfig *config;
-@property (nonatomic, strong) AUIMessageUserInfo *userInfo;
+@property (nonatomic, strong) id<AUIUserProtocol> userInfo;
 @property (nonatomic, weak) id<AUIMessageServiceConnectionDelegate> connectionDelegate;
 @property (nonatomic, strong) AUIMessageListenerObserver *listenerObserver;
 
@@ -29,7 +31,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [[RCCoreClient sharedCoreClient] initWithAppKey:@"8luwapkv8hwfl" option:nil];
+        [[RCCoreClient sharedCoreClient] initWithAppKey:kRCAppKey option:nil];
         [[RCCoreClient sharedCoreClient] addConnectionStatusChangeDelegate:self];
         [[RCCoreClient sharedCoreClient] addReceiveMessageDelegate:self];
         [[RCChatRoomClient sharedChatRoomClient] setMemberDelegate:self];
@@ -38,7 +40,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
     return self;
 }
 
-- (AUIMessageUserInfo *)currentUserInfo {
+- (id<AUIUserProtocol>)currentUserInfo {
     if ([self isLogin]) {
         return self.userInfo;
     }
@@ -49,7 +51,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
     return [[RCIMClient sharedRCIMClient] getConnectionStatus] == ConnectionStatus_Connected;
 }
 
-- (void)login:(AUIMessageUserInfo *)userInfo callback:(AUIMessageDefaultCallback)callback {
+- (void)login:(id<AUIUserProtocol>)userInfo callback:(AUIMessageDefaultCallback)callback {
     if (self.isLogin) {
         if (callback) {
             callback(nil);
@@ -281,8 +283,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
 - (void)memberDidChange:(NSArray<RCChatRoomMemberAction *> *)members inRoom:(NSString *)roomId {
     // 注意需要提交工单申请开通
     for (RCChatRoomMemberAction *action in members) {
-        AUIMessageUserInfo *sender = [AUIMessageUserInfo new];
-        sender.userId = action.memberId;
+        AUIMessageUserInfo *sender = [[AUIMessageUserInfo alloc] init:action.memberId];
         AUIMessageModel *model = [AUIMessageModel new];
         model.groupId = roomId;
         model.sender = sender;
@@ -310,8 +311,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
             model.msgType = [[dict objectForKey:@"type"] integerValue];
             model.messageId = [NSString stringWithFormat:@"%ld", message.messageId ];
             
-            AUIMessageUserInfo *sender = [AUIMessageUserInfo new];
-            sender.userId = message.senderUserId;
+            AUIMessageUserInfo *sender = [[AUIMessageUserInfo alloc] init:message.senderUserId];
             sender.userNick = [dict objectForKey:@"nick"];
             sender.userAvatar = [dict objectForKey:@"avatar"];
             model.sender = sender;

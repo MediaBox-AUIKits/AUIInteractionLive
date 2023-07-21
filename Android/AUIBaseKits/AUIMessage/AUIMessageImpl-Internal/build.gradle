@@ -61,6 +61,6 @@ dependencies {
     api "com.aliyun.roompaas.biz:gaea:0.0.18-CopyOf_2_1_0_2-cloud"
 
     // imsdk
-    api 'com.aliyun.sdk.android:aliinteraction-cxx:1.0.2'
-    api 'com.aliyun.sdk.android:aliinteraction-android:1.1.1'
+    api 'com.aliyun.sdk.android:aliinteraction-cxx:1.0.0'
+    api 'com.aliyun.sdk.android:aliinteraction-android:1.1.0'
 }

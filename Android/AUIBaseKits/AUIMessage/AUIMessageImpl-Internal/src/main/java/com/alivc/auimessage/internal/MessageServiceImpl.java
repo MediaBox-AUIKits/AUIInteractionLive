@@ -66,7 +66,6 @@ import com.aliyun.aliinteraction.TokenAccessor;
 import com.aliyun.aliinteraction.base.Callback;
 import com.aliyun.aliinteraction.base.Error;
 import com.aliyun.aliinteraction.enums.BroadcastType;
-import com.aliyun.aliinteraction.enums.MessageLevel;
 import com.aliyun.aliinteraction.listener.OnMessageListener;
 import com.aliyun.aliinteraction.listener.SimpleEngineListener;
 import com.aliyun.aliinteraction.listener.SimpleMessageListener;
@@ -305,7 +304,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
         ImSendMessageToGroupUsersReq sendMessageToGroupUsersReq = new ImSendMessageToGroupUsersReq();
         sendMessageToGroupUsersReq.groupId = req.groupId;
         sendMessageToGroupUsersReq.type = req.type;
-        sendMessageToGroupUsersReq.level = MessageLevel.HIGH.value;
+//        sendMessageToGroupUsersReq.level = MessageLevel.HIGH.value;
         sendMessageToGroupUsersReq.data = req.data;
         sendMessageToGroupUsersReq.skipAudit = req.skipAudit;
         sendMessageToGroupUsersReq.skipMuteCheck = true;

@@ -35,7 +35,7 @@ AUI Kits 互动直播场景（竖屏样式）集成工具是阿里云提供的�
 ## 跑通demo
 
 - 源码下载后，进入Example目录
-- 执行“pod install  --repo-update”，自动安装依赖SDK
+- 在Example目录里执行命令“pod install  --repo-update”，自动安装依赖SDK
 - 打开工程文件“AUILiveDemo.xcworkspace”，修改包Id
 - 在控制台上申请试用License，开通直播推流、播放、美颜等能力，获取License文件和LicenseKey，如果已开通License直接进入下一步
 - 把License文件放到Example/AUILiveDemo/目录下，并修改文件名为“license.crt”
@@ -49,11 +49,11 @@ AUI Kits 互动直播场景（竖屏样式）集成工具是阿里云提供的�
 ### 集成源码
 - 导入AUIInteractionLive：仓库代码下载后，拷贝iOS文件夹到你的APP代码目录下，改名为AUIInteractionLive，与你的Podfile文件在同一层级，可以删除Example目录
 - 修改你的Podfile，引入：
-  - AliVCSDK_PremiumLive：适用于互动直播的音视频终端SDK，也可以使用AliVCSDK_Premium，参考[SDK说明](https://help.aliyun.com/document_detail/440004.html#section-icw-ppu-dll)
+  - AliVCSDK_PremiumLive：适用于互动直播的音视频终端SDK，也可以使用AliVCSDK_Premium，参考[快速集成](https://help.aliyun.com/document_detail/2412571.htm)
   - AUIFoundation：基础UI组件
   - AUIMessage：互动消息组件
   - AUIBeauty：美颜UI组件  
-  - AUIInteractionLive：企业直播UI组件源码，根据自身的业务，有需要可以对组件代码进行修改
+  - AUIInteractionLive：互动直播直播竖屏样式UI组件源码，根据自身的业务，有需要可以对组件代码进行修改
 ```ruby
 
 #需要iOS10.0及以上才能支持
@@ -62,7 +62,7 @@ platform :ios, '10.0'
 target '你的App target' do
     # 根据自己的业务场景，集成合适的音视频终端SDK
     # 如果你的APP中还需要频短视频编辑功能，可以使用音视频终端全功能SDK（AliVCSDK_Premium），可以把本文件中的所有AliVCSDK_PremiumLive替换为AliVCSDK_Premium
-    pod 'AliVCSDK_PremiumLive', '~> 1.8.0'
+    pod 'AliVCSDK_PremiumLive', '~> 6.2.0'
 
     # 基础UI组件
     pod 'AUIFoundation/All', :path => "../AUIInteractionLive/AUIBaseKits/AUIFoundation/"
@@ -73,7 +73,7 @@ target '你的App target' do
     # 美颜UI组件，如果终端SDK使用的是AliVCSDK_Premium，需要AliVCSDK_PremiumLive替换为AliVCSDK_Premium
     pod 'AUIBeauty/AliVCSDK_PremiumLive', :path => "../AUIInteractionLive/AUIBaseKits/AUIBeauty/"
     
-    # 互动直播UI组件，如果终端SDK使用的是AliVCSDK_Premium，需要AliVCSDK_PremiumLive替换为AliVCSDK_Premium
+    # 互动直播竖屏样式UI组件，如果终端SDK使用的是AliVCSDK_Premium，需要AliVCSDK_PremiumLive替换为AliVCSDK_Premium
     pod 'AUIInteractionLive/AliVCSDK_PremiumLive',  :path => "./AUIInteractionLive/"
 
 end
@@ -87,10 +87,10 @@ end
   - 配置Build Setting > Build Options > Enable Bitcode，设为NO。
 - 打开工程info.Plist，添加NSCameraUsageDescription和NSMicrophoneUsageDescription权限
 - 如果你需要在APP后台时继续直播，那么需要在XCode中开启“Background Modes”
-- 配置License，参考[License配置](https://help.aliyun.com/document_detail/440004.html#section-51r-40z-j1w)
+- 配置License，参考[License配置](https://help.aliyun.com/document_detail/2412571.html)
 
 
-### 初始化
+### API调用
 - AppServer部署后，修改AppServer域名地址，找到AUIInteractionLiveManager.m文件，修改kLiveServiceDomainString的值，如下：
 ```ObjC
 // AUIInteractionLiveManager.m
@@ -145,7 +145,7 @@ me.token = @"当前登录用户token";   // 用于服务端用户有效性验证
 
 ```
 
-### 运行
+### 进入直播间
 前面工作完成后，接下来可以根据自身的业务场景和交互，可以在你APP上通过AUIInteractionLiveManager接口快速主播开播，进入直播等功能，也可以根据自身的需求修改源码。
 ``` ObjC
 
@@ -159,3 +159,9 @@ me.token = @"当前登录用户token";   // 用于服务端用户有效性验证
 // 进入直播
 [[AUIInteractionLiveManager defaultManager] joinLiveWithLiveId:@"直播id" currentVC:self completed:nil];
 ```
+
+### 运行结果
+参考Demo
+
+## 常见问题
+更多AUIKits问题咨询及使用说明，请搜索钉钉群（35685013712）加入AUI客户支持群联系我们。

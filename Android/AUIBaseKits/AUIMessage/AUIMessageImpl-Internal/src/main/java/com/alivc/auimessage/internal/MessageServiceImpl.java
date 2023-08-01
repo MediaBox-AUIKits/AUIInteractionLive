@@ -94,6 +94,8 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
 
     private final InteractionEngine engine;
     private final InteractionService service;
+    private final EngineConfig engineConfig;
+
     private final OnMessageListener sOnMessageListener = new DefaultMessageListener();
     private InteractionCallback<Void> loginCallback;
     private AUIMessageUserInfo userInfo;
@@ -127,6 +129,8 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                 });
             }
         });
+
+        engineConfig = new EngineConfig();
     }
 
     @NonNull
@@ -169,15 +173,6 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
 
     @Override
     public void setConfig(final AUIMessageConfig config) {
-        // TODO: 兼容IM SDK逻辑，如果在重复init engine，会导致IM SDK抛出错误
-        // 在此层兼容，全局默认只调用一次init engine，因为IM Engine全局单例，且没有destroy方法，伴随app生命周期
-        // 可能导致的问题：用户退出房间后，不再使用IM功能，但是IM Engine还在后台工作。。
-        if (mEngineInitialized) {
-            return;
-        }
-        mEngineInitialized = true;
-
-        EngineConfig engineConfig = new EngineConfig();
         engineConfig.deviceId = config.deviceId;
         engineConfig.tokenAccessor = new TokenAccessor() {
             @Override
@@ -189,7 +184,14 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                 callback.onSuccess(new Token(config.token));
             }
         };
-        engine.init(engineConfig);
+
+        // TODO: 兼容IM SDK逻辑，如果在重复init engine，会导致IM SDK抛出错误
+        // 在此层兼容，全局默认只调用一次init engine，因为IM Engine全局单例，且没有destroy方法，伴随app生命周期
+        // 可能导致的问题：用户退出房间后，不再使用IM功能，但是IM Engine还在后台工作。。
+        if (!mEngineInitialized) {
+            mEngineInitialized = true;
+            engine.init(engineConfig);
+        }
     }
 
     @Override

@@ -33,6 +33,7 @@ Android 5.0或以上版本的真机，暂不支持模拟器调试。
 * 您已获取[音视频终端SDK](https://help.aliyun.com/product/261167.html)的直播推流和播放器的License授权和License Key；获取方法，请参见官网文档[获取License](https://help.aliyun.com/document_detail/2391512.html)
 
 ## 跑通Demo（可选）
+
 本节介绍如何编译运行Demo。
 
 1.下载并解压Demo文件，目录说明如下。
@@ -43,8 +44,16 @@ Android 5.0或以上版本的真机，暂不支持模拟器调试。
 
 4.安装到Android真机上，运行互动直播应用。
 
+## 快速集成
+
+### 导入源码
+
+从阿里云产品官网或GitHub上获取互动直播的代码仓库，并将对应的基础组件模块，导入到自己的项目工程中。
+
 ### 配置License
-license获取请参考文档[获取License](https://help.aliyun.com/document_detail/2391512.html)。
+MediaBox AUI Kits和MediaBox SDKs拥有统一的License获取方式。您可以在控制台申请如直播推流、短视频、播放器、美颜特效等模块的License使用权限，也可以对各个模块的License进行管理。
+
+配置License的前提是您已获取音视频终端SDK的直播推流和播放器的License授权和License Key。获取方法，请参考文档[获取License](https://help.aliyun.com/document_detail/2391512.html)。
 
 1. 在AUIInteractionLiveApp/src/main/AndroidManifest.xml里配置 license key
 
@@ -57,6 +66,8 @@ license获取请参考文档[获取License](https://help.aliyun.com/document_det
 
 1. 将.crt文件重命名为release.crt，并复制到AUInteractionLiveApp/src/main/assets/cert/文件夹中
 ### 初始化调用
+
+初始化调用包含几部分，注册项目类型，和替换APP Server地址。每个工程中App模块下都有一个Manager类，参考setup()方法，即可完成这部分的初始化调用。
 
 在AUIInteractionLiveApp工程下找到AUIInteractionLiveManager文件，参考setup方法，建议在application进行调用，包含以下步骤：
 
@@ -76,22 +87,24 @@ AlivcBase.setIntegrationWay(TAG_PROJECT_INTERACTION_LIVE);
 RetrofitManager.setAppServerUrl("$YOU NEED TO CHECK THE APP SERVER URL HERE$");
 ```
 
-## 常见问题
-[Android端集成AUI Kits常见问题](https://help.aliyun.com/document_detail/2401413.html)
+### 其它工程配置
 
-### maven 仓库地址
+#### maven仓库地址
+
 ```groovy
 maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
 ```
 
-### gradle 依赖
+#### gradle依赖
+
 ```groovy
 api 'com.aliyun.sdk.android:aliinteraction-cxx:1.0.0'
 api 'com.aliyun.sdk.android:aliinteraction-android:1.1.0'
 api 'com.aliyun.aio:AliVCSDK_Premium:6.2.0'
 ```
 
-### 混淆配置
+#### 混淆配置
+
 ```text
 -keep class com.alivc.** { *; }
 -keep class com.aliyun.** { *; }
@@ -106,7 +119,8 @@ api 'com.aliyun.aio:AliVCSDK_Premium:6.2.0'
 -keep class com.cicada.**{*;}
 ```
 
-### 权限申请
+#### 权限申请
+
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -121,6 +135,10 @@ api 'com.aliyun.aio:AliVCSDK_Premium:6.2.0'
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 ```
+
+## 常见问题
+
+[Android端集成AUI Kits常见问题](https://help.aliyun.com/document_detail/2401413.html)
 
 ## 技术支持
 

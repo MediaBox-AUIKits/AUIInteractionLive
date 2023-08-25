@@ -21,8 +21,7 @@
             android:layout_height="match_parent"
             android:focusable="true"
             app:behavior_hideable="true"
-            app:behavior_peekHeight="0dp"
-            app:layout_behavior="@string/app_name" />
+            app:behavior_peekHeight="0dp" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

@@ -15,26 +15,20 @@ public class AliLiveMediaStreamOptions {
     // 纯音频推流
     public boolean isAudioOnly = false;
     // 视频编码码率
-    @Deprecated
     public int videoBitrate = 1500;
     // 视频帧率
-    @Deprecated
     public AlivcFpsEnum fps = AlivcFpsEnum.FPS_20;
     // preview 展示模式
     public AliLivePreviewDisplayMode previewDisplayMode = AliLivePreviewDisplayMode.PUSHER_PREVIEW_ASPECT_FILL;
     // 预览横竖屏
     public AliLivePreviewOrientation previewOrientation = AliLivePreviewOrientation.ORIENTATION_PORTRAIT;
     // 视频编码Gop
-    @Deprecated
     public AliLiveVideoEncodeGop videoEncodeGop = AliLiveVideoEncodeGop.GOP_FOUR;
     // 视频编码
-    @Deprecated
     public AliLiveVideoEncode videoEncode = AliLiveVideoEncode.ENCODE_MODE_HARD;
     // 摄像头
-    @Deprecated
     public AliLivePushCameraType cameraType = AliLivePushCameraType.CAMERA_TYPE_FRONT;
     // 分辨率
-    @Deprecated
     public AliLiveResolution resolution = AliLiveResolution.RESOLUTION_1080P;
 
     public AliLiveMediaStreamOptions() {

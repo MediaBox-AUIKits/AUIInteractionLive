@@ -1,24 +1,4 @@
 apply plugin: 'com.android.application'
-buildscript {
-    repositories {
-        google()
-        jcenter()
-        mavenLocal()
-        mavenCentral()
-        maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
-        maven { url 'https://jitpack.io' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
-    }
-}
-
-repositories {
-    mavenCentral()
-    jcenter()
-    google()
-    maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
-}
 
 // Cannot make method static, @runchen.brc
 String getEnvValue(key, defValue) {

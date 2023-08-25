@@ -29,6 +29,10 @@ import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveContext;
 import com.aliyun.auipusher.LivePusherService;
 import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.aliyun.auipusher.config.LiveEvent;
+import com.aliyun.auipusher.manager.LiveLinkMicPushManager;
+
+import java.util.Map;
 
 /**
  * 媒体流渲染视图
@@ -75,11 +79,29 @@ public class LiveRenderComponent extends FrameLayout implements ComponentHolder 
 
     private class Component extends BaseComponent {
 
+        private void innerStopLive() {
+            isLiveStopped = true;
+            if (!isOwner()) {
+                getPlayerService().stopPlay();
+            }
+        }
+
         @Override
         public void onInit(final LiveContext liveContext) {
             super.onInit(liveContext);
 
-
+            liveContext.getLiveLinkMicPushManager().setCallback(new LiveLinkMicPushManager.Callback() {
+                @Override
+                public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
+                    switch (event) {
+                        case LIVE_PLAYER_ERROR:
+                            if (!isOwner()) {
+                                innerStopLive();
+                            }
+                            break;
+                    }
+                }
+            });
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override
                 public void onStartLive(AUIMessageModel<StartLiveModel> message) {
@@ -96,10 +118,7 @@ public class LiveRenderComponent extends FrameLayout implements ComponentHolder 
 
                 @Override
                 public void onStopLive(AUIMessageModel<StopLiveModel> message) {
-                    isLiveStopped = true;
-                    if (!isOwner()) {
-                        getPlayerService().stopPlay();
-                    }
+                    innerStopLive();
                 }
             });
         }

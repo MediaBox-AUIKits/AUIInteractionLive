@@ -18,6 +18,10 @@ import com.aliyun.aliinteraction.uikit.uibase.util.AnimUtil;
 import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveContext;
 import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.aliyun.auipusher.config.LiveEvent;
+import com.aliyun.auipusher.manager.LiveLinkMicPushManager;
+
+import java.util.Map;
 
 /**
  * @author puke
@@ -54,9 +58,29 @@ public class LiveCurtainComponent extends View implements ComponentHolder {
     }
 
     private class Component extends BaseComponent {
+
+        private void innerStopLive() {
+            if (!isOwner()) {
+                showCurtain();
+            }
+        }
         @Override
         public void onInit(LiveContext liveContext) {
             super.onInit(liveContext);
+
+            liveContext.getLiveLinkMicPushManager().setCallback(new LiveLinkMicPushManager.Callback() {
+                @Override
+                public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
+                    switch (event) {
+                        case LIVE_PLAYER_ERROR:
+                            if (!isOwner()) {
+                                innerStopLive();
+                            }
+                            break;
+                    }
+                }
+            });
+
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override
                 public void onStartLive(AUIMessageModel<StartLiveModel> message) {
@@ -65,9 +89,7 @@ public class LiveCurtainComponent extends View implements ComponentHolder {
 
                 @Override
                 public void onStopLive(AUIMessageModel<StopLiveModel> message) {
-                    if (!isOwner()) {
-                        showCurtain();
-                    }
+                    innerStopLive();
                 }
             });
 

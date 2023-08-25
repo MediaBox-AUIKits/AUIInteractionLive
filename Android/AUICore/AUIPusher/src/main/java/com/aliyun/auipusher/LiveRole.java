@@ -1,9 +1,11 @@
 package com.aliyun.auipusher;
 
+import java.io.Serializable;
+
 /**
  * 角色
  */
-public enum LiveRole {
+public enum LiveRole implements Serializable {
     /**
      * 主播
      */

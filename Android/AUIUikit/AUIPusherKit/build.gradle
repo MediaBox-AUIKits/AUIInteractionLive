@@ -1,15 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -28,6 +27,6 @@ android {
 dependencies {
     implementation project(':AUIUikit:AUIBaseKit')
 
-    api "com.aliyunsdk.components:queen_menu:2.4.1-official-menu-ultimate-tiny"
-    api "com.aliyun.aio:AliVCSDK_PremiumLive:6.2.0"
+    implementation "com.aliyunsdk.components:queen_menu:2.4.1-official-menu-ultimate-tiny"
+    implementation "com.aliyun.aio:AliVCSDK_PremiumLive:6.2.0"
 }

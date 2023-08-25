@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.alivc.auicommon.common.biz.exposable.enums.LiveStatus;
 import com.aliyun.aliinteraction.roompaas.message.listener.SimpleOnMessageListener;
 import com.aliyun.aliinteraction.roompaas.message.model.StartLiveModel;
@@ -18,6 +20,10 @@ import com.aliyun.aliinteraction.uikit.uibase.util.AnimUtil;
 import com.aliyun.aliinteraction.uikit.uibase.util.ViewUtil;
 import com.aliyun.auipusher.LiveContext;
 import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.aliyun.auipusher.config.LiveEvent;
+import com.aliyun.auipusher.manager.LiveLinkMicPushManager;
+
+import java.util.Map;
 
 /**
  * 直播未开始的视图
@@ -77,10 +83,30 @@ public class LiveNotStartComponent extends RelativeLayout implements ComponentHo
     }
 
     private class Component extends BaseComponent {
+
+        private void innerStopLive() {
+            tips.setText("直播已结束~");
+            show();
+        }
+
         @Override
         public void onInit(LiveContext liveContext) {
             super.onInit(liveContext);
             hide();
+
+            liveContext.getLiveLinkMicPushManager().setCallback(new LiveLinkMicPushManager.Callback() {
+                @Override
+                public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
+                    switch (event) {
+                        case LIVE_PLAYER_ERROR:
+                            if (!isOwner()) {
+                                innerStopLive();
+                            }
+                            break;
+                    }
+                }
+            });
+
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override
                 public void onStartLive(AUIMessageModel<StartLiveModel> message) {
@@ -89,8 +115,7 @@ public class LiveNotStartComponent extends RelativeLayout implements ComponentHo
 
                 @Override
                 public void onStopLive(AUIMessageModel<StopLiveModel> message) {
-                    tips.setText("直播已结束~");
-                    show();
+                    innerStopLive();
                 }
             });
 

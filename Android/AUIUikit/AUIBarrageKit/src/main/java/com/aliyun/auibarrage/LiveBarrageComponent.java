@@ -42,9 +42,12 @@ import com.aliyun.auipusher.LiveContext;
 import com.alivc.auimessage.model.base.AUIMessageModel;
 import com.alivc.auimessage.model.message.MuteGroupMessage;
 import com.alivc.auimessage.model.message.UnMuteGroupMessage;
+import com.aliyun.auipusher.config.LiveEvent;
+import com.aliyun.auipusher.manager.LiveLinkMicPushManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author puke
@@ -322,6 +325,13 @@ public class LiveBarrageComponent extends RelativeLayout implements ComponentHol
     }
 
     private class Component extends BaseComponent {
+
+        private void innerStopLive() {
+            if (!isOwner()) {
+                addSystemMessage("直播已结束");
+            }
+        }
+
         @Override
         public void onInit(LiveContext liveContext) {
             super.onInit(liveContext);
@@ -334,6 +344,19 @@ public class LiveBarrageComponent extends RelativeLayout implements ComponentHol
                 model.contentColor = Color.parseColor("#A4E0A7");
                 addMessageToPanel(Collections.singletonList(model));
             }
+
+            liveContext.getLiveLinkMicPushManager().setCallback(new LiveLinkMicPushManager.Callback() {
+                @Override
+                public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
+                    switch (event) {
+                        case LIVE_PLAYER_ERROR:
+                            if (!isOwner()) {
+                                innerStopLive();
+                            }
+                            break;
+                    }
+                }
+            });
 
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override
@@ -350,9 +373,7 @@ public class LiveBarrageComponent extends RelativeLayout implements ComponentHol
 
                 @Override
                 public void onStopLive(AUIMessageModel<StopLiveModel> message) {
-                    if (!isOwner()) {
-                        addSystemMessage("直播已结束");
-                    }
+                    innerStopLive();
                 }
 
                 @Override

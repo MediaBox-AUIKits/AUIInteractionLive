@@ -1,27 +1,4 @@
 apply plugin: 'com.android.library'
-apply from: 'https://paas-sdk.oss-cn-shanghai.aliyuncs.com/paas/room/android/release/config/config.gradle'
-
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-        google()
-        maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
-        //引入其他的插件
-        classpath 'digital.wup:android-maven-publish:3.4.0'
-    }
-}
-
-apply plugin: 'digital.wup.android-maven-publish'
-apply from: 'https://paas-sdk.oss-cn-shanghai.aliyuncs.com/paas/room/android/release/config/publish.gradle'
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
-    distributionUrl = 'https://services.gradle.org/distributions/gradle-3.3-bin.zip'
-}
 
 android {
     compileSdkVersion 31
@@ -30,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 1
-        versionName "${VER}"
+        versionName "1.0"
 
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -53,14 +30,8 @@ android {
 
 dependencies {
     api project(':AUIBaseKits:AUIMessage')
-    // lwp网络库
-    api "com.aliyun.roompaas.biz:dps:0.0.18-CopyOf_3_0_0_20"
-    api "com.aliyun.roompaas.biz:openssl:0.0.18-CopyOf_1_1_1-ant"
-    api "com.aliyun.roompaas.biz:xlite:0.0.18-CopyOf_1_0_2_9"
-    api "com.aliyun.roompaas.biz:dmojo_support:0.0.18-CopyOf_1_0_1_12"
-    api "com.aliyun.roompaas.biz:gaea:0.0.18-CopyOf_2_1_0_2-cloud"
 
     // imsdk
-    api 'com.aliyun.sdk.android:aliinteraction-cxx:1.0.0'
-    api 'com.aliyun.sdk.android:aliinteraction-android:1.1.0'
+    implementation 'com.aliyun.sdk.android:aliinteraction-cxx:1.0.0'
+    implementation 'com.aliyun.sdk.android:aliinteraction-android:1.2.0'
 }

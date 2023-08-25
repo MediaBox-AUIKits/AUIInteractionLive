@@ -103,7 +103,7 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
     private boolean isPause = false;
     // 当前直播推流地址
     private String mCurrentPublishUrl;
-    private Callback callback;
+    private List<Callback> callbackList = new ArrayList<>();
 
     // region listener
     AlivcLivePushInfoListener pushInfoListener = new AlivcLivePushInfoListener() {
@@ -258,7 +258,6 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
     private FrameLayout renderView;
     private FrameLayout mAudienceFrameLayout;
     private AlivcLivePushConfig mAlivcLivePushConfig;
-    private MultiInteractLivePushPullListener mMultiInteractLivePushPullListener;
     private BeautyInterface mBeautyManager;
     private boolean isBeautyEnable = true;
 
@@ -386,7 +385,11 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
     }
 
     public void setCallback(Callback callback) {
-        this.callback = callback;
+        this.callbackList.add(callback);
+    }
+
+    public void removeCallback(Callback callback) {
+        this.callbackList.remove(callback);
     }
 
     protected void onEvent(LiveEvent event) {
@@ -394,8 +397,10 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
     }
 
     protected void onEvent(LiveEvent event, Map<String, Object> extras) {
-        if (callback != null) {
-            callback.onEvent(event, extras);
+        if (callbackList != null && callbackList.size() > 0) {
+            for (Callback callback : callbackList) {
+                callback.onEvent(event, extras);
+            }
         }
     }
 
@@ -647,7 +652,9 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
      */
     public void destroy() {
         stopPublish();
-
+        if (callbackList != null &&  callbackList.size() > 0) {
+            callbackList.clear();
+        }
         if (mALivcLivePusher != null) {
             mALivcLivePusher.destroy();
             mALivcLivePusher = null;
@@ -1009,37 +1016,25 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         alivcLivePlayer.setMultiInteractPlayInfoListener(new MultiInteractLivePushPullListener() {
             @Override
             public void onPullSuccess(String audiencePull) {
-                if (mMultiInteractLivePushPullListener != null) {
-                    mMultiInteractLivePushPullListener.onPullSuccess(audiencePull);
-                }
             }
 
             @Override
             public void onPullError(String audiencePull, AlivcLivePlayError errorType, String errorMsg) {
-                if (mMultiInteractLivePushPullListener != null) {
-                    mMultiInteractLivePushPullListener.onPullError(audiencePull, errorType, errorMsg);
+                if (errorType == AlivcLivePlayError.AlivcLivePlayErrorStreamStopped) {
+                    onEvent(LiveEvent.LIVE_PLAYER_ERROR);
                 }
             }
 
             @Override
             public void onPullStop(String audiencePull) {
-                if (mMultiInteractLivePushPullListener != null) {
-                    mMultiInteractLivePushPullListener.onPullStop(audiencePull);
-                }
             }
 
             @Override
             public void onPushSuccess(String audiencePull) {
-                if (mMultiInteractLivePushPullListener != null) {
-                    mMultiInteractLivePushPullListener.onPushSuccess(audiencePull);
-                }
             }
 
             @Override
             public void onPushError(String audiencePull) {
-                if (mMultiInteractLivePushPullListener != null) {
-                    mMultiInteractLivePushPullListener.onPushError(audiencePull);
-                }
             }
         });
         mAlivcLivePlayerMap.put(audiencePull, alivcLivePlayer);

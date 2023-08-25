@@ -232,6 +232,10 @@ public class LivePlayerManager extends BaseManager<PlayerEvent> implements Surfa
      */
     public SurfaceView startPlay(@NonNull String url) {
         Logger.i(TAG, "startPlay, url :" + url);
+        if (mAliPlayer == null || mSurfaceView == null) {
+            Logger.e(TAG, "startPlay error, not init or internal invalid:");
+            return null;
+        }
         mSurfaceView.setVisibility(View.VISIBLE);
         this.mPullUrl = url;
         if (TextUtils.isEmpty(url)) {
@@ -251,10 +255,8 @@ public class LivePlayerManager extends BaseManager<PlayerEvent> implements Surfa
         }
         UrlSource source = new UrlSource();
         source.setUri(mPullUrl);
-        if (mAliPlayer != null) {
-            mAliPlayer.setDataSource(source);
-            mAliPlayer.prepare();
-        }
+        mAliPlayer.setDataSource(source);
+        mAliPlayer.prepare();
         return mSurfaceView;
     }
 

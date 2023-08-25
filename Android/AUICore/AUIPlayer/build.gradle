@@ -1,16 +1,5 @@
 apply plugin: 'com.android.library'
 
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-        google()
-        maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
-    }
-}
 android {
     compileSdkVersion 31
 
@@ -20,7 +9,6 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
     buildTypes {

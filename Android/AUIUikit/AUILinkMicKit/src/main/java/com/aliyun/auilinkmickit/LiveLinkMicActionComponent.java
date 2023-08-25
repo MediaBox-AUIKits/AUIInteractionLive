@@ -161,6 +161,7 @@ public class LiveLinkMicActionComponent extends LinearLayout implements Componen
                                     @Override
                                     public void run() {
                                         component.postEvent(Actions.LEAVE_LINK_MIC);
+                                        component.getLiveLinkMicPushManager().destroy();
                                     }
                                 },
                                 new Runnable() {
@@ -402,6 +403,7 @@ public class LiveLinkMicActionComponent extends LinearLayout implements Componen
                     @Override
                     public void run() {
                         component.postEvent(Actions.LEAVE_LINK_MIC);
+                        component.getLiveLinkMicPushManager().destroy();
                         activity.onBackPressed();
                     }
                 });

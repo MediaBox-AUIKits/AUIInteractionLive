@@ -229,6 +229,11 @@ public class LiveLinkMicRenderComponent extends FrameLayout implements MultiComp
                             // 拉流 todo
                             // pushManager.linkMic(bigContainer, anchorPullUrl);
                             break;
+                        case LIVE_PLAYER_ERROR:
+                            if (!isOwner()) {
+                                postEvent(Actions.LEAVE_LINK_MIC);
+                            }
+                            break;
                     }
                 }
             });

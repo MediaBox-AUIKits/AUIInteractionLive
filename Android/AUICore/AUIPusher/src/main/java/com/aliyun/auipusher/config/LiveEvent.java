@@ -95,4 +95,9 @@ public enum LiveEvent {
      * 推流码率变化 (仅主播端收到)
      */
     UPLOAD_BITRATE_UPDATED,
+
+    /**
+     * 连麦拉流失败
+     */
+    LIVE_PLAYER_ERROR,
 }

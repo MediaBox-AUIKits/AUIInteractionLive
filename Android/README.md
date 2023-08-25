@@ -98,9 +98,9 @@ maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
 #### gradle依赖
 
 ```groovy
-api 'com.aliyun.sdk.android:aliinteraction-cxx:1.0.0'
-api 'com.aliyun.sdk.android:aliinteraction-android:1.1.0'
-api 'com.aliyun.aio:AliVCSDK_Premium:6.2.0'
+implementation 'com.aliyun.sdk.android:aliinteraction-cxx:1.0.0'
+implementation 'com.aliyun.sdk.android:aliinteraction-android:1.2.0'
+implementation 'com.aliyun.aio:AliVCSDK_PremiumLive:6.2.0'
 ```
 
 #### 混淆配置

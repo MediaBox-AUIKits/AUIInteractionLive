@@ -3,7 +3,7 @@
 ## AppServer
 
 - 您已经搭建AppServer并获取了访问域名。搭建步骤，请参见[快速搭建AppServer](https://help.aliyun.com/document_detail/462753.htm?spm=a2c4g.11186623.0.0.16226274w8j0zy#task-2266772)。
-> 如果您仅需要跑通Demo体验功能，则无需搭建AppServer，我们在Demo中为您提供已搭建的AppServer域名。
+> 部署后，请将域名填入 config.js 文件中的 appServer 字段值内
 
 ## 主播端
 目前微信小程序仅包含观众端模块，暂未支持推流、连麦，如需体验完整的功能，需要您接入移动端的AUI Kits。接入方式请参见Android端接入、iOS端接入。
@@ -39,11 +39,8 @@
 - 在 manifest.json 中配置您的小程序 appid，项目初期没有时可不填，或者也可以在小程序开发者工具设置
 
 ![image.png](https://intranetproxy.alipay.com/skylark/lark/0/2023/png/5470/1677486208933-7d0cca52-dfda-4a51-a420-c4b1f84d944e.png#clientId=uecbe8470-b6f4-4&from=paste&height=557&id=u7a261805&name=image.png&originHeight=1114&originWidth=1702&originalType=binary&ratio=2&rotation=0&showTitle=false&size=1500469&status=done&style=none&taskId=u7a786129-57b7-4cad-817a-3f97f09162f&title=&width=851)
-
 ![image.png](https://intranetproxy.alipay.com/skylark/lark/0/2023/png/5470/1677486280233-11086180-6ba9-4810-8758-69d426c891e5.png#clientId=uecbe8470-b6f4-4&from=paste&height=431&id=u51070f83&name=image.png&originHeight=861&originWidth=1256&originalType=binary&ratio=2&rotation=0&showTitle=false&size=687875&status=done&style=none&taskId=u050fe0e9-563c-43df-9ce3-c466ff0b8c6&title=&width=628)
-
 配置完成后点击菜单栏中的 运行 -> 运行到小程序模拟器 -> 微信开发中工具 就会对代码进行打包，并自动打开微信开发者工具运行该项目。
-
 ![image.png](https://intranetproxy.alipay.com/skylark/lark/0/2023/png/5470/1677486426826-ba041977-6e71-4094-a711-b47532cc0cfa.png#clientId=uecbe8470-b6f4-4&from=paste&height=441&id=uc19d187a&name=image.png&originHeight=882&originWidth=1158&originalType=binary&ratio=2&rotation=0&showTitle=false&size=1396921&status=done&style=none&taskId=u9838b0bb-be5f-4911-bf2f-b20225fc384&title=&width=579)
 ## 发布
 ### 域名配置

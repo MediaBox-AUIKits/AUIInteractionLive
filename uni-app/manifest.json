@@ -56,5 +56,12 @@
         },
         "usingComponents" : true
     },
-    "vueVersion" : "2"
+    "vueVersion" : "2",
+    "h5" : {
+        "router" : {
+            "mode" : "hash"
+        },
+        "title" : "阿里云互动直播",
+        "template" : "template.h5.html"
+    }
 }

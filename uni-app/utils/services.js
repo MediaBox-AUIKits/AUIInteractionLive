@@ -1,7 +1,7 @@
+import config from '../config';
+
 // 配置 APPServer 服务域名
-export const ServicesOrigin = 'https://appserver.h5video.vip';
-//'http://livedemo.apsaralive-github-test.1428367983895556.cn-shanghai.fc.devsapp.net'
-//'http://live-example.live.1569899459811379.cn-hangzhou.fc.devsapp.net';
+export const ServicesOrigin = config.appServer;
 
 // 配置api接口路径前缀
 export const ApiPrefixPath = '/api/v1/live/';

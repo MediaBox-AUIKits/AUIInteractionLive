@@ -53,7 +53,12 @@
 			<!-- 手动调起分享，处理逻辑在 pages/room.vue onShareAppMessage 中 -->
 			<button
 				class="operation-btn-wrap share-btn"
+				<!-- #ifdef MP-WEIXIN -->
 				open-type="share"
+				<!-- #endif -->
+				<!-- #ifdef H5 -->
+				@click="handleShare"
+				<!-- #endif -->
 			>
 				<view class="operation-btn auiicon-Share"></view>
 			</button>
@@ -312,11 +317,14 @@
 				        // 若是失败了，加回 count
 				        this.likeCount += count;
 				    });
-			}
+			},
+			handleShare() {
+				this.showToast('分享请自行实现');
+			},
 		},
 	};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	@import './chatBox.scss';
 </style>

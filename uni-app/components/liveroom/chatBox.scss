@@ -82,6 +82,12 @@
   overflow-y: scroll;
   font-size: 0.28rem;
   box-sizing: border-box;
+  
+  /deep/ .uni-scroll-view-content {
+  	display: flex;
+  	flex-direction: column;
+  	overflow-y: scroll;
+  }
 }
 
 .chat-item {

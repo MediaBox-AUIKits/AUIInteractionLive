@@ -13,7 +13,7 @@
 			</view>
 			<view class="room-item-bottom">
 				<view class="room-item-title">{{ info.title }}</view>
-				<view class="room-item-id">{{ xtensionObj.userNick || info.anchor_id }}</view>
+				<view class="room-item-id">{{ extensionObj.userNick || info.anchor_id }}</view>
 			</view>
 		</view>
 	</view>

@@ -167,6 +167,11 @@ public class LivePushManager implements AlivcLiveBaseListener {
         public void onKickedOutByServer(AlivcLivePusher pusher, AlivcLivePushKickedOutType kickedOutType) {
 
         }
+
+        @Override
+        public void onMicrophoneVolumeUpdate(AlivcLivePusher pusher, int volume) {
+
+        }
     };
     AlivcLivePushNetworkListener pushNetworkListener = new AlivcLivePushNetworkListener() {
         @Override

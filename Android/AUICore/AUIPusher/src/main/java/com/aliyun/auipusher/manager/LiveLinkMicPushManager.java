@@ -18,6 +18,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSON;
+import com.alivc.auibeauty.beauty.BeautyFactory;
+import com.alivc.auibeauty.beauty.BeautyInterface;
+import com.alivc.auibeauty.beauty.constant.BeautySDKType;
 import com.alivc.auicommon.common.base.AppContext;
 import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.common.base.util.CollectionUtil;
@@ -46,9 +49,6 @@ import com.alivc.live.pusher.AlivcLivePusher;
 import com.alivc.live.pusher.AlivcLiveTranscodingConfig;
 import com.alivc.live.pusher.AlivcPreviewDisplayMode;
 import com.alivc.live.pusher.AlivcPreviewOrientationEnum;
-import com.alivc.auibeauty.beauty.BeautyFactory;
-import com.alivc.auibeauty.beauty.BeautyInterface;
-import com.alivc.auibeauty.beauty.constant.BeautySDKType;
 import com.aliyun.auipusher.LivePushGlobalConfig;
 import com.aliyun.auipusher.config.AliLivePusherOptions;
 import com.aliyun.auipusher.config.CanvasScale;
@@ -181,6 +181,11 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
 
         @Override
         public void onKickedOutByServer(AlivcLivePusher pusher, AlivcLivePushKickedOutType kickedOutType) {
+
+        }
+
+        @Override
+        public void onMicrophoneVolumeUpdate(AlivcLivePusher pusher, int volume) {
 
         }
     };

@@ -59,6 +59,11 @@ public class MultiAlivcLivePlayer extends AlivcLivePlayerImpl implements AlivcLi
     }
 
     @Override
+    public void onPlayoutVolumeUpdate(int volume, boolean isSpeaking) {
+
+    }
+
+    @Override
     public void onPlayerStatistics(AlivcLivePlayerStatsInfo statsInfo) {
 
     }

@@ -26,8 +26,6 @@ android {
 }
 
 dependencies {
-//    compileOnly "com.alibaba:fastjson:1.1.72.android"
-//    implementation 'androidx.leanback:leanback:1.0.0'
     api project(':AUIBaseKits:AUICommon')
     api project(':AUICore:AUILiveMessage')
     api project(':AUICore:AUIAppServer')

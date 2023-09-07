@@ -15,6 +15,7 @@ import com.alivc.auicommon.common.base.exposable.Callback;
 import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.common.biz.exposable.enums.LiveStatus;
 import com.alivc.auicommon.core.base.Actions;
+import com.alivc.auimessage.model.base.AUIMessageModel;
 import com.aliyun.aliinteraction.player.LivePlayerService;
 import com.aliyun.aliinteraction.player.exposable.CanvasScale;
 import com.aliyun.aliinteraction.roompaas.message.listener.SimpleOnMessageListener;
@@ -28,7 +29,6 @@ import com.aliyun.auiappserver.ThreadUtil;
 import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveContext;
 import com.aliyun.auipusher.LivePusherService;
-import com.alivc.auimessage.model.base.AUIMessageModel;
 import com.aliyun.auipusher.config.LiveEvent;
 import com.aliyun.auipusher.manager.LiveLinkMicPushManager;
 
@@ -90,18 +90,22 @@ public class LiveRenderComponent extends FrameLayout implements ComponentHolder 
         public void onInit(final LiveContext liveContext) {
             super.onInit(liveContext);
 
-            liveContext.getLiveLinkMicPushManager().setCallback(new LiveLinkMicPushManager.Callback() {
-                @Override
-                public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
-                    switch (event) {
-                        case LIVE_PLAYER_ERROR:
-                            if (!isOwner()) {
-                                innerStopLive();
-                            }
-                            break;
+            LiveLinkMicPushManager liveLinkMicPushManager = liveContext.getLiveLinkMicPushManager();
+            if (liveLinkMicPushManager != null) {
+                liveLinkMicPushManager.setCallback(new LiveLinkMicPushManager.Callback() {
+                    @Override
+                    public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
+                        switch (event) {
+                            case LIVE_PLAYER_ERROR:
+                                if (!isOwner()) {
+                                    innerStopLive();
+                                }
+                                break;
+                        }
                     }
-                }
-            });
+                });
+            }
+
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override
                 public void onStartLive(AUIMessageModel<StartLiveModel> message) {

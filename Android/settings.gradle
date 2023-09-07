@@ -1,17 +1,5 @@
 include ':AUIInteractionLiveApp'
 rootProject.name = "amaui-native-live-android"
-//
-//include(':AUIInteractionLiveRoom')
-//project(':AUIInteractionLiveRoom').projectDir = new File("AUIInteractionLiveRoom")
-//
-//include(':AUICore')
-//project(':AUICore').projectDir = new File("AUICore")
-//
-//include(':AUICore:AUIPlayer')
-//project(':AUICore:AUIPlayer').projectDir = new File("AUICore/AUIPlayer")
-//
-//include(':AUIBaseKits:AUIMessage')
-//project(':AUIBaseKits:AUIMessage').projectDir = new File("AUICore/AUIMessage")
 
 def debuggerPath = hasProperty('debugger.path') ? getProperty('debugger.path') : null
 if (debuggerPath != null && new File(debuggerPath).exists()) {
@@ -29,6 +17,7 @@ include ':AUICore:AUIPlayer'
 include ':AUICore:AUILiveMessage'
 include ':AUICore:AUIAppServer'
 include ':AUICore:AUIPusher'
+
 include ':AUIUikit:AUIPusherKit'
 include ':AUIUikit:AUIBarrageKit'
 include ':AUIUikit:AUINoticeKit'

@@ -17,7 +17,6 @@
 #endif
 
 #define AUIRoomMessageTypeComment 10001
-#define AUIRoomMessageTypeLike    10002
 
 
 #ifdef ENABLE_ALIVCINTERACTION
@@ -355,8 +354,9 @@ static NSError *s_error(AVCIInteractionError *error) {
             }
         }
     }
-#ifdef ENABLE_ALIVCINTERACTION
-    else if (model.msgType == 1001) {  // 阿里互动消息SDK定义的"点赞"类型为1001
+    else if (model.msgType == 1001) {
+        // 这里点赞消息类型定义为1001，原因是阿里互动消息SDK定义的"点赞"类型为1001
+        // 如果使用其他IM方案，通过接口发送点赞数据，则服务端接收到点赞数进行处理后（客户自行实现），在群内广播点赞总数，消息类型为1001
         NSEnumerator<id<AUIRoomMessageServiceObserver>>* enumerator = [self.observerList objectEnumerator];
         id<AUIRoomMessageServiceObserver> observer = nil;
         while ((observer = [enumerator nextObject])) {
@@ -367,20 +367,6 @@ static NSError *s_error(AVCIInteractionError *error) {
             }
         }
     }
-#else
-    else if (model.msgType == AUIRoomMessageTypeLike) {
-        // 通过接口发送点赞数据，服务端接收到点赞数进行处理后（客户自行实现），在群内广播点赞总数
-        NSEnumerator<id<AUIRoomMessageServiceObserver>>* enumerator = [self.observerList objectEnumerator];
-        id<AUIRoomMessageServiceObserver> observer = nil;
-        while ((observer = [enumerator nextObject])) {
-            if ([observer.groupId isEqualToString:model.groupId]) {
-                if ([observer respondsToSelector:@selector(onLikeReceived:)]) {
-                    [observer onLikeReceived:model];
-                }
-            }
-        }
-    }
-#endif
     else {
         NSEnumerator<id<AUIRoomMessageServiceObserver>>* enumerator = [self.observerList objectEnumerator];
         id<AUIRoomMessageServiceObserver> observer = nil;

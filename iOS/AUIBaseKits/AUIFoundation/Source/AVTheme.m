@@ -65,6 +65,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.moduleColorMap = [NSMutableDictionary dictionary];
+        self.moduleImageBundleMap = [NSMutableDictionary dictionary];
         if (@available(iOS 13.0, *)) {
             _supportsAutoMode = YES;
             self.currentMode = AVThemeModeLight;

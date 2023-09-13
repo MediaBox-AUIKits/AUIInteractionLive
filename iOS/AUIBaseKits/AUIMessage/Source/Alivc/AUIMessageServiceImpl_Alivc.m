@@ -241,10 +241,11 @@ static NSString *_globalGroupId = nil;
         }
         return;
     }
+    NSString *groupId = req.groupId.length == 0 ? self.class.globalGroupId : req.groupId;
     
 #ifndef ALIVC_IM_VERSION_1_1
     AVCInteractionSendMessageToGroupUsersReq *avReq = [AVCInteractionSendMessageToGroupUsersReq new];
-    avReq.groupId = req.groupId ?: self.class.globalGroupId;
+    avReq.groupId = groupId;
     avReq.type = (int32_t)req.msgType;
     avReq.level = 2;
     avReq.message = [AUIMessageHelper jsonStringWithDict:[req.data toData]];
@@ -268,7 +269,7 @@ static NSString *_globalGroupId = nil;
         });
     }];*/
 #else
-    [self.interactionEngine.interactionService sendTextMessageToGroupUsers:[AUIMessageHelper jsonStringWithDict:[req.data toData]] groupID:req.groupId ?: self.class.globalGroupId type:(int32_t)req.msgType userIDs:@[req.receiverId] skipMuteCheck:YES skipAudit:req.skipAudit onSuccess:^{
+    [self.interactionEngine.interactionService sendTextMessageToGroupUsers:[AUIMessageHelper jsonStringWithDict:[req.data toData]] groupID:groupId type:(int32_t)req.msgType userIDs:@[req.receiverId] skipMuteCheck:YES skipAudit:req.skipAudit onSuccess:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
                 AUIMessageSendMessageToGroupUserResponse *rsp = [AUIMessageSendMessageToGroupUserResponse new];

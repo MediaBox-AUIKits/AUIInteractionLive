@@ -87,9 +87,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AUIMessageSendMessageToGroupUserRequest : NSObject
 
 /**
- * 群组id
+ * 群组id，为空时全局发送
  */
-@property (nonatomic, copy) NSString *groupId;
+@property (nonatomic, copy, nullable) NSString *groupId;
 
 /**
  * 消息类型

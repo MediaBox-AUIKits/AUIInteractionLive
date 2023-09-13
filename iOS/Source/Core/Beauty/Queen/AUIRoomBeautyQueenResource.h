@@ -5,9 +5,9 @@
 //  Created by Bingo on 2023/4/20.
 //
 
-#ifndef DISABLE_QUEEN
-
 #import "AUIRoomBeautyResourceProtocol.h"
+
+#ifndef DISABLE_QUEEN
 
 NS_ASSUME_NONNULL_BEGIN
 

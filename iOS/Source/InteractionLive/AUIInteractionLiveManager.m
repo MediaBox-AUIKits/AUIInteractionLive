@@ -50,6 +50,9 @@ static NSString * const kLiveServiceDomainString = @"https://appserver.h5video.v
     // 初始化美颜
     [AUIRoomBeautyManager registerBeautyEngine];
     
+    [AliPlayer setEnableLog:NO];
+    [AliPlayer setLogCallbackInfo:LOG_LEVEL_NONE callbackBlock:nil];
+    
 #if DEBUG
     [AlivcLiveBase setLogLevel:AlivcLivePushLogLevelDebug];
     [AlivcLiveBase setLogPath:NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject maxPartFileSizeInKB:1024*100];

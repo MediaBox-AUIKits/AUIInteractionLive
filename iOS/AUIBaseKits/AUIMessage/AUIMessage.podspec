@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AUIMessage'
-  s.version          = '1.0.0'
+  s.version          = '1.1.0'
   s.summary          = 'A short description of AUIMessage.'
 
 # This description is used to generate tags and improve search results.
@@ -37,7 +37,7 @@ TODO: Add long description of the pod here.
   end
 
   s.subspec 'Alivc' do |ss|
-    ss.dependency 'AlivcInteraction', '1.1.0'
+    ss.dependency 'AlivcInteraction', '1.2.1'
     ss.dependency 'AUIMessage/Common'
     ss.source_files = 'Source/Alivc/*.{h,m,mm}'
     ss.pod_target_xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) AUIMESSAGE_IMPL_TYPE=0'}

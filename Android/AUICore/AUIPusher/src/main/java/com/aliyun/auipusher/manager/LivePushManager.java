@@ -19,7 +19,10 @@ import androidx.annotation.Nullable;
 import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.core.utils.AssetUtil;
 import com.alivc.component.custom.AlivcLivePushCustomFilter;
+import com.alivc.live.annotations.AlivcLiveNetworkQuality;
 import com.alivc.live.annotations.AlivcLivePushKickedOutType;
+import com.alivc.live.annotations.AlivcLiveRecordMediaEvent;
+import com.alivc.live.player.annotations.AlivcLivePlayVideoStreamType;
 import com.alivc.live.pusher.AlivcEncodeModeEnum;
 import com.alivc.live.pusher.AlivcLiveBase;
 import com.alivc.live.pusher.AlivcLiveBaseListener;
@@ -172,6 +175,26 @@ public class LivePushManager implements AlivcLiveBaseListener {
         public void onMicrophoneVolumeUpdate(AlivcLivePusher pusher, int volume) {
 
         }
+
+        @Override
+        public void onLocalRecordEvent(AlivcLiveRecordMediaEvent mediaEvent, String storagePath) {
+
+        }
+
+        @Override
+        public void onScreenFramePushState(AlivcLivePusher pusher, boolean isPushing) {
+
+        }
+
+        @Override
+        public void onRemoteUserEnterRoom(AlivcLivePusher pusher, String userId, boolean isOnline) {
+
+        }
+
+        @Override
+        public void onRemoteUserVideoStream(AlivcLivePusher pusher, String userId, AlivcLivePlayVideoStreamType videoStreamType, boolean isPushing) {
+
+        }
     };
     AlivcLivePushNetworkListener pushNetworkListener = new AlivcLivePushNetworkListener() {
         @Override
@@ -209,6 +232,11 @@ public class LivePushManager implements AlivcLiveBaseListener {
         }
 
         @Override
+        public void onNetworkQualityChanged(AlivcLiveNetworkQuality upQuality, AlivcLiveNetworkQuality downQuality) {
+
+        }
+
+        @Override
         public void onConnectionLost(AlivcLivePusher pusher) {
             //推流已断开
             onEvent(LiveEvent.CONNECTION_LOST);
@@ -239,6 +267,8 @@ public class LivePushManager implements AlivcLiveBaseListener {
         @Override
         public void onPacketsLost(AlivcLivePusher pusher) {
         }
+
+
     };
     private int mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
     private SurfaceHolder.Callback surfaceViewCallback;

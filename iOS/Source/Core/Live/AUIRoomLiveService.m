@@ -70,9 +70,8 @@ typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
 @property (assign, nonatomic) NSInteger likeCountWillSend;
 @property (assign, nonatomic) NSInteger likeCountToSend;
 
-@property (assign, nonatomic) BOOL pvNeedUpdate;
-@property (assign, nonatomic) BOOL pvIsUpdating;
-@property (assign, nonatomic) NSTimeInterval pvLastUpdateTime;
+@property (assign, nonatomic) BOOL needQueryStatistics;
+@property (assign, nonatomic) BOOL statisticsIsUpdating;
 
 
 @property (copy, nonatomic) NSString *notice;
@@ -86,11 +85,6 @@ typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
     return [self.liveInfoModel.anchor_id isEqualToString:AUIRoomAccount.me.userId];
 }
 
-- (NSString *)jsonStringWithDict:(NSDictionary *)dict {
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-}
-
 #pragma mark - Room
 
 - (void)enterRoom:(void(^)(BOOL))completed {
@@ -98,6 +92,7 @@ typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
     [self.messageService joinGroup:self.liveInfoModel.chat_id completed:^(NSError * _Nullable error) {
         if (!error) {
             weakSelf.isJoined = YES;
+            [weakSelf queryStatistics];
         }
         if (completed) {
             completed(error == nil);
@@ -315,36 +310,28 @@ typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
     }
 }
 
-#pragma mark - PV
+#pragma mark - statistics
 
-- (void)fetchPV {
-#if !__has_include(<AlivcInteraction/AlivcInteraction.h>)
-    // 如果不使用阿里云的互动消息SDK，那么需要在通过接口更新PV，PV的统计需要在api/v1/live/getStatistics接口实现
-    self.pvNeedUpdate = YES;
-    if (self.pvIsUpdating) {
+- (void)queryStatistics {
+    self.needQueryStatistics = YES;
+    if (self.statisticsIsUpdating) {
         return;
     }
     __weak typeof(self) weakSelf = self;
-    [AUIRoomAppServer fetchStatistics:self.liveInfoModel.live_id completed:^(AUIRoomLiveMetricsModel * _Nullable model, NSError * _Nullable error) {
-        
-        if (model) {
-            NSInteger pv = model.pv;
-            if (pv > weakSelf.pv) {
-                weakSelf.pv = pv;
-                if (weakSelf.onReceivedPV) {
-                    weakSelf.onReceivedPV(weakSelf.pv);
-                }
+    [self.messageService queryStatistics:self.liveInfoModel.live_id completed:^(NSInteger pv, NSInteger onlineCount, NSError * _Nullable error) {
+        if (pv > weakSelf.pv) {
+            weakSelf.pv = pv;
+            if (weakSelf.onReceivedPV) {
+                weakSelf.onReceivedPV(weakSelf.pv);
             }
         }
-        
-        weakSelf.pvIsUpdating = NO;
-        if (weakSelf.pvNeedUpdate) {
-            [weakSelf fetchPV];
+        weakSelf.statisticsIsUpdating = NO;
+        if (weakSelf.needQueryStatistics) {
+            [weakSelf queryStatistics];
         }
     }];
-    self.pvIsUpdating = YES;
-    self.pvNeedUpdate = NO;
-#endif
+    self.statisticsIsUpdating = YES;
+    self.needQueryStatistics = NO;
 }
 
 #pragma mark - Gift
@@ -719,16 +706,6 @@ static NSUInteger g_maxLinkMicCount = 6;
     }
 }
 
-- (void)onPVReceived:(AUIMessageModel *)message {
-    NSInteger pv = [[message.data objectForKey:@"pv"] integerValue];
-    if (pv > self.pv) {
-        self.pv = pv;
-        if (self.onReceivedPV) {
-            self.onReceivedPV(self.pv);
-        }
-    }
-}
-
 - (void)onLikeReceived:(AUIMessageModel *)message {
     AUIRoomUser *sender = [self userFromMessageUserInfo:message.sender];
     NSInteger likeCount = [[message.data objectForKey:@"likeCount"] integerValue];
@@ -751,11 +728,16 @@ static NSUInteger g_maxLinkMicCount = 6;
 }
 
 - (void)onJoinGroup:(AUIMessageModel *)message {
-    [self fetchPV];
+    if (![message.sender.userId isEqualToString:AUIRoomAccount.me.userId]) {
+        // 不是自己进群，则PV加1，因为自己在joinGroup后已经获取最新的PV了
+        self.pv++;
+        if (self.onReceivedPV) {
+            self.onReceivedPV(self.pv);
+        }
+    }
 }
 
 - (void)onLeaveGroup:(AUIMessageModel *)message {
-    
 }
 
 - (void)onMuteGroup:(AUIMessageModel *)message {
@@ -769,6 +751,12 @@ static NSUInteger g_maxLinkMicCount = 6;
     self.isMuteAll = NO;
     if (self.onReceivedMuteAll) {
         self.onReceivedMuteAll(self.isMuteAll);
+    }
+}
+
+- (void)onExitedGroup:(NSString *)groupId {
+    if (self.onReceivedLeaveRoom) {
+        self.onReceivedLeaveRoom();
     }
 }
 

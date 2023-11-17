@@ -17,16 +17,13 @@ static NSString * const kRCAppKey = @"你的AppKey";
 @property (nonatomic, strong) AUIMessageConfig *config;
 @property (nonatomic, strong) id<AUIUserProtocol> userInfo;
 @property (nonatomic, weak) id<AUIMessageServiceConnectionDelegate> connectionDelegate;
+@property (nonatomic, weak) id<AUIMessageServiceUnImplDelegate> unImplDelegate;
 @property (nonatomic, strong) AUIMessageListenerObserver *listenerObserver;
 
 
 @end
 
 @implementation AUIMessageServiceImpl_RCChatRoom
-
-static NSError *s_error(NSInteger code, NSString *message) {
-    return [NSError errorWithDomain:@"auimessage.rcchatroom" code:code userInfo:@{NSLocalizedDescriptionKey:message}];
-}
 
 - (instancetype)init {
     self = [super init];
@@ -38,6 +35,22 @@ static NSError *s_error(NSInteger code, NSString *message) {
         [[RCChatRoomClient sharedChatRoomClient] addChatRoomNotifyEventDelegate:self];
     }
     return self;
+}
+
+- (AUIMessageServiceImplType)implType {
+    return AUIMessageServiceImplTypeRCChatRoom;
+}
+
+- (void)setConfig:(AUIMessageConfig *)config {
+    _config = config;
+}
+
+- (void)setConnectionDelegate:(id<AUIMessageServiceConnectionDelegate>)connectionDelegate {
+    _connectionDelegate = connectionDelegate;
+}
+
+- (void)setUnImplDelegate:(id<AUIMessageServiceUnImplDelegate>)delegate {
+    _unImplDelegate = delegate;
 }
 
 - (id<AUIUserProtocol>)currentUserInfo {
@@ -60,20 +73,21 @@ static NSError *s_error(NSInteger code, NSString *message) {
     }
     if (userInfo.userId.length == 0) {
         if (callback) {
-            callback(s_error(-1, @"userId is empty."));
+            callback([AUIMessageHelper error:AUIMessageErrorTypeParamError msg:@"userId is empty."]);
         }
         return;
     }
     
-    if (self.config == nil || self.config.token.length == 0) {
+    NSString *token = [self.config.tokenData objectForKey:@"token"];
+    if (token.length == 0) {
         if (callback) {
-            callback(s_error(-1, @"config or token is empty."));
+            callback([AUIMessageHelper error:AUIMessageErrorTypeParamError msg:@"config or token is empty."]);
         }
         return;
     }
 
     self.userInfo = userInfo;
-    [[RCIMClient sharedRCIMClient] connectWithToken:self.config.token timeLimit:15 dbOpened:^(RCDBErrorCode code) {
+    [[RCIMClient sharedRCIMClient] connectWithToken:token timeLimit:15 dbOpened:^(RCDBErrorCode code) {
         
     } success:^(NSString * _Nonnull userId) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -84,7 +98,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
     } error:^(RCConnectErrorCode errorCode) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(s_error(errorCode, @"connected error"));
+                callback([AUIMessageHelper error:errorCode msg:@"connected error"]);
             }
         });
     }];
@@ -105,31 +119,41 @@ static NSError *s_error(NSInteger code, NSString *message) {
 }
 
 - (void)getGroupInfo:(AUIMessageGetGroupInfoRequest *)req callback:(AUIMessageGetGroupInfoCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
     [[RCChatRoomClient sharedChatRoomClient] getChatRoomInfo:req.groupId count:0 order:RC_ChatRoom_Member_Desc success:^(RCChatRoomInfo * _Nonnull chatRoomInfo) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
                 AUIMessageGetGroupInfoResponse *rsp = [AUIMessageGetGroupInfoResponse new];
                 rsp.groupId = chatRoomInfo.targetId;
                 rsp.onlineCount = chatRoomInfo.totalMemberCount;
+                rsp.pv = -1;
                 callback(rsp, nil);
-                
             }
         });
     } error:^(RCErrorCode status) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(nil, s_error(status, @"get group info error"));
+                callback(nil, [AUIMessageHelper error:status msg:@"get group info error"]);
             }
         });
     }];
 }
 
 - (void)createGroup:(AUIMessageCreateGroupRequest *)req callback:(AUIMessageCreateGroupCallback)callback {
-//    if (callback) {
-//        callback(nil, s_error(-1, @"融云端侧SDK无法创建聊天室，必须通过服务端进行创建，请自行实现"));
-//    }
+    if (![self isLogin]) {
+        if (callback) {
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
+
     // 注意：1、聊天室id不存在情况下会进行创建并自动加入  2、聊天室存在自动销毁机制，需要服务端加入保活列表，建议创建聊天室由服务端来做
-    NSString *groupId = NSUUID.UUID.UUIDString.lowercaseString;
+    NSString *groupId = req.groupId.length > 0 ? req.groupId : NSUUID.UUID.UUIDString.lowercaseString;
     [[RCChatRoomClient sharedChatRoomClient] joinChatRoom:groupId messageCount:-1 success:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
@@ -141,13 +165,19 @@ static NSError *s_error(NSInteger code, NSString *message) {
     } error:^(RCErrorCode status) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(nil, s_error(status, @"create group error"));
+                callback(nil, [AUIMessageHelper error:status msg:@"create group error"]);
             }
         });
     }];
 }
 
 - (void)joinGroup:(AUIMessageJoinGroupRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
     [[RCChatRoomClient sharedChatRoomClient] joinExistChatRoom:req.groupId messageCount:-1 success:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
@@ -157,13 +187,19 @@ static NSError *s_error(NSInteger code, NSString *message) {
     } error:^(RCErrorCode status) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(s_error(status, @"join group error"));
+                callback([AUIMessageHelper error:status msg:@"join group error"]);
             }
         });
     }];
 }
 
 - (void)leaveGroup:(AUIMessageLeaveGroupRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
     [[RCChatRoomClient sharedChatRoomClient] quitChatRoom:req.groupId success:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
@@ -173,13 +209,111 @@ static NSError *s_error(NSInteger code, NSString *message) {
     } error:^(RCErrorCode status) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(s_error(status, @"join group error"));
+                callback([AUIMessageHelper error:status msg:@"leave group error"]);
             }
         });
     }];
 }
 
+- (void)muteAll:(AUIMessageMuteAllRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
+    
+    // 该接口需要业务层实现
+    if ([self.unImplDelegate respondsToSelector:@selector(muteAll:callback:)]) {
+        [self.unImplDelegate muteAll:req callback:callback];
+    }
+    else {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeUnImpl msg:@"unimpl"]);
+        }
+    }
+}
+
+- (void)cancelMuteAll:(AUIMessageCancelMuteAllRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
+    
+    // 该接口需要业务层实现
+    if ([self.unImplDelegate respondsToSelector:@selector(cancelMuteAll:callback:)]) {
+        [self.unImplDelegate cancelMuteAll:req callback:callback];
+    }
+    else {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeUnImpl msg:@"unimpl"]);
+        }
+    }
+}
+
+- (void)queryMuteAll:(AUIMessageQueryMuteAllRequest *)req callback:(AUIMessageQueryMuteAllCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
+    
+    // 该接口需要业务层实现
+    if ([self.unImplDelegate respondsToSelector:@selector(queryMuteAll:callback:)]) {
+        [self.unImplDelegate queryMuteAll:req callback:callback];
+    }
+    else {
+        if (callback) {
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeUnImpl msg:@"unimpl"]);
+        }
+    }
+}
+
+- (void)sendLike:(AUIMessageSendLikeRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
+    
+    // 该接口需要业务层实现
+    if ([self.unImplDelegate respondsToSelector:@selector(sendLike:callback:)]) {
+        [self.unImplDelegate sendLike:req callback:callback];
+    }
+    else {
+        if (callback) {
+            callback([AUIMessageHelper error:AUIMessageErrorTypeUnImpl msg:@"unimpl"]);
+        }
+    }
+}
+
 - (void)sendMessageToGroup:(AUIMessageSendMessageToGroupRequest *)req callback:(AUIMessageSendMessageToGroupCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
+    
+#define USE_SEND_SYS_MESSAGE_IMPL   // 如果你的业务无需在禁言时发送消息，可以关闭该宏，反之打开该宏。关闭后，所有消息都通过sdk的接口发送
+#ifdef USE_SEND_SYS_MESSAGE_IMPL
+    // 融云聊天室sdk无法在禁言下仍然发送消息，需要通过业务接口来实现
+    if (req.skipMuteCheck) {
+        if ([self.unImplDelegate respondsToSelector:@selector(sendSysMessageToGroup:callback:)]) {
+            [self.unImplDelegate sendSysMessageToGroup:req callback:callback];
+        }
+        else {
+            if (callback) {
+                callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeUnImpl msg:@"接口没实现，无法发送消息"]);
+            }
+        }
+        return;
+    }
+#endif
     
     NSMutableDictionary *body = [NSMutableDictionary dictionary];
     [body addEntriesFromDictionary:@{
@@ -190,7 +324,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
         @"avatar" : self.userInfo.userAvatar ?: @"",
     }];
     if (req.data) {
-        [body setObject:[AUIMessageHelper jsonStringWithDict:[req.data toData]] forKey:@"data"];
+        [body setObject:[AUIMessageHelper jsonStringWithDict:[req.data toData]] ?: @"{}" forKey:@"data"];
     }
     NSString *bodyText = [AUIMessageHelper jsonStringWithDict:body];
     RCTextMessage *messageContent = [RCTextMessage messageWithContent:bodyText];
@@ -211,17 +345,23 @@ static NSError *s_error(NSInteger code, NSString *message) {
         //失败
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(nil, s_error(nErrorCode, @"send message to group error"));
+                callback(nil, [AUIMessageHelper error:nErrorCode msg:@"send message to group error"]);
             }
         });
     }];
 }
 
 - (void)sendMessageToGroupUser:(AUIMessageSendMessageToGroupUserRequest *)req callback:(AUIMessageSendMessageToGroupUserCallback)callback {
+    if (![self isLogin]) {
+        if (callback) {
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
     
     if (req.receiverId.length == 0) {
         if (callback) {
-            callback(nil, s_error(-301, @"param error: receiverId is empty"));
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeParamError msg:@"param error: receiverId is empty"]);
         }
         return;
     }
@@ -235,7 +375,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
         @"avatar" : self.userInfo.userAvatar ?: @"",
     }];
     if (req.data) {
-        [body setObject:[AUIMessageHelper jsonStringWithDict:[req.data toData]] forKey:@"data"];
+        [body setObject:[AUIMessageHelper jsonStringWithDict:[req.data toData]] ?: @"{}" forKey:@"data"];
     }
     NSString *bodyText = [AUIMessageHelper jsonStringWithDict:body];
     RCTextMessage *messageContent = [RCTextMessage messageWithContent:bodyText];
@@ -253,7 +393,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
         //失败
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(nil, s_error(nErrorCode, @"send message to user error"));
+                callback(nil, [AUIMessageHelper error:nErrorCode msg:@"send message to user error"]);
             }
         });
     }];
@@ -304,7 +444,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
     if ([messageContent isKindOfClass:RCTextMessage.class]) {
         NSString *bodyText = messageContent.content;
         if (bodyText.length > 0) {
-            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:[bodyText dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
+            NSDictionary* dict = [AUIMessageHelper parseJson:bodyText];
             
             AUIMessageModel *model = [AUIMessageModel new];
             model.groupId = [dict objectForKey:@"groupId"];
@@ -318,7 +458,7 @@ static NSError *s_error(NSInteger code, NSString *message) {
             
             NSString *dataString = [dict objectForKey:@"data"];
             if (dataString.length > 0) {
-                model.data = [NSJSONSerialization JSONObjectWithData:[dataString dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
+                model.data = [AUIMessageHelper parseJson:dataString];
             }
             
             [self.listenerObserver onMessageReceived:model];

@@ -12,4 +12,11 @@ public class JoinGroupRequest implements Serializable {
      * 群组id
      */
     public String groupId;
+
+    @Override
+    public String toString() {
+        return "JoinGroupRequest{" +
+                "groupId='" + groupId + '\'' +
+                '}';
+    }
 }

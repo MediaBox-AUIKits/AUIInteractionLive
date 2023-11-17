@@ -8,6 +8,8 @@
 	<string>#141416FF</string>
 	<key>fg_strong</key>
 	<string>#23262FFF</string>
+	<key>text_ultrastrong</key>
+	<string>#FFFFFFFF</string>
 	<key>text_strong</key>
 	<string>#FCFCFDFF</string>
 	<key>text_medium</key>

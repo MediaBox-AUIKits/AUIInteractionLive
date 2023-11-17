@@ -10,19 +10,17 @@
 
 #import <AlivcInteraction/AlivcInteraction.h>
 
-#define ALIVC_IM_VERSION_1_1  // 1.1 版本SDK
 
 @interface AUIMessageServiceImpl_Alivc () <AVCIInteractionEngineDelegate, AVCIInteractionServiceDelegate>
 
 @property (nonatomic, strong) AUIMessageConfig *config;
-@property (nonatomic, copy) NSString *loginToken;
+@property (nonatomic, copy) NSDictionary *loginToken;
 @property (nonatomic, weak) id<AUIMessageServiceConnectionDelegate> connectionDelegate;
+@property (nonatomic, weak) id<AUIMessageServiceUnImplDelegate> unImplDelegate;
 
 @property (nonatomic, strong) AUIMessageListenerObserver *listenerObserver;
 @property (nonatomic, strong) id<AUIUserProtocol> userInfo;
 @property (nonatomic, copy) AUIMessageDefaultCallback loginCallback;
-
-
 
 @end
 
@@ -30,11 +28,7 @@
 @implementation AUIMessageServiceImpl_Alivc
 
 static NSError *s_error_interaction(AVCIInteractionError *error) {
-    return s_error(error.code, error.message?:@"");
-}
-
-static NSError *s_error(NSInteger code, NSString *message) {
-    return [NSError errorWithDomain:@"auimessage.alivc" code:code userInfo:@{NSLocalizedDescriptionKey:message}];
+    return [AUIMessageHelper error:error.code msg:error.message ?: @""];
 }
 
 static NSString *_globalGroupId = nil;
@@ -46,9 +40,21 @@ static NSString *_globalGroupId = nil;
     _globalGroupId = globalGroupId;
 }
 
+- (AUIMessageServiceImplType)implType {
+    return AUIMessageServiceImplTypeAlivc;
+}
+
 - (void)setConfig:(AUIMessageConfig *)config {
     _config = config;
-    _loginToken = config.token;
+    _loginToken = config.tokenData;
+}
+
+- (void)setConnectionDelegate:(id<AUIMessageServiceConnectionDelegate>)connectionDelegate {
+    _connectionDelegate = connectionDelegate;
+}
+
+- (void)setUnImplDelegate:(id<AUIMessageServiceUnImplDelegate>)unImplDelegate {
+    _unImplDelegate = unImplDelegate;
 }
 
 - (id<AUIUserProtocol>)currentUserInfo {
@@ -71,14 +77,14 @@ static NSString *_globalGroupId = nil;
     }
     if (userInfo.userId.length == 0) {
         if (callback) {
-            callback(s_error(-1, @"userId is empty."));
+            callback([AUIMessageHelper error:AUIMessageErrorTypeParamError msg:@"userId is empty."]);
         }
         return;
     }
     
     if (self.loginCallback) {
         // 上次调用login，此时返回失败
-        self.loginCallback(s_error(-1, @"login again."));
+        self.loginCallback([AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"login again."]);
     }
     self.loginCallback = callback;
     self.userInfo = userInfo;
@@ -116,9 +122,8 @@ static NSString *_globalGroupId = nil;
             if (callback) {
                 AUIMessageGetGroupInfoResponse *rsp = [AUIMessageGetGroupInfoResponse new];
                 rsp.groupId = groupDetail.groupId;
-#ifndef ALIVC_IM_VERSION_1_1
                 rsp.onlineCount = groupDetail.onlineCount;
-#endif
+                rsp.pv = groupDetail.pv;
                 callback(rsp, nil);
             }
         });
@@ -132,7 +137,11 @@ static NSString *_globalGroupId = nil;
 }
 
 - (void)createGroup:(AUIMessageCreateGroupRequest *)req callback:(AUIMessageCreateGroupCallback)callback {
-    [self.interactionEngine.interactionService createGroupWithExtension:req.extension ?: @{} onSuccess:^(NSString * _Nonnull groupID) {
+    NSDictionary *extension = @{
+        @"groupName" : req.groupName ?: @"",
+        @"groupExtension" : req.groupExtension ?: @"",
+    };
+    [self.interactionEngine.interactionService createGroupWithExtension:extension ?: @{} onSuccess:^(NSString * _Nonnull groupID) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
                 AUIMessageCreateGroupResponse *rsp = [AUIMessageCreateGroupResponse new];
@@ -150,7 +159,7 @@ static NSString *_globalGroupId = nil;
 }
 
 - (void)joinGroup:(AUIMessageJoinGroupRequest *)req callback:(AUIMessageDefaultCallback)callback {
-    [self.interactionEngine.interactionService joinGroup:req.groupId userNick:self.userInfo.userNick userAvatar:self.userInfo.userAvatar userExtension:@"{}" broadCastType:2 broadCastStatistics:YES onSuccess:^{
+    [self.interactionEngine.interactionService joinGroup:req.groupId userNick:self.userInfo.userNick userAvatar:self.userInfo.userAvatar userExtension:@"{}" broadCastType:2 broadCastStatistics:NO onSuccess:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
                 callback(nil);
@@ -183,32 +192,75 @@ static NSString *_globalGroupId = nil;
     }];
 }
 
-- (void)sendMessageToGroup:(AUIMessageSendMessageToGroupRequest *)req callback:(AUIMessageSendMessageToGroupCallback)callback {
-    
-#ifndef ALIVC_IM_VERSION_1_1
-    AVCInteractionSendMessageToGroupReq *avReq = [AVCInteractionSendMessageToGroupReq new];
-    avReq.groupId = req.groupId;
-    avReq.type = (int32_t)req.msgType;
-    avReq.skipAudit = req.skipAudit;
-    avReq.skipMuteCheck = YES;
-    avReq.message = [AUIMessageHelper jsonStringWithDict:[req.data toData]];
-    [self.interactionEngine.interactionService sendTextMessage:avReq onSuccess:^(AVCInteractionSendMessageToGroupRsp * _Nonnull avRsp) {
+- (void)muteAll:(AUIMessageMuteAllRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    [self.interactionEngine.interactionService muteAll:req.groupId broadCastType:2 onSuccess:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                AUIMessageSendMessageToGroupResponse *rsp = [AUIMessageSendMessageToGroupResponse new];
-                rsp.messageId = avRsp.messageId;
+                callback(nil);
+            }
+        });
+    } onFailure:^(AVCIInteractionError * _Nonnull error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                callback(s_error_interaction(error));
+            }
+        });
+    }];
+}
+
+- (void)cancelMuteAll:(AUIMessageCancelMuteAllRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    [self.interactionEngine.interactionService cancelMuteAll:req.groupId broadCastType:2 onSuccess:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                callback(nil);
+            }
+        });
+    } onFailure:^(AVCIInteractionError * _Nonnull error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                callback(s_error_interaction(error));
+            }
+        });
+    }];
+}
+
+- (void)queryMuteAll:(AUIMessageQueryMuteAllRequest *)req callback:(AUIMessageQueryMuteAllCallback)callback {
+    [self.interactionEngine.interactionService getGroup:req.groupId onSuccess:^(AVCIInteractionGroupDetail * _Nonnull groupDetail) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                AUIMessageQueryMuteAllResponse *rsp = [AUIMessageQueryMuteAllResponse new];
+                rsp.groupId = req.groupId;
+                rsp.isMuteAll = groupDetail.isMuteAll;
                 callback(rsp, nil);
             }
         });
     } onFailure:^(AVCIInteractionError * _Nonnull error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
-                callback(nil, s_error_interaction(error));
+                callback(nil ,s_error_interaction(error));
             }
         });
-    }];*/
-#else
-    [self.interactionEngine.interactionService sendTextMessage:[AUIMessageHelper jsonStringWithDict:[req.data toData]] groupID:req.groupId type:(int32_t)req.msgType skipMuteCheck:YES skipAudit:req.skipAudit onSuccess:^{
+    }];
+}
+
+- (void)sendLike:(AUIMessageSendLikeRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    [self.interactionEngine.interactionService sendLikeWithGroupID:req.groupId count:(int32_t)req.count broadCastType:2 onSuccess:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                callback(nil);
+            }
+        });
+    } onFailure:^(AVCIInteractionError * _Nonnull error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                callback(s_error_interaction(error));
+            }
+        });
+    }];
+}
+
+- (void)sendMessageToGroup:(AUIMessageSendMessageToGroupRequest *)req callback:(AUIMessageSendMessageToGroupCallback)callback {
+    [self.interactionEngine.interactionService sendTextMessage:[AUIMessageHelper jsonStringWithDict:[req.data toData]] ?: @"{}" groupID:req.groupId type:(int32_t)req.msgType skipMuteCheck:req.skipMuteCheck skipAudit:req.skipAudit onSuccess:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
                 AUIMessageSendMessageToGroupResponse *rsp = [AUIMessageSendMessageToGroupResponse new];
@@ -223,53 +275,25 @@ static NSString *_globalGroupId = nil;
             }
         });
     }];
-#endif
 }
 
 - (void)sendMessageToGroupUser:(AUIMessageSendMessageToGroupUserRequest *)req callback:(AUIMessageSendMessageToGroupUserCallback)callback {
     
     if (req.receiverId.length == 0) {
         if (callback) {
-            callback(nil, s_error(-1, @"param error: receiverId is empty"));
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeParamError msg:@"receiverId is empty"]);
         }
         return;
     }
     
     if (req.groupId.length == 0 && self.class.globalGroupId.length == 0) {
         if (callback) {
-            callback(nil, s_error(-1, @"param error: groupId is empty"));
+            callback(nil, [AUIMessageHelper error:AUIMessageErrorTypeParamError msg:@"groupId is empty"]);
         }
         return;
     }
     NSString *groupId = req.groupId.length == 0 ? self.class.globalGroupId : req.groupId;
-    
-#ifndef ALIVC_IM_VERSION_1_1
-    AVCInteractionSendMessageToGroupUsersReq *avReq = [AVCInteractionSendMessageToGroupUsersReq new];
-    avReq.groupId = groupId;
-    avReq.type = (int32_t)req.msgType;
-    avReq.level = 2;
-    avReq.message = [AUIMessageHelper jsonStringWithDict:[req.data toData]];
-    avReq.userIDs = @[req.receiverId];
-    avReq.skipAudit = req.skipAudit;
-    avReq.skipMuteCheck = YES;
-    [self.interactionEngine.interactionService sendTextMessageToGroupUsers:avReq onSuccess:^(AVCInteractionSendMessageToGroupUsersRsp * _Nonnull avRsp) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (callback) {
-                AUIMessageSendMessageToGroupUserResponse *rsp = [AUIMessageSendMessageToGroupUserResponse new];
-                rsp.messageId = avRsp.messageId;
-                callback(rsp, nil);
-            }
-        });
-        
-    } onFailure:^(AVCIInteractionError * _Nonnull error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (callback) {
-                callback(nil, s_error_interaction(error));
-            }
-        });
-    }];*/
-#else
-    [self.interactionEngine.interactionService sendTextMessageToGroupUsers:[AUIMessageHelper jsonStringWithDict:[req.data toData]] groupID:groupId type:(int32_t)req.msgType userIDs:@[req.receiverId] skipMuteCheck:YES skipAudit:req.skipAudit onSuccess:^{
+    [self.interactionEngine.interactionService sendTextMessageToGroupUsers:[AUIMessageHelper jsonStringWithDict:[req.data toData]] ?: @"{}" groupID:groupId type:(int32_t)req.msgType userIDs:@[req.receiverId] skipMuteCheck:YES skipAudit:req.skipAudit onSuccess:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
                 AUIMessageSendMessageToGroupUserResponse *rsp = [AUIMessageSendMessageToGroupUserResponse new];
@@ -284,62 +308,9 @@ static NSString *_globalGroupId = nil;
             }
         });
     }];
-#endif
 }
 
 #pragma mark - IM
-
-#ifndef ALIVC_IM_VERSION_1_1
-- (void)setupEngineIfNeed {
-    if (![AVCIInteractionEngine sharedInstanced].config && self.config) {
-        __weak typeof(self) weakSelf = self;
-        AVCIInteractionEngineConfig *interactionEngineConfig =  [[AVCIInteractionEngineConfig alloc] init];
-        interactionEngineConfig.deviceID = AUIMessageConfig.deviceId;
-        interactionEngineConfig.requestToken = ^(void (^ _Nonnull onRequestedToken)(NSString * _Nonnull, NSString * _Nonnull)) {
-            
-            void (^processToken)(NSString *finalToken) = ^(NSString *finalToken){
-                NSString *accessToken = @"";
-                NSString *refreshToken = @"";
-                NSArray *array = [finalToken componentsSeparatedByString:@"_"];
-                if (array.count == 2) {
-                    accessToken = array.firstObject;
-                    refreshToken = array.lastObject;
-                }
-                NSLog(@"AUIMessageServiceImpl_Alivc##requestToken {\n accessToken:%@\nrefreshToken:%@\n}", accessToken, refreshToken);
-                if (onRequestedToken) {
-                    onRequestedToken(refreshToken, accessToken);
-                }
-            };
-            
-            if (weakSelf.loginToken.length > 0) {
-                processToken(weakSelf.loginToken);
-            }
-            else if ([weakSelf.connectionDelegate respondsToSelector:@selector(onTokenExpire)]) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf.connectionDelegate onTokenExpire];
-                });
-                return;
-            }
-            else {
-                processToken(nil);
-            }
-            
-        };
-        [AVCIInteractionEngine sharedInstanced].config = interactionEngineConfig;
-        [AVCIInteractionEngine sharedInstanced].delegate = self;
-    }
-}
-
-- (AVCIInteractionEngine *)interactionEngine {
-    [self setupEngineIfNeed];
-    return [AVCIInteractionEngine sharedInstanced];
-}
-
-- (id)getNativeEngine {
-    return [AVCIInteractionEngine sharedInstanced];
-}
-
-#else
 
 static AVCIInteractionEngine *_engine = nil;
 - (AVCIInteractionEngine *)interactionEngine {
@@ -349,25 +320,16 @@ static AVCIInteractionEngine *_engine = nil;
         interactionEngineConfig.deviceID = AUIMessageConfig.deviceId;
         interactionEngineConfig.requestToken = ^(void (^ _Nonnull onRequestedToken)(NSString * _Nonnull, NSString * _Nonnull)) {
             
-            void (^processToken)(NSString *finalToken) = ^(NSString *finalToken){
-                NSString *accessToken = @"";
-                NSString *refreshToken = @"";
-                NSArray *array = [finalToken componentsSeparatedByString:@"_"];
-                if (array.count == 2) {
-                    accessToken = array.firstObject;
-                    refreshToken = array.lastObject;
-                }
-                else {
-                    accessToken = finalToken;
-                    refreshToken = finalToken;
-                }
+            void (^processToken)(NSDictionary *tokenData) = ^(NSDictionary *tokenData){
+                NSString *accessToken = [tokenData objectForKey:@"access_token"];
+                NSString *refreshToken = [tokenData objectForKey:@"refresh_token"];
                 NSLog(@"AUIMessageServiceImpl_Alivc##requestToken {\n accessToken:%@\nrefreshToken:%@\n}", accessToken, refreshToken);
                 if (onRequestedToken) {
                     onRequestedToken(refreshToken, accessToken);
                 }
             };
             
-            if (weakSelf.loginToken.length > 0) {
+            if (weakSelf.loginToken) {
                 processToken(weakSelf.loginToken);
             }
             else if ([weakSelf.connectionDelegate respondsToSelector:@selector(onTokenExpire)]) {
@@ -390,10 +352,6 @@ static AVCIInteractionEngine *_engine = nil;
     return _engine;
 }
 
-
-#endif
-
-
 #pragma mark - AVCIInteractionEngineDelegate
 
 - (void)onKickout:(NSString *)info {
@@ -415,7 +373,7 @@ static AVCIInteractionEngine *_engine = nil;
             self.loginCallback = nil;
             if (self.class.globalGroupId.length > 0) {
                 // 加入一个globalGroup中，用于保障点对点通讯
-                [self.interactionEngine.interactionService joinGroup:self.class.globalGroupId userNick:@"" userAvatar:@"" userExtension:@"{}" broadCastType:0 broadCastStatistics:YES onSuccess:^{
+                [self.interactionEngine.interactionService joinGroup:self.class.globalGroupId userNick:@"" userAvatar:@"" userExtension:@"{}" broadCastType:0 broadCastStatistics:NO onSuccess:^{
                     
                 } onFailure:^(AVCIInteractionError * _Nonnull error) {
                     
@@ -426,7 +384,7 @@ static AVCIInteractionEngine *_engine = nil;
 }
 
 - (void)onLog:(NSString *)log level:(AliInteractionLogLevel)level {
-//    NSLog(@"AUIMessageServiceImpl_Alivcon##onLog:%@", log);
+//    NSLog(@"AUIMessageServiceImpl_Alivc##onLog:%@", log);
 }
 
 #pragma mark - AVCIInteractionServiceDelegate
@@ -452,7 +410,8 @@ static AVCIInteractionEngine *_engine = nil;
     if ([message.groupId isEqualToString:self.class.globalGroupId]) {
         return;
     }
-    [self.listenerObserver onJoinGroup:[self messageModelFromMessage:message]];
+    AUIMessageModel *model = [self messageModelFromMessage:message];
+    [self.listenerObserver onJoinGroup:model];
 }
 
 - (void)onLeaveGroup:(AVCIInteractionGroupMessage *)message {
@@ -510,7 +469,7 @@ static AVCIInteractionEngine *_engine = nil;
         dict = message.data;
     }
     else if ([message.data isKindOfClass:NSString.class]) {
-        dict = [NSJSONSerialization JSONObjectWithData:[message.data dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
+        dict = [AUIMessageHelper parseJson:message.data];
     }
     return dict;
 }

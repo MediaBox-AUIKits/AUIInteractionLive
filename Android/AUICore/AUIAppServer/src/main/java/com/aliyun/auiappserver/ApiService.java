@@ -31,62 +31,62 @@ import retrofit2.http.POST;
 public interface ApiService {
 
     //登录
-    @POST("live/login")
+    @POST("/api/v1/live/login")
     ApiInvoker<AppServerToken> login(@Body LoginRequest request);
 
     //获取token校验合法性
-    @POST("live/token")
+    @POST("/api/v2/live/token")
     ApiInvoker<Token> fetchToken(@Body TokenRequest request);
 
     //创建直播间
-    @POST("live/create")
+    @POST("/api/v2/live/create")
     ApiInvoker<LiveModel> createLive(@Body CreateLiveRequest request);
 
     //更新直播间信息，比如更新公告等
-    @POST("live/update")
+    @POST("/api/v1/live/update")
     ApiInvoker<LiveModel> updateLive(@Body UpdateLiveRequest request);
 
-    //获取直播间信息，方便进入直播间信息展示
-    @POST("live/get")
-    ApiInvoker<LiveModel> getLive(@Body GetLiveRequest request);
-
     //推流成功后, 调用此服务通知服务端更新状态（开播状态）
-    @POST("live/start")
+    @POST("/api/v1/live/start")
     ApiInvoker<Void> startLive(@Body StartLiveRequest request);
 
     //停止推流后, 调用此服务通知服务端更新状态（停播状态）
-    @POST("live/stop")
+    @POST("/api/v1/live/stop")
     ApiInvoker<Void> stopLive(@Body StopLiveRequest request);
 
     //群统计：监听进出群事件，统计PV/UV/在线等数据；并新增API给端进行查询
-    @POST("live/getStatistics")
+    @POST("/api/v1/live/getStatistics")
     ApiInvoker<FetchStatisticsResponse> fetchStatistics(@Body FetchStatisticsRequest request);
 
     //向服务端请求全体禁言接口，目前APPServer仅支持融云聊天室
-    @POST("live/muteChatroom")
+    @POST("/api/v1/live/muteChatroom")
     ApiInvoker<MuteGroupStatus> muteAll(@Body MuteAllRequest request);
 
     //向服务端请求取消全体禁言接口，目前APPServer仅支持融云聊天室
-    @POST("live/cancelMuteChatroom")
+    @POST("/api/v1/live/cancelMuteChatroom")
     ApiInvoker<MuteGroupStatus> cancelMuteAll(@Body CancelMuteAllRequest request);
 
     //向服务端请求是否开启全体禁言接口，目前APPServer仅支持融云聊天室
-    @POST("live/isMuteChatroom")
+    @POST("/api/v1/live/isMuteChatroom")
     ApiInvoker<MuteGroupStatus> queryMuteAll(@Body QueryMuteAllRequest request);
 
     //向服务端请求是否开启全体禁言接口，目前APPServer仅支持融云聊天室
-    @POST("live/sendLikeMessage")
+    @POST("/api/v1/live/sendLikeMessage")
     ApiInvoker<LiveSendLikeResponse> sendLike(@Body LiveSendLikeRequest request);
 
-    //获取直播间列表
-    @POST("live/list")
-    ApiInvoker<List<LiveModel>> getLiveList(@Body ListLiveRequest request);
+    //获取直播间信息，方便进入直播间信息展示
+    @POST("/api/v1/live/get")
+    ApiInvoker<LiveModel> fetchLive(@Body GetLiveRequest request);
+
+    //分页获取直播间列表
+    @POST("/api/v1/live/list")
+    ApiInvoker<List<LiveModel>> fetchLiveList(@Body ListLiveRequest request);
 
     //主播将最新的麦上成员列表更新到AppServer端，直播间连麦管理模块用
-    @POST("live/updateMeetingInfo")
+    @POST("/api/v1/live/updateMeetingInfo")
     ApiInvoker<MeetingInfo> updateMeetingInfo(@Body UpdateMeetingInfoRequest request);
 
     //获取连麦观众信息，直播间连麦管理模块用
-    @POST("live/getMeetingInfo")
+    @POST("/api/v1/live/getMeetingInfo")
     ApiInvoker<MeetingInfo> getMeetingInfo(@Body GetMeetingInfoRequest request);
 }

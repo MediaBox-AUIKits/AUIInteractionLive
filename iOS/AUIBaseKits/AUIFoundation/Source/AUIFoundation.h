@@ -31,6 +31,7 @@
 #import "AUIPickerPanel.h"
 #import "AVBlockButton.h"
 #import "AVEdgeInsetLabel.h"
+#import "AVVideoPlayProgressView.h"
 
 #import "AVBaseControllPanel.h"
 #import "AVBaseCollectionControllPanel.h"

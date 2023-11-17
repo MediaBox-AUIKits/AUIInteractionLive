@@ -321,6 +321,7 @@ MethodImplementation(bg_medium)
 MethodImplementation(fg_strong)
 
 MethodImplementation(text_strong)
+MethodImplementation(text_ultrastrong)
 MethodImplementation(text_medium)
 MethodImplementation(text_weak)
 MethodImplementation(text_ultraweak)

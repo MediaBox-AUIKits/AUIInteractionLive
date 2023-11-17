@@ -133,4 +133,21 @@
     }
 }
 
+- (void)onExitedGroup:(NSString *)groudId {
+    if ([NSThread isMainThread]) {
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [self.observerList objectEnumerator];
+        id<AUIMessageListenerProtocol> observer = nil;
+        while ((observer = [enumerator nextObject])) {
+            if ([observer respondsToSelector:@selector(onExitedGroup:)]) {
+                [observer onExitedGroup:groudId];
+            }
+        }
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self onExitedGroup:groudId];
+        });
+    }
+}
+
 @end

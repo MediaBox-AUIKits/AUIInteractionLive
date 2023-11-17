@@ -29,9 +29,12 @@ import com.alibaba.dingpaas.interaction.ImSendMessageToGroupUsersRsp;
 import com.alivc.auicommon.common.base.base.Consumer;
 import com.alivc.auicommon.common.base.base.Function;
 import com.alivc.auimessage.AUIMessageConfig;
+import com.alivc.auimessage.AUIMessageServiceImplType;
 import com.alivc.auimessage.MessageService;
 import com.alivc.auimessage.listener.InteractionCallback;
+import com.alivc.auimessage.listener.MessageConnectionListener;
 import com.alivc.auimessage.listener.MessageListener;
+import com.alivc.auimessage.listener.MessageUnImplListener;
 import com.alivc.auimessage.model.base.AUIMessageModel;
 import com.alivc.auimessage.model.base.AUIMessageUserInfo;
 import com.alivc.auimessage.model.base.InteractionError;
@@ -57,6 +60,7 @@ import com.alivc.auimessage.model.message.JoinGroupMessage;
 import com.alivc.auimessage.model.message.LeaveGroupMessage;
 import com.alivc.auimessage.model.message.MuteGroupMessage;
 import com.alivc.auimessage.model.message.UnMuteGroupMessage;
+import com.alivc.auimessage.model.token.IMOldToken;
 import com.alivc.auimessage.observable.Observable;
 import com.aliyun.aliinteraction.EngineConfig;
 import com.aliyun.aliinteraction.IToken;
@@ -80,6 +84,7 @@ import com.aliyun.aliinteraction.model.MuteUserModel;
 import com.aliyun.aliinteraction.model.UserInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author puke
@@ -172,16 +177,31 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
     }
 
     @Override
+    public void setConnectionListener(MessageConnectionListener connectionListener) {
+
+    }
+
+    @Override
+    public void setUnImplListener(MessageUnImplListener unImplListener) {
+
+    }
+
+    @Override
     public void setConfig(final AUIMessageConfig config) {
         engineConfig.deviceId = config.deviceId;
         engineConfig.tokenAccessor = new TokenAccessor() {
             @Override
             public void getToken(String userId, final com.aliyun.aliinteraction.base.Callback<IToken> callback) {
-                if (TextUtils.isEmpty(config.token)) {
+                IMOldToken oldToken = config.oldToken;
+                if (oldToken == null) {
+                    callback.onError(new Error("config token is null."));
+                    return;
+                }
+                if (TextUtils.isEmpty(oldToken.access_token) || TextUtils.isEmpty(oldToken.refresh_token)) {
                     callback.onError(new Error("config token is empty."));
                     return;
                 }
-                callback.onSuccess(new Token(config.token));
+                callback.onSuccess(new Token(oldToken.access_token, oldToken.refresh_token));
             }
         };
 
@@ -226,8 +246,12 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
 
     @Override
     public void createGroup(final CreateGroupRequest req, InteractionCallback<CreateGroupResponse> callback) {
+        HashMap<String, String> extension = new HashMap<>();
+        extension.put("groupName", req.groupName != null ? req.groupName : "");
+        extension.put("groupExtension", req.groupExtension);
+
         ImCreateGroupReq createGroupReq = new ImCreateGroupReq();
-        createGroupReq.extension = req.extension;
+        createGroupReq.extension = extension;
         final Function<ImCreateGroupRsp, CreateGroupResponse> responseConverter = new Function<ImCreateGroupRsp, CreateGroupResponse>() {
             @Override
             public CreateGroupResponse apply(ImCreateGroupRsp rsp) {
@@ -236,6 +260,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                 return createGroupResponse;
             }
         };
+        // TODO keria 客户反馈，这地方engine.setMessageListener需要从回调里面拿出来，才能在进房时，收到回调并及时更新pv
         service.createGroup(createGroupReq, new CallbackAdapter<ImCreateGroupRsp, CreateGroupResponse>(callback, responseConverter) {
             @Override
             public void onSuccess(ImCreateGroupRsp rsp) {
@@ -258,6 +283,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                 return new JoinGroupResponse();
             }
         };
+        // TODO keria 客户反馈，这地方engine.setMessageListener需要从回调里面拿出来，才能在进房时，收到回调并及时更新pv
         service.joinGroup(joinGroupReq, new CallbackAdapter<ImJoinGroupRsp, JoinGroupResponse>(callback, responseConverter) {
             @Override
             public void onSuccess(ImJoinGroupRsp rsp) {
@@ -287,7 +313,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
     public void sendMessageToGroup(SendMessageToGroupRequest req, InteractionCallback<SendMessageToGroupResponse> callback) {
         ImSendMessageToGroupReq sendMessageToGroupReq = new ImSendMessageToGroupReq();
         sendMessageToGroupReq.groupId = req.groupId;
-        sendMessageToGroupReq.type = req.type;
+        sendMessageToGroupReq.type = req.msgType;
         sendMessageToGroupReq.data = req.data;
         sendMessageToGroupReq.skipAudit = req.skipAudit;
         sendMessageToGroupReq.skipMuteCheck = true;
@@ -305,7 +331,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
     public void sendMessageToGroupUser(SendMessageToGroupUserRequest req, InteractionCallback<SendMessageToGroupUserResponse> callback) {
         ImSendMessageToGroupUsersReq sendMessageToGroupUsersReq = new ImSendMessageToGroupUsersReq();
         sendMessageToGroupUsersReq.groupId = req.groupId;
-        sendMessageToGroupUsersReq.type = req.type;
+        sendMessageToGroupUsersReq.type = req.msgType;
 //        sendMessageToGroupUsersReq.level = MessageLevel.HIGH.value;
         sendMessageToGroupUsersReq.data = req.data;
         sendMessageToGroupUsersReq.skipAudit = req.skipAudit;
@@ -355,7 +381,8 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                     return;
                 }
                 GroupMuteStatusResponse response = new GroupMuteStatusResponse();
-                response.mute = true;
+                response.groupId = req.groupId;
+                response.isMuteAll = true;
                 callback.onSuccess(response);
             }
 
@@ -385,7 +412,8 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                     return;
                 }
                 GroupMuteStatusResponse response = new GroupMuteStatusResponse();
-                response.mute = false;
+                response.groupId = req.groupId;
+                response.isMuteAll = false;
                 callback.onSuccess(response);
             }
 
@@ -414,7 +442,8 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                     return;
                 }
                 GroupMuteStatusResponse response = new GroupMuteStatusResponse();
-                response.mute = rsp.getIsMuteAll();
+                response.groupId = rsp.groupId;
+                response.isMuteAll = rsp.getIsMuteAll();
                 callback.onSuccess(response);
             }
 
@@ -463,6 +492,11 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
         return this.engine;
     }
 
+    @Override
+    public AUIMessageServiceImplType getImplType() {
+        return AUIMessageServiceImplType.ALIVC;
+    }
+
     private static class CallbackAdapter<T, R> implements Callback<T> {
 
         final InteractionCallback<R> callback;
@@ -503,10 +537,9 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
         final String accessToken;
         final String refreshToken;
 
-        Token(String originToken) {
-            String[] split = originToken.split(SPLITTER_TOKEN);
-            accessToken = split[0];
-            refreshToken = split[1];
+        public Token(String accessToken, String refreshToken) {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
         }
 
         @Override

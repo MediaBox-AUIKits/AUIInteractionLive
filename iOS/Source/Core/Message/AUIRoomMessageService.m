@@ -11,21 +11,10 @@
 #import "AUIRoomAppServer.h"
 #import "AUIFoundation.h"
 
-#if __has_include(<AlivcInteraction/AlivcInteraction.h>)
-#import <AlivcInteraction/AlivcInteraction.h>
-#define ENABLE_ALIVCINTERACTION
-#endif
-
 #define AUIRoomMessageTypeComment 10001
 
 
-#ifdef ENABLE_ALIVCINTERACTION
-static NSError *s_error(AVCIInteractionError *error) {
-    return [NSError errorWithDomain:@"" code:error.code userInfo:@{NSLocalizedDescriptionKey:error.message?:@""}];
-}
-#endif
-
-@interface AUIRoomMessageService : NSObject <AUIRoomMessageServiceProtocol, AUIMessageServiceConnectionDelegate, AUIMessageListenerProtocol>
+@interface AUIRoomMessageService : NSObject <AUIRoomMessageServiceProtocol, AUIMessageServiceUnImplDelegate, AUIMessageServiceConnectionDelegate, AUIMessageListenerProtocol>
 
 @property (nonatomic, strong) id<AUIMessageServiceProtocol> messageService;
 @property (nonatomic, strong) NSHashTable<id<AUIRoomMessageServiceObserver>> *observerList;
@@ -39,6 +28,7 @@ static NSError *s_error(AVCIInteractionError *error) {
     self = [super init];
     if (self) {
         self.messageService = [AUIMessageServiceFactory getMessageService];
+        [self.messageService setUnImplDelegate:self];
         [self.messageService setConnectionDelegate:self];
         [[self.messageService getListenerObserver] addListener:self];
     }
@@ -65,14 +55,20 @@ static NSError *s_error(AVCIInteractionError *error) {
     [self.observerList removeObject:observer];
 }
 
-+ (void)fetchToken:(void(^)(NSString *finalToken, NSError *error))completed {
-    [AUIRoomAppServer fetchToken:^(NSString * _Nullable accessToken, NSString * _Nullable refreshToken, NSError * _Nullable error) {
+- (void)fetchToken:(void(^)(NSDictionary *tokenData, NSError *error))completed {
+    [AUIRoomAppServer fetchToken:^(NSDictionary * _Nullable data, NSError * _Nullable error) {
         if (completed) {
-#ifdef ENABLE_ALIVCINTERACTION
-            completed([NSString stringWithFormat:@"%@_%@", accessToken, refreshToken], error);
-#else
-            completed(accessToken, error);
-#endif
+            if (error) {
+                completed(nil, error);
+                return;
+            }
+            NSDictionary *tokenData = [AUIRoomMessage fetchTokenData:data];
+            if (tokenData == nil) {
+                completed(nil, [NSError errorWithDomain:@"message.service" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"获取token数据出错"}]);
+            }
+            else {
+                completed(tokenData, nil);
+            }
         }
     }];
 }
@@ -91,7 +87,8 @@ static NSError *s_error(AVCIInteractionError *error) {
         return;
     }
     
-    [AUIRoomMessageService fetchToken:^(NSString *finalToken, NSError *error) {
+    __weak typeof(self) weakSelf = self;
+    [self fetchToken:^(NSDictionary *tokenData, NSError *error) {
         if (error) {
             if (completed) {
                 completed(NO);
@@ -100,13 +97,13 @@ static NSError *s_error(AVCIInteractionError *error) {
         }
         
         AUIMessageConfig *config = [AUIMessageConfig new];
-        config.token = finalToken;
-        [self.messageService setConfig:config];
+        config.tokenData = tokenData;
+        [weakSelf.messageService setConfig:config];
         
         AUIMessageUserInfo *user = [[AUIMessageUserInfo alloc] init:AUIRoomAccount.me.userId];
         user.userNick = AUIRoomAccount.me.nickName;
         user.userAvatar = AUIRoomAccount.me.avatar;
-        [self.messageService login:user callback:^(NSError * _Nullable error) {
+        [weakSelf.messageService login:user callback:^(NSError * _Nullable error) {
             if (completed) {
                 completed(error == nil);
             }
@@ -123,7 +120,31 @@ static NSError *s_error(AVCIInteractionError *error) {
 - (void)joinGroup:(NSString *)groupID completed:(AUIMessageDefaultCallback)completed {
     AUIMessageJoinGroupRequest *req = [AUIMessageJoinGroupRequest new];
     req.groupId = groupID;
-    [self.messageService joinGroup:req callback:completed];
+    
+    __weak typeof(self) weakSelf = self;
+    [self.messageService joinGroup:req callback:^(NSError * _Nullable error) {
+        if (completed) {
+            completed(error);
+        }
+        
+        if (!error) {
+            // 需要查询当前房间是否全员禁言
+            [weakSelf queryMuteAll:groupID completed:^(BOOL isMuteAll, NSError * _Nullable error) {
+                if (!error) {
+                    AUIMessageModel *model = [AUIMessageModel new];
+                    model.groupId = groupID;
+                    if (isMuteAll) {
+                        [weakSelf onMuteGroup:model];
+                    }
+                    else {
+                        [weakSelf onUnmuteGroup:model];
+                    }
+                }
+            }];
+        }
+    }];
+    
+    
 }
 
 - (void)leaveGroup:(NSString *)groupID completed:(AUIMessageDefaultCallback)completed {
@@ -132,89 +153,64 @@ static NSError *s_error(AVCIInteractionError *error) {
     [self.messageService leaveGroup:req callback:completed];
 }
 
-- (void)muteAll:(NSString *)groupID completed:(AUIMessageDefaultCallback)completed {
-#ifdef ENABLE_ALIVCINTERACTION
-    AVCIInteractionEngine *interactionEngine = [self.messageService getNativeEngine];
-    
-    [interactionEngine.interactionService muteAll:groupID broadCastType:2 onSuccess:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(nil);
+- (void)queryStatistics:(NSString *)groupID completed:(void (^)(NSInteger, NSInteger, NSError * _Nullable))completed {
+    AUIMessageGetGroupInfoRequest *req = [AUIMessageGetGroupInfoRequest new];
+    req.groupId = groupID;
+    [self.messageService getGroupInfo:req callback:^(AUIMessageGetGroupInfoResponse * _Nullable rsp, NSError * _Nullable error) {
+        if (completed) {
+            if (error) {
+                completed(-1, -1, error);
             }
-        });
-    } onFailure:^(AVCIInteractionError * _Nonnull error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(s_error(error));
+            else {
+                completed(rsp.pv, rsp.onlineCount, nil);
             }
-        });
+        }
     }];
-#else
-    [AUIRoomAppServer muteAll:groupID completed:completed];
-#endif
+    
+    // 如果AUIMessage的getGroupInfo不满足的情况下，则需要使用自建服务端实现
+    // 可以打开以下注释代码，并需要服务端实现/api/v1/live/getStatistics接口
+    /*
+    [AUIRoomAppServer fetchStatistics:groupID completed:^(AUIRoomLiveMetricsModel * _Nullable model, NSError * _Nullable error) {
+        
+        if (model) {
+            if (error) {
+                completed(-1, -1, error);
+            }
+            else {
+                completed(model.pv, model.online_count, nil);
+            }
+        }
+    }];
+     */
+}
+
+- (void)muteAll:(NSString *)groupID completed:(AUIMessageDefaultCallback)completed {
+    AUIMessageMuteAllRequest *req = [AUIMessageMuteAllRequest new];
+    req.groupId = groupID;
+    [self.messageService muteAll:req callback:completed];
 }
 
 - (void)cancelMuteAll:(NSString *)groupID completed:(AUIMessageDefaultCallback)completed {
-#ifdef ENABLE_ALIVCINTERACTION
-    AVCIInteractionEngine *interactionEngine = [self.messageService getNativeEngine];
-    [interactionEngine.interactionService cancelMuteAll:groupID broadCastType:2 onSuccess:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(nil);
-            }
-        });
-    } onFailure:^(AVCIInteractionError * _Nonnull error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(s_error(error));
-            }
-        });
-    }];
-#else
-    [AUIRoomAppServer cancelMuteAll:groupID completed:completed];
-#endif
+    AUIMessageCancelMuteAllRequest *req = [AUIMessageCancelMuteAllRequest new];
+    req.groupId = groupID;
+    [self.messageService cancelMuteAll:req callback:completed];
 }
 
 - (void)queryMuteAll:(NSString *)groupID completed:(void (^)(BOOL, NSError * _Nullable))completed {
-#ifdef ENABLE_ALIVCINTERACTION
-    AVCIInteractionEngine *interactionEngine = [self.messageService getNativeEngine];
-    [interactionEngine.interactionService getGroup:groupID onSuccess:^(AVCIInteractionGroupDetail * _Nonnull groupDetail) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(groupDetail.isMuteAll, nil);
-            }
-        });
-    } onFailure:^(AVCIInteractionError * _Nonnull error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(NO ,s_error(error));
-            }
-        });
+    AUIMessageQueryMuteAllRequest *req = [AUIMessageQueryMuteAllRequest new];
+    req.groupId = groupID;
+    [self.messageService queryMuteAll:req callback:^(AUIMessageQueryMuteAllResponse * _Nullable rsp, NSError * _Nullable error) {
+        if (completed) {
+            completed(rsp.isMuteAll, error);
+        }
     }];
-#else
-    [AUIRoomAppServer queryMuteAll:groupID completed:completed];
-#endif
 }
 
 - (void)sendLike:(NSString *)groupID count:(NSUInteger)count completed:(AUIMessageDefaultCallback)completed {
-#ifdef ENABLE_ALIVCINTERACTION
-    AVCIInteractionEngine *interactionEngine = [self.messageService getNativeEngine];
-    [interactionEngine.interactionService sendLikeWithGroupID:groupID count:(int32_t)count broadCastType:2 onSuccess:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(nil);
-            }
-        });
-    } onFailure:^(AVCIInteractionError * _Nonnull error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completed) {
-                completed(s_error(error));
-            }
-        });
-    }];
-#else
-    [AUIRoomAppServer sendLike:groupID count:count completed:completed];
-#endif
+    AUIMessageSendLikeRequest *req = [AUIMessageSendLikeRequest new];
+    req.groupId = groupID;
+    req.count = count;
+    [self.messageService sendLike:req callback:completed];
 }
 
 - (void)sendComment:(NSString *)groupID comment:(NSDictionary *)comment completed:(AUIMessageDefaultCallback)completed {
@@ -223,6 +219,7 @@ static NSError *s_error(AVCIInteractionError *error) {
     req.data = [[AUIMessageDefaultData alloc] initWithData:comment];
     req.msgType = AUIRoomMessageTypeComment;
     req.skipAudit = NO;
+    req.skipMuteCheck = NO;
     [self.messageService sendMessageToGroup:req callback:^(AUIMessageSendMessageToGroupResponse * _Nullable rsp, NSError * _Nullable error) {
         if (completed) {
             completed(error);
@@ -237,6 +234,8 @@ static NSError *s_error(AVCIInteractionError *error) {
         req.data = data;
         req.msgType = type;
         req.receiverId = receiverId;
+        req.skipAudit = YES;
+        
         [self.messageService sendMessageToGroupUser:req callback:^(AUIMessageSendMessageToGroupUserResponse * _Nullable rsp, NSError * _Nullable error) {
             if (completed) {
                 completed(error);
@@ -249,6 +248,7 @@ static NSError *s_error(AVCIInteractionError *error) {
         req.data = data;
         req.msgType = type;
         req.skipAudit = YES;
+        req.skipMuteCheck = YES;
         [self.messageService sendMessageToGroup:req callback:^(AUIMessageSendMessageToGroupResponse * _Nullable rsp, NSError * _Nullable error) {
             if (completed) {
                 completed(error);
@@ -262,10 +262,52 @@ static NSError *s_error(AVCIInteractionError *error) {
     }
 }
 
+#pragma mark - AUIMessageServiceUnImplDelegate
+
+- (void)muteAll:(AUIMessageMuteAllRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    // 当AUIMessageService的实现不支持时，会通过该接口回调，这时需要使用服务端接口来实现
+    [AUIRoomAppServer muteAll:req.groupId completed:callback];
+}
+
+- (void)cancelMuteAll:(AUIMessageCancelMuteAllRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    // 当AUIMessageService的实现不支持时，会通过该接口回调，这时需要使用服务端接口来实现
+    [AUIRoomAppServer cancelMuteAll:req.groupId completed:callback];
+}
+
+- (void)queryMuteAll:(AUIMessageQueryMuteAllRequest *)req callback:(AUIMessageQueryMuteAllCallback)callback {
+    // 当AUIMessageService的实现不支持时，会通过该接口回调，这时需要使用服务端接口来实现
+    [AUIRoomAppServer queryMuteAll:req.groupId completed:^(BOOL isMuteAll, NSError * _Nullable error) {
+        if (error) {
+            if (callback) {
+                callback(nil, error);
+            }
+        }
+        else {
+            if (callback) {
+                AUIMessageQueryMuteAllResponse *rsp = [AUIMessageQueryMuteAllResponse new];
+                rsp.groupId = req.groupId;
+                rsp.isMuteAll = isMuteAll;
+                callback(rsp, nil);
+            }
+        }
+    }];
+}
+
+- (void)sendLike:(AUIMessageSendLikeRequest *)req callback:(AUIMessageDefaultCallback)callback {
+    // 当AUIMessageService的实现不支持时，会通过该接口回调，这时需要使用服务端接口来实现
+    [AUIRoomAppServer sendLike:req.groupId count:req.count completed:callback];
+}
+
+- (void)sendSysMessageToGroup:(AUIMessageSendMessageToGroupRequest *)req callback:(AUIMessageSendMessageToGroupCallback)callback {
+    // 当AUIMessageService的实现不支持时，会通过该接口回调，这时需要使用服务端接口来实现
+    // TODO: 如果使用融云ChatRoom模式，需要实现
+}
+
 #pragma mark - AUIMessageServiceConnectionDelegate
 
-- (void)onTokenExpire:(void (^)(NSString * _Nonnull, NSError * _Nonnull))onRequestedNewToken {
-    [AUIRoomMessageService fetchToken:onRequestedNewToken];
+- (void)onTokenExpire {
+    // 目前token有效期较长，如果有效期较短情况下，在当前APP生命周期出现了token过期，建议走重新登录逻辑
+    NSLog(@"Message Token过期了");
 }
 
 #pragma mark - AUIMessageListenerProtocol
@@ -280,29 +322,6 @@ static NSError *s_error(AVCIInteractionError *error) {
             }
         }
     }
-    
-#ifdef ENABLE_ALIVCINTERACTION
-    NSDictionary *stat = [model.data objectForKey:@"statistics"];
-    if (stat) {
-        AUIMessageModel *statMessageModel = [AUIMessageModel new];
-        statMessageModel.groupId = model.groupId;
-        statMessageModel.sender = model.sender;
-        statMessageModel.data = stat;
-        statMessageModel.messageId = model.messageId;
-        
-        enumerator = [self.observerList objectEnumerator];
-        while ((observer = [enumerator nextObject])) {
-            if ([observer.groupId isEqualToString:statMessageModel.groupId]) {
-                if ([observer respondsToSelector:@selector(onPVReceived:)]) {
-                    [observer onPVReceived:statMessageModel];
-                }
-                if ([observer respondsToSelector:@selector(onLikeReceived:)]) {
-                    [observer onLikeReceived:statMessageModel];
-                }
-            }
-        }
-    }
-#endif
 }
 
 - (void)onLeaveGroup:(AUIMessageModel *)model {
@@ -380,17 +399,101 @@ static NSError *s_error(AVCIInteractionError *error) {
     }
 }
 
+- (void)onExitedGroup:(NSString *)groupId {
+    NSEnumerator<id<AUIRoomMessageServiceObserver>>* enumerator = [self.observerList objectEnumerator];
+    id<AUIRoomMessageServiceObserver> observer = nil;
+    while ((observer = [enumerator nextObject])) {
+        if ([observer.groupId isEqualToString:groupId]) {
+            if ([observer respondsToSelector:@selector(onExitedGroup:)]) {
+                [observer onExitedGroup:groupId];
+            }
+        }
+    }
+}
+
 @end
 
 
+#define IM_SERVER_ALIYUN_OLD @"aliyun_old"
+#define IM_SERVER_ALIYUN_NEW @"aliyun_new"
+#define IM_SERVER_RONGYUN @"rongyun"
+
+#define IM_RSP_DATA_ALIYUN_OLD @"aliyun_old_im"
+#define IM_RSP_DATA_ALIYUN_NEW @"aliyun_new_im"
+#define IM_RSP_DATA_RONGYUN @"rongyun_im"
+
 @implementation AUIRoomMessage
 
-+ (id<AUIRoomMessageServiceProtocol>)currentService {
++ (AUIRoomMessageService *)messageService {
     static AUIRoomMessageService *_instance = nil;
     if (!_instance) {
         _instance = [AUIRoomMessageService new];
     }
     return _instance;
 }
+
++ (id<AUIRoomMessageServiceProtocol>)currentService {
+    return [self messageService];
+}
+
+static BOOL _useAlivcIMWhenCompatMode = NO;
++ (void)useAlivcIMWhenCompatMode:(BOOL)isAlivcIM {
+    _useAlivcIMWhenCompatMode = isAlivcIM;
+}
+
++ (NSArray<NSString *> *)currentIMServers {
+    NSMutableArray *servers = [NSMutableArray array];
+    AUIMessageServiceImplType implType = [self messageService].messageService.implType;
+    if (implType == AUIMessageServiceImplTypeAlivc) {
+        [servers addObject:IM_SERVER_ALIYUN_OLD];
+    }
+    else if (implType == AUIMessageServiceImplTypeAlivcIM) {
+        [servers addObject:IM_SERVER_ALIYUN_NEW];
+    }
+    else if (implType == AUIMessageServiceImplTypeAlivcCompat) {
+        if (_useAlivcIMWhenCompatMode) {
+            [servers addObject:IM_SERVER_ALIYUN_NEW];
+        }
+        else {
+            [servers addObject:IM_SERVER_ALIYUN_OLD];
+        }
+    }
+    else if (implType == AUIMessageServiceImplTypeRCChatRoom) {
+        [servers addObject:IM_SERVER_RONGYUN];
+    }
+    return servers;
+}
+
++ (NSDictionary *)fetchTokenData:(NSDictionary *)rspData {
+    AUIMessageServiceImplType implType = [self messageService].messageService.implType;
+    NSString *key = nil;
+    if (implType == AUIMessageServiceImplTypeAlivc) {
+        key = IM_RSP_DATA_ALIYUN_OLD;
+    }
+    else if (implType == AUIMessageServiceImplTypeAlivcIM) {
+        key = IM_RSP_DATA_ALIYUN_NEW;
+    }
+    else if (implType == AUIMessageServiceImplTypeAlivcCompat) {
+        key = _useAlivcIMWhenCompatMode ? IM_RSP_DATA_ALIYUN_NEW : IM_RSP_DATA_ALIYUN_OLD;
+    }
+    else if (implType == AUIMessageServiceImplTypeRCChatRoom) {
+        key = IM_RSP_DATA_RONGYUN;
+    }
+    if (key == nil) {
+        return nil;
+    }
+    
+    NSDictionary *tokenData = [rspData objectForKey:key];
+    if (tokenData && [tokenData isKindOfClass:NSDictionary.class]) {
+        NSMutableDictionary *final = [NSMutableDictionary dictionaryWithDictionary:tokenData];
+        [final setObject: AlivcBase.IntegrationWay ?: @"aui-live" forKey:@"source"];
+        if (implType == AUIMessageServiceImplTypeAlivcCompat) {
+            [final setObject:_useAlivcIMWhenCompatMode ? IM_SERVER_ALIYUN_NEW : IM_SERVER_ALIYUN_OLD forKey:@"mode"];
+        }
+        return final;
+    }
+    return nil;
+}
+
 
 @end

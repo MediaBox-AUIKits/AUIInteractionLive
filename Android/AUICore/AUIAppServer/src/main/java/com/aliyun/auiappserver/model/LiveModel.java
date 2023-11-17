@@ -19,51 +19,93 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LiveModel implements Serializable {
 
+    // 直播间Id
+    @JsonProperty("id")
     public String id;
 
-    public int status;
+    // 创建时间
+    @JsonProperty("created_at")
+    public String createdAt;
 
-    public int pv;
+    // 修改时间
+    @JsonProperty("updated_at")
+    public String updatedAt;
 
+    // 直播标题
+    @JsonProperty("title")
+    public String title;
+
+    // 直播公告
+    @JsonProperty("notice")
     public String notice;
 
+    // 封面图。预留字段
+    @JsonProperty("cover_url")
+    public String coverUrl;
+
+    // 主播userId
     @JsonProperty("anchor_id")
     public String anchorId;
 
+    // 主播昵称
     @JsonProperty("anchor_nick")
     public String anchorNick;
 
+    // 扩展字段
+    @JsonProperty("extends")
+    public String extend;
 
+    // 直播间状态：
+    // 0：准备中；1：已开播；2：已停止
+    @JsonProperty("status")
+    public int status;
+
+    // 直播模式
+    // 0：普通直播；1：连麦直播
+    @JsonProperty("mode")
+    public int mode;
+
+
+    // IM群Id
+    @JsonProperty("chat_id")
+    public String chatId;
+
+    // 连麦Id
+    @JsonProperty("meeting_id")
+    public String meetingId;
+
+    // Json字符串。连麦观众信息
+    @JsonProperty("meeting_info")
+    public String meetingInfo;
+
+
+    // 推流地址集合
+    @JsonProperty("push_url_info")
+    public LivePushUrlInfo pushUrlInfo;
+
+    // 拉流地址集合
+    @JsonProperty("pull_url_info")
+    public LivePullUrlInfo pullUrlInfo;
+
+    // 连麦地址集合
+    @JsonProperty("link_info")
+    public LiveLinkInfo linkInfo;
+
+
+    // 直播录制视频信息
     @JsonProperty("vod_info")
     public VodInfo vodInfo;
 
     @JsonProperty("vod_id")
     public String vodId;
 
-    public String title;
 
-    @JsonProperty("created_at")
-    public String createdAt;
-
-    @JsonProperty("chat_id")
-    public String chatId;
-
-    @JsonProperty("pull_url_info")
-    public LivePullUrlInfo pullUrlInfo;
-
-    @JsonProperty("push_url_info")
-    public LivePushUrlInfo pushUrlInfo;
-
-    @JsonProperty("link_info")
-    public LiveLinkInfo linkInfo;
-
-    @JsonProperty("mode")
-    public int mode;
-
-    @JsonProperty("extends")
-    public String extend;
-
+    // 统计数据
+    @JsonProperty("metrics")
     public Metrics metrics;
+
+    public int pv;
+
 
     @Nullable
     public String getPlaybackUrl() {
@@ -132,21 +174,26 @@ public class LiveModel implements Serializable {
     public String toString() {
         return "LiveModel{" +
                 "id='" + id + '\'' +
-                ", status=" + status +
-                ", pv=" + pv +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                ", title='" + title + '\'' +
                 ", notice='" + notice + '\'' +
+                ", coverUrl='" + coverUrl + '\'' +
                 ", anchorId='" + anchorId + '\'' +
                 ", anchorNick='" + anchorNick + '\'' +
+                ", extend='" + extend + '\'' +
+                ", status=" + status +
+                ", mode=" + mode +
+                ", chatId='" + chatId + '\'' +
+                ", meetingId='" + meetingId + '\'' +
+                ", meetingInfo='" + meetingInfo + '\'' +
+                ", pushUrlInfo=" + pushUrlInfo +
+                ", pullUrlInfo=" + pullUrlInfo +
+                ", linkInfo=" + linkInfo +
+                ", pv=" + pv +
                 ", vodInfo=" + vodInfo +
                 ", vodId='" + vodId + '\'' +
-                ", title='" + title + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", chatId='" + chatId + '\'' +
-                ", pullUrlInfo=" + pullUrlInfo +
-                ", pushUrlInfo=" + pushUrlInfo +
-                ", linkInfo=" + linkInfo +
-                ", mode=" + mode +
-                ", extend='" + extend + '\'' +
+                ", metrics=" + metrics +
                 '}';
     }
 }

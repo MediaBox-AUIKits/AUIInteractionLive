@@ -12,15 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol AUIRoomMessageServiceObserver <NSObject>
 
+@optional
+
 /**
  * 消息所在的群
  */
 - (NSString *)groupId;
-
-/**
- * 收到PV更新
- */
-- (void)onPVReceived:(AUIMessageModel *)message;
 
 /**
  * 收到评论消息
@@ -57,6 +54,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)onCancelMuteGroup:(AUIMessageModel *)message;
 
+/**
+ * 被动离开群组
+ */
+- (void)onExitedGroup:(NSString *)groupId;
+
 @end
 
 
@@ -75,6 +77,9 @@ typedef void(^AUIRoomMessageCallback)(NSError * _Nullable error);
 
 - (void)leaveGroup:(NSString *)groupID
          completed:(AUIMessageDefaultCallback _Nullable)completed;
+
+- (void)queryStatistics:(NSString *)groupID
+           completed:(void (^)(NSInteger pv, NSInteger onlineCount, NSError * _Nullable))completed;
 
 - (void)muteAll:(NSString *)groupID
       completed:(AUIMessageDefaultCallback _Nullable)completed;
@@ -104,6 +109,10 @@ typedef void(^AUIRoomMessageCallback)(NSError * _Nullable error);
 @interface AUIRoomMessage : NSObject
 
 @property (nonatomic, strong, readonly, class) id<AUIRoomMessageServiceProtocol> currentService;
+
++ (NSArray<NSString *> *)currentIMServers;
++ (void)useAlivcIMWhenCompatMode:(BOOL)isAlivcIM;
++ (NSDictionary *)fetchTokenData:(NSDictionary *)rspData;
 
 @end
 

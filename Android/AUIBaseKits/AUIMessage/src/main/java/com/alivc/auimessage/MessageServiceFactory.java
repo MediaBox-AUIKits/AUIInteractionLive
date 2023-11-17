@@ -23,8 +23,8 @@ public class MessageServiceFactory {
         // 注: 为方便AUI中快速切换消息引擎和避免代码改动, 此处使用反射方式来进行实例化
         // 若业务上层确定消息引擎后, 可以直接改为手动new对象的方式, 如下
         // return messageService = new MessageServiceImpl();
-        for (ServiceImpl impl : ServiceImpl.values()) {
-            String implClassName = impl.className;
+        for (AUIMessageServiceImplType serviceImpl : AUIMessageServiceImplType.values()) {
+            String implClassName = serviceImpl.impl;
             try {
                 Class<?> implType = Class.forName(implClassName);
                 messageService = (MessageService) implType.newInstance();
@@ -40,26 +40,21 @@ public class MessageServiceFactory {
 
     public static boolean useInternal() {
         String messageServiceClassName = getMessageService().getClass().getName();
-        return TextUtils.equals(messageServiceClassName, ServiceImpl.INTERNAL.className);
+        return TextUtils.equals(messageServiceClassName, AUIMessageServiceImplType.ALIVC.impl);
+    }
+
+    public static boolean useAlivcIM() {
+        String messageServiceClassName = getMessageService().getClass().getName();
+        return TextUtils.equals(messageServiceClassName, AUIMessageServiceImplType.ALIVC_IM.impl);
     }
 
     public static boolean useRongCloud() {
         String messageServiceClassName = getMessageService().getClass().getName();
-        return TextUtils.equals(messageServiceClassName, ServiceImpl.RONG_CLOUD.className);
+        return TextUtils.equals(messageServiceClassName, AUIMessageServiceImplType.RC_CHAT_ROOM.impl);
     }
 
-    private enum ServiceImpl {
-        // 内部SDK
-        INTERNAL("com.alivc.auimessage.internal.MessageServiceImpl"),
-
-        // 融云SDK
-        RONG_CLOUD("com.alivc.auimessage.rongcloud.MessageServiceImpl"),
-        ;
-
-        final String className;
-
-        ServiceImpl(String className) {
-            this.className = className;
-        }
+    public static boolean isMessageServiceValid() {
+        return useInternal() || useRongCloud() || useAlivcIM();
     }
+
 }

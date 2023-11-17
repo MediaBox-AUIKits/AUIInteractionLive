@@ -77,8 +77,13 @@ AVUIViewControllerInteractivePopGesture
             }
             [AVAlertController showWithTitle:tips message:@"" needCancel:YES onCompleted:^(BOOL isCanced) {
                 if (!isCanced) {
-                    [weakSelf.liveManager leaveRoom:nil];
-                    [weakSelf.navigationController popViewControllerAnimated:YES];
+                    AVProgressHUD *loading = [AVProgressHUD ShowHUDAddedTo:weakSelf.view animated:YES];
+                    loading.labelText = @"正在退出直播间";
+                    [weakSelf.liveManager leaveRoom:^(BOOL succ) {
+                        [loading hideAnimated:YES];
+                        UIApplication.sharedApplication.idleTimerDisabled = NO;
+                        [weakSelf.navigationController popViewControllerAnimated:YES];
+                    }];
                 }
             }];
         };
@@ -285,10 +290,12 @@ AVUIViewControllerInteractivePopGesture
     [self.liveManager enterRoom:^(BOOL success) {
         if (!success) {
             [AVAlertController showWithTitle:nil message:@"进入直播间失败，请稍后重试~" needCancel:NO onCompleted:^(BOOL isCanced) {
+                UIApplication.sharedApplication.idleTimerDisabled = NO;
                 [weakSelf.navigationController popViewControllerAnimated:YES];
             }];
         }
     }];
+    UIApplication.sharedApplication.idleTimerDisabled = YES;
 }
 
 - (void)setupBackground {
@@ -501,6 +508,13 @@ AVUIViewControllerInteractivePopGesture
     
     self.liveManager.onReceivedGift = ^(AUIRoomUser * _Nonnull sender, AUIRoomGiftModel * _Nonnull gift) {
         // 处理接收到的礼物
+    };
+    
+    self.liveManager.onReceivedLeaveRoom = ^{
+        [AVAlertController showWithTitle:@"你被移出房间了" message:@"" needCancel:NO onCompleted:^(BOOL isCanced) {
+            UIApplication.sharedApplication.idleTimerDisabled = NO;
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }];
     };
     
     [self linkMicManager].applyListChangedBlock = ^(AUIRoomInteractionLiveManagerAnchor * _Nonnull sender) {

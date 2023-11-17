@@ -12,4 +12,12 @@ public class GetGroupInfoRequest implements Serializable {
      * 群组id
      */
     public String groupId;
+
+    @Override
+    public String toString() {
+        return "GetGroupInfoRequest{" +
+                "groupId='" + groupId + '\'' +
+                '}';
+    }
+
 }

@@ -27,10 +27,13 @@ import com.alivc.auicommon.common.base.util.CollectionUtil;
 import com.alivc.auicommon.core.utils.AssetUtil;
 import com.alivc.component.custom.AlivcLivePushCustomFilter;
 import com.alivc.live.annotations.AlivcLiveMode;
+import com.alivc.live.annotations.AlivcLiveNetworkQuality;
 import com.alivc.live.annotations.AlivcLivePushKickedOutType;
+import com.alivc.live.annotations.AlivcLiveRecordMediaEvent;
 import com.alivc.live.player.AlivcLivePlayConfig;
 import com.alivc.live.player.AlivcLivePlayer;
 import com.alivc.live.player.annotations.AlivcLivePlayError;
+import com.alivc.live.player.annotations.AlivcLivePlayVideoStreamType;
 import com.alivc.live.pusher.AlivcAudioAACProfileEnum;
 import com.alivc.live.pusher.AlivcEncodeModeEnum;
 import com.alivc.live.pusher.AlivcFpsEnum;
@@ -188,6 +191,26 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         public void onMicrophoneVolumeUpdate(AlivcLivePusher pusher, int volume) {
 
         }
+
+        @Override
+        public void onLocalRecordEvent(AlivcLiveRecordMediaEvent mediaEvent, String storagePath) {
+
+        }
+
+        @Override
+        public void onScreenFramePushState(AlivcLivePusher pusher, boolean isPushing) {
+
+        }
+
+        @Override
+        public void onRemoteUserEnterRoom(AlivcLivePusher pusher, String userId, boolean isOnline) {
+
+        }
+
+        @Override
+        public void onRemoteUserVideoStream(AlivcLivePusher pusher, String userId, AlivcLivePlayVideoStreamType videoStreamType, boolean isPushing) {
+
+        }
     };
 
     AlivcLivePushNetworkListener pushNetworkListener = new AlivcLivePushNetworkListener() {
@@ -256,6 +279,11 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         @Override
         public void onPacketsLost(AlivcLivePusher pusher) {
         }
+
+        @Override
+        public void onNetworkQualityChanged(AlivcLiveNetworkQuality upQuality, AlivcLiveNetworkQuality downQuality) {
+
+        }
     };
 
     private int mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
@@ -319,6 +347,9 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
 
         // 初始化推流配置类
         mAlivcLivePushConfig = new AlivcLivePushConfig();
+        // 设置H5兼容模式
+        // 互动模式下，是否需要与Web 连麦互通，则必须使用H5兼容模式,否则，Web用户查看Native用户将是黑屏。
+        mAlivcLivePushConfig.setH5CompatibleMode(true);
         mAlivcLivePushConfig.setExtraInfo(LivePushGlobalConfig.LIVE_PUSH_CONFIG_EXTRA_INFO);
         mAlivcLivePushConfig.setPreviewDisplayMode(AlivcPreviewDisplayMode.ALIVC_LIVE_PUSHER_PREVIEW_ASPECT_FILL);
         mAlivcLivePushConfig.setLivePushMode(AlivcLiveMode.AlivcLiveInteractiveMode);
@@ -657,7 +688,7 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
      */
     public void destroy() {
         stopPublish();
-        if (callbackList != null &&  callbackList.size() > 0) {
+        if (callbackList != null && callbackList.size() > 0) {
             callbackList.clear();
         }
         if (mALivcLivePusher != null) {

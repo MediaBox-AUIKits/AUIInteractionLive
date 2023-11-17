@@ -16,6 +16,7 @@ import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.common.biz.exposable.enums.LiveStatus;
 import com.alivc.auicommon.core.base.Actions;
 import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.alivc.auimessage.model.message.ExitGroupMessage;
 import com.aliyun.aliinteraction.player.LivePlayerService;
 import com.aliyun.aliinteraction.player.exposable.CanvasScale;
 import com.aliyun.aliinteraction.roompaas.message.listener.SimpleOnMessageListener;
@@ -24,6 +25,7 @@ import com.aliyun.aliinteraction.roompaas.message.model.StopLiveModel;
 import com.aliyun.aliinteraction.uikit.core.BaseComponent;
 import com.aliyun.aliinteraction.uikit.core.ComponentHolder;
 import com.aliyun.aliinteraction.uikit.core.IComponent;
+import com.aliyun.aliinteraction.uikit.uibase.util.DialogUtil;
 import com.aliyun.aliinteraction.uikit.uibase.util.ViewUtil;
 import com.aliyun.auiappserver.ThreadUtil;
 import com.aliyun.auiappserver.model.LiveModel;
@@ -123,6 +125,26 @@ public class LiveRenderComponent extends FrameLayout implements ComponentHolder 
                 @Override
                 public void onStopLive(AUIMessageModel<StopLiveModel> message) {
                     innerStopLive();
+                }
+
+                @Override
+                public void onExitedGroup(AUIMessageModel<ExitGroupMessage> message) {
+                    super.onExitedGroup(message);
+                    innerStopLive();
+                    DialogUtil.confirm(getContext(), message.data.reason,
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    activity.finish();
+                                }
+                            },
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    activity.finish();
+                                }
+                            }
+                    );
                 }
             });
         }

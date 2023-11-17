@@ -1,5 +1,11 @@
 package com.aliyun.aliinteraction.roompaas.message.listener;
 
+import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.alivc.auimessage.model.message.ExitGroupMessage;
+import com.alivc.auimessage.model.message.JoinGroupMessage;
+import com.alivc.auimessage.model.message.LeaveGroupMessage;
+import com.alivc.auimessage.model.message.MuteGroupMessage;
+import com.alivc.auimessage.model.message.UnMuteGroupMessage;
 import com.aliyun.aliinteraction.roompaas.message.model.ApplyJoinLinkMicModel;
 import com.aliyun.aliinteraction.roompaas.message.model.CameraStatusUpdateModel;
 import com.aliyun.aliinteraction.roompaas.message.model.CancelApplyJoinLinkMicModel;
@@ -16,11 +22,6 @@ import com.aliyun.aliinteraction.roompaas.message.model.MicStatusUpdateModel;
 import com.aliyun.aliinteraction.roompaas.message.model.StartLiveModel;
 import com.aliyun.aliinteraction.roompaas.message.model.StopLiveModel;
 import com.aliyun.aliinteraction.roompaas.message.model.UpdateNoticeModel;
-import com.alivc.auimessage.model.base.AUIMessageModel;
-import com.alivc.auimessage.model.message.JoinGroupMessage;
-import com.alivc.auimessage.model.message.LeaveGroupMessage;
-import com.alivc.auimessage.model.message.MuteGroupMessage;
-import com.alivc.auimessage.model.message.UnMuteGroupMessage;
 
 /**
  * @author puke
@@ -54,7 +55,7 @@ public class SimpleOnMessageListener implements AUIMessageListener {
     }
 
     @Override
-    public void onTokenExpire() {
+    public void onExitedGroup(AUIMessageModel<ExitGroupMessage> message) {
 
     }
 

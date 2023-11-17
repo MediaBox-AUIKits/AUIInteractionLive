@@ -10,6 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, AUIMessageLevel) {
+    AUIMessageLevelNormal,
+    AUIMessageLevelHigh,
+};
+
 @protocol AUIMessageDataProtocol <NSObject>
 
 - (instancetype)initWithData:(NSDictionary *)data;
@@ -24,12 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AUIMessageModel : NSObject
 
-@property (nonatomic, copy) NSString *messageId;
-@property (nonatomic, copy) NSString *groupId;
+@property (nonatomic, copy, nullable) NSString *messageId;
+@property (nonatomic, copy, nullable) NSString *groupId;
 @property (nonatomic, assign) NSInteger msgType;
+@property (nonatomic, assign) AUIMessageLevel msgLevel;
 
-@property (nonatomic, strong) id<AUIUserProtocol> sender;
-@property (nonatomic, copy) NSDictionary *data;
+@property (nonatomic, strong, nullable) id<AUIUserProtocol> sender;
+@property (nonatomic, copy, nullable) NSDictionary *data;
 
 
 @end

@@ -14,6 +14,11 @@ import com.alivc.auicommon.common.base.exposable.Callback;
 import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.common.base.util.CommonUtil;
 import com.alivc.auicommon.common.roombase.Const;
+import com.alivc.auimessage.AUIMessageConfig;
+import com.alivc.auimessage.MessageServiceFactory;
+import com.alivc.auimessage.listener.InteractionCallback;
+import com.alivc.auimessage.model.base.AUIMessageUserInfo;
+import com.alivc.auimessage.model.base.InteractionError;
 import com.aliyun.aliinteraction.uikit.core.LiveConst;
 import com.aliyun.aliinteraction.uikit.uibase.helper.IMLoginHelper;
 import com.aliyun.auiappserver.AppServerApi;
@@ -21,15 +26,11 @@ import com.aliyun.auiappserver.AppServerTokenManager;
 import com.aliyun.auiappserver.model.CreateLiveRequest;
 import com.aliyun.auiappserver.model.GetLiveRequest;
 import com.aliyun.auiappserver.model.LiveModel;
+import com.aliyun.auiappserver.model.Token;
 import com.aliyun.auiappserver.model.UpdateLiveRequest;
 import com.aliyun.auipusher.LiveParam;
 import com.aliyun.auipusher.LiveRole;
 import com.aliyun.auipusher.config.AliLiveMediaStreamOptions;
-import com.alivc.auimessage.AUIMessageConfig;
-import com.alivc.auimessage.MessageServiceFactory;
-import com.alivc.auimessage.listener.InteractionCallback;
-import com.alivc.auimessage.model.base.AUIMessageUserInfo;
-import com.alivc.auimessage.model.base.InteractionError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,10 +129,23 @@ public class LivePrototype implements Serializable {
     private void fetchMessageToken(AUIMessageUserInfo userInfo, final InteractionCallback<Void> interactionCallback) {
         final AUIMessageConfig config = new AUIMessageConfig();
         config.deviceId = CommonUtil.getDeviceId();
-        AppServerTokenManager.fetchToken(userInfo.userId, new InteractionCallback<String>() {
+        AppServerTokenManager.fetchToken(userInfo.userId, new InteractionCallback<Token>() {
             @Override
-            public void onSuccess(String data) {
-                config.token = data;
+            public void onSuccess(Token data) {
+                if (!MessageServiceFactory.isMessageServiceValid()) {
+                    interactionCallback.onError(new InteractionError("invalid IM type."));
+                    return;
+                }
+
+                if (MessageServiceFactory.useInternal()) {
+                    config.oldToken = data.oldToken;
+                } else if (MessageServiceFactory.useRongCloud()) {
+                    // 消息组件的live/token接口，融云方案的app server和内部方案的app server地址不一样，后面需要统一掉.
+                    config.oldToken = data.oldToken;
+                } else if (MessageServiceFactory.useAlivcIM()) {
+                    config.newToken = data.newToken;
+                }
+
                 MessageServiceFactory.getMessageService().setConfig(config);
                 interactionCallback.onSuccess(null);
             }
@@ -159,6 +173,7 @@ public class LivePrototype implements Serializable {
         request.anchor_nick = param.nick;
         request.notice = param.notice;
         request.mode = param.model;
+        request.imServer.add("aliyun_new");
         AppServerApi.instance().createLive(request).invoke(new InteractionCallback<LiveModel>() {
             @Override
             public void onSuccess(LiveModel liveModel) {
@@ -199,7 +214,8 @@ public class LivePrototype implements Serializable {
         GetLiveRequest request = new GetLiveRequest();
         request.id = param.liveId;
         request.userId = Const.getUserId();
-        AppServerApi.instance().getLive(request).invoke(new InteractionCallback<LiveModel>() {
+        request.imServer.add("aliyun_new");
+        AppServerApi.instance().fetchLive(request).invoke(new InteractionCallback<LiveModel>() {
             @Override
             public void onSuccess(LiveModel liveModel) {
                 LiveParam liveParam = new LiveParam();

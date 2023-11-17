@@ -12,6 +12,7 @@ include ':AUIBaseKits:AUIBeauty'
 include ':AUIBaseKits:AUIMessage'
 include ':AUIBaseKits:AUIMessage:AUIMessageImpl-Internal'
 include ':AUIBaseKits:AUIMessage:AUIMessageImpl-RongCloud'
+include ':AUIBaseKits:AUIMessage:AUIMessageImpl-AliVCIM'
 
 include ':AUICore:AUIPlayer'
 include ':AUICore:AUILiveMessage'

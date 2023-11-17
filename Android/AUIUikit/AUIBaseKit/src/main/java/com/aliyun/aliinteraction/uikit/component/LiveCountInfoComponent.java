@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.alivc.auicommon.core.base.Actions;
+import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.alivc.auimessage.model.lwp.GetGroupInfoResponse;
 import com.aliyun.aliinteraction.roompaas.message.listener.SimpleOnMessageListener;
 import com.aliyun.aliinteraction.roompaas.message.model.LiveRoomInfoUpdateModel;
 import com.aliyun.aliinteraction.uikit.R;
@@ -19,7 +21,6 @@ import com.aliyun.aliinteraction.uikit.core.IComponent;
 import com.aliyun.aliinteraction.uikit.uibase.util.AppUtil;
 import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveContext;
-import com.alivc.auimessage.model.base.AUIMessageModel;
 
 import java.util.Locale;
 
@@ -84,6 +85,7 @@ public class LiveCountInfoComponent extends FrameLayout implements ComponentHold
         @Override
         public void onEnterRoomSuccess(LiveModel liveModel) {
             // 进入房间后, 填充房间基本信息
+            // TODO keria 客户反馈这地方有问题
             setViewCount(liveModel.pv);
         }
 
@@ -96,6 +98,13 @@ public class LiveCountInfoComponent extends FrameLayout implements ComponentHold
                         setVisibility(View.GONE);
                     } else {
                         setVisibility(View.VISIBLE);
+                    }
+                    break;
+                }
+                case Actions.GET_GROUP_STATISTICS_SUCCESS: {
+                    if (args.length > 0 && args[0] instanceof GetGroupInfoResponse) {
+                        GetGroupInfoResponse rsp = (GetGroupInfoResponse) args[0];
+                        setViewCount(rsp.pv);
                     }
                     break;
                 }

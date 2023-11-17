@@ -49,7 +49,7 @@ public class MultiAlivcLivePlayer extends AlivcLivePlayerImpl implements AlivcLi
     }
 
     @Override
-    public void onNetworkQualityChanged(AlivcLiveNetworkQuality quality) {
+    public void onNetworkQualityChanged(AlivcLiveNetworkQuality upQuality, AlivcLiveNetworkQuality downQuality) {
 
     }
 
@@ -60,6 +60,21 @@ public class MultiAlivcLivePlayer extends AlivcLivePlayerImpl implements AlivcLi
 
     @Override
     public void onPlayoutVolumeUpdate(int volume, boolean isSpeaking) {
+
+    }
+
+    @Override
+    public void onAudioMuted(boolean mute) {
+
+    }
+
+    @Override
+    public void onVideoEnabled(boolean enable) {
+
+    }
+
+    @Override
+    public void onVideoResolutionChanged(int width, int height) {
 
     }
 

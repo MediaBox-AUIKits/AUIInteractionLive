@@ -1,5 +1,7 @@
 package com.alivc.auimessage.model.base;
 
+import com.alivc.auimessage.AUIMessageLevel;
+
 /**
  * @author puke
  * @version 2023/4/13
@@ -14,6 +16,11 @@ public class AUIMessageModel<T> {
      * 群组ID
      */
     public String groupId;
+
+    /**
+     * 消息级别
+     */
+    public @AUIMessageLevel int msgLevel;
 
     /**
      * 发送者信息

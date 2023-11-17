@@ -4,7 +4,7 @@
 
 ### **模块职责**
 
-**AUIMessage**模块，为消息信令模块，主要负责对各个IM SDK的消息、信令的封装，一站式使用消息信令。
+**AUIMessage**模块，为消息信令模块，主要负责对各个IM SDK的消息、信令的封装，一站式使用消息、信令。
 
 ## **二、前置条件**
 
@@ -26,11 +26,12 @@ interface RongCloudConsts {
 
 ### **实现逻辑**
 
-* 对外接口：MessageService
-* 核心实现：分两个模块，每个模块里面都有一个实现类MessageServiceImpl，阿里云内部的IM SDK走AUIMessageImpl-Internal模块，融云的IM SDK走AUIMessageImpl-RongCloud模块。
-* 创建实例：MessageServiceFactory
+* **MessageService**：抽象统一了**AUIMessage**模块的对外接口，用户通过直接调用MessageService接口，即可屏蔽具体的实现逻辑。
+* **MessageServiceImpl**：继承自抽象接口MessageService，对不同IM解决方案进行封装，为MessageService的核心实现。AUIMessage工程目录下，提供不同IM解决方案的实现模块，因此每个模块里面都有一个实现类MessageServiceImpl。
 
-由于模块实现了插件化，因此message service实例是通过反射进行实例化，即：
+**注意：核心逻辑在MessageServiceImpl中。**
+
+* **MessageServiceFactory**：由于模块实现了插件化，因此message service实例是通过反射进行实例化，即：
 
 MessageService类，负责抽象出一套统一的对外接口；
 
@@ -40,36 +41,45 @@ messageService = (MessageService) implType.newInstance();
 
 MessageServiceFactory类，通过反射创建实例；
 
+* **MessageUnImplListener**：由于不同IM解决方案的能力存在差异化，当该方案无法实现AUIMessage抽象接口的能力时，需要使用APPServer完成相应能力的实现，即：通过该回调到业务上层RoomService，再通过服务端接口的能力来实现。
+
+* **AUIMessageServiceImplType**：该类中，定义了当前**AUIMessage**模块所有支持的IM解决方案，如下：
+
+| Module Name              | 模块含义          | IM 类型               |
+| ------------------------ | ----------------- | --------------------- |
+| AUIMessageImpl-Internal  | 阿里云IM v2.0实现 | 阿里云IM v2.0         |
+| AUIMessageImpl-RongCloud | 融云IM实现        | 融云IM                |
+| AUIMessageImpl-AliVCIM   | 阿里云IM v3.0实现 | 阿里云IM v3.0（推荐） |
+
+**注意：不同IM解决方案，消息信令不互通。**
+
 ```java
-public static boolean useInternal() {
-  String messageServiceClassName = getMessageService().getClass().getName();
-  return TextUtils.equals(messageServiceClassName, ServiceImpl.INTERNAL.className);
-}
+public enum AUIMessageServiceImplType {
 
-public static boolean useRongCloud() {
-  String messageServiceClassName = getMessageService().getClass().getName();
-  return TextUtils.equals(messageServiceClassName, ServiceImpl.RONG_CLOUD.className);
-}
+    /**
+     * 阿里视频云旧版互动消息SDK
+     *
+     * @implNote 对应`AUIMessageImpl-Internal`模块
+     */
+    ALIVC(ALIVC_NAME, ALIVC_IMPL),
 
-private enum ServiceImpl {
-  // 内部SDK
-  INTERNAL("com.alivc.auimessage.internal.MessageServiceImpl"),
+    /**
+     * 阿里视频云新版互动消息SDK
+     *
+     * @implNote 对应`AUIMessageImpl-AliVCIM`模块
+     */
+    ALIVC_IM(ALIVC_IM_NAME, ALIVC_IM_IMPL),
 
-  // 融云SDK
-  RONG_CLOUD("com.alivc.auimessage.rongcloud.MessageServiceImpl"),
-  ;
+    /**
+     * 融云聊天室SDK
+     *
+     * @implNote 对应`AUIMessageImpl-RongCloud`模块
+     */
+    RC_CHAT_ROOM(RC_CHAT_ROOM_NAME, RC_CHAT_ROOM_IMPL),
 
-  final String className;
-
-  ServiceImpl(String className) {
-    this.className = className;
-  }
+    ;
 }
 ```
-
-INTERNAL对应所在的类，为阿里云内部的IM SDK实现；RONG_CLOUD对应所在的类，为融云的IM SDK实现；
-
-**核心逻辑在不同的MessageServiceImpl中**
 
 **注意：**
 
@@ -78,8 +88,17 @@ INTERNAL对应所在的类，为阿里云内部的IM SDK实现；RONG_CLOUD对�
 * 当前项目中，通过BUILD_IM_TYPE编译配置，实现工程IM SDK类型的可配置，动态使用不同的IM SDK实现；
 
 ```groovy
-// IMType, internal->内部IM，rongcloud->融云IM
-ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", 'internal')
+// 定义BUILD IM TYPE，以决定使用哪种类型的IM方案，对应`AUIMessageServiceImplType`
+//internal->内部IM
+def BUILD_IM_TYPE_INTERNAL = "internal"
+//rongcloud->融云IM
+def BUILD_IM_TYPE_RONGCLOUD = "rongcloud"
+//alivcim->ALIVC_IM
+def BUILD_IM_TYPE_ALIVC_IM = "alivcim"
+
+// 默认切换到Aliyun IM SDK v3.0
+//ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", BUILD_IM_TYPE_INTERNAL)
+ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", BUILD_IM_TYPE_ALIVC_IM)
 ```
 
 ### **依赖关系**
@@ -96,34 +115,23 @@ dependencies {
 
 ```groovy
 // 切换消息SDK引擎
-if (BUILD_IM_TYPE == "rongcloud") {
-  implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-RongCloud')
+if (BUILD_IM_TYPE_INTERNAL.equals(BUILD_IM_TYPE)) {
+    implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-Internal')
+} else if (BUILD_IM_TYPE_RONGCLOUD.equals(BUILD_IM_TYPE)) {
+    implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-RongCloud')
 } else {
-  implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-Internal')
+    implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-AliVCIM')
 }
 ```
 
 ### **可扩展**
 
-MessageService为抽象化的消息服务接口类，客户可以基于该接口类，对接其它IM SDK，实现一套基于其它IM SDK的实现（参考MessageServiceImpl）。
+MessageService为抽象化的消息服务接口类，客户可以基于该接口类，对接其它IM SDK，实现一套基于其它IM SDK的实现（参考MessageServiceImpl）。步骤如下：
 
-在enum ServiceImpl里面定义IM SDK类型，以及实现类的包路径，通过MessageServiceFactory指定IM SDK类型，完成反射实例化。
-
-### **注意事项**
-
-在AUILiveMessage模块，某些功能在不同IM SDK方案下，走的逻辑不同。
-
-如：禁言群组，使用融云IM SDK时，走的是APP Server方案；而阿里云内部的IM SDK，可以直接通过IM SDK接口调用进行；请注意通过以下if-else来区分：
-
-```java
-if (MessageServiceFactory.useRongCloud()) {
-  // 融云方案走App Server
-} else if (MessageServiceFactory.useInternal()) {
-  // 内部消息组件走IM方案
-} else {
-  interactionCallback.onError(new InteractionError(""));
-}
-```
+* 在枚举AUIMessageServiceImplType里面，定义IM SDK类型，以及实现类的包路径；
+* 定义IM解决方案的实现模块，基于MessageService接口完成相应实现；
+* 通过implementation引入该IM解决方案的实现模块；
+* 通过MessageServiceFactory完成反射实例化；
 
 ## 四、用户指引
 
@@ -138,3 +146,4 @@ if (MessageServiceFactory.useRongCloud()) {
 ### **FAQ**
 
 如果您在使用AUI Kits有任何问题或建议，欢迎通过钉钉搜索群号35685013712加入AUI客户支持群。
+

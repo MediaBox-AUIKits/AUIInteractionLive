@@ -57,7 +57,7 @@ public class BeautyConstant {
 ```groovy
 dependencies {
     implementation "com.aliyunsdk.components:queen_menu:2.4.1-official-menu-ultimate-tiny"
-    implementation "com.aliyun.aio:AliVCSDK_PremiumLive:6.4.0"
+    implementation "com.aliyun.aio:AliVCSDK_PremiumLive:6.6.0"
 }
 ```
 

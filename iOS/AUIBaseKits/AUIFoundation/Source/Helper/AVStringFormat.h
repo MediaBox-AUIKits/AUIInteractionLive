@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 // 00:00:00
 + (NSString *)format2WithDuration:(float)duration;
 
+// 以“万”为单位
++ (NSString *)formatWithCount:(int)count;
+
 @end
 
 NS_ASSUME_NONNULL_END

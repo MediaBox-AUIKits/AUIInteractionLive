@@ -14,9 +14,12 @@ import com.alivc.auicommon.common.base.base.Function;
 import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.common.base.util.ThreadUtil;
 import com.alivc.auimessage.AUIMessageConfig;
+import com.alivc.auimessage.AUIMessageServiceImplType;
 import com.alivc.auimessage.MessageService;
 import com.alivc.auimessage.listener.InteractionCallback;
+import com.alivc.auimessage.listener.MessageConnectionListener;
 import com.alivc.auimessage.listener.MessageListener;
+import com.alivc.auimessage.listener.MessageUnImplListener;
 import com.alivc.auimessage.model.base.AUIMessageModel;
 import com.alivc.auimessage.model.base.AUIMessageUserInfo;
 import com.alivc.auimessage.model.base.InteractionError;
@@ -73,6 +76,10 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
 
     private static final String TAG = "MessageServiceImpl";
     private static final String SOURCE_ERROR = "rongcloud";
+
+    private MessageConnectionListener mMessageConnectionListener;
+    private MessageUnImplListener mMessageUnImplListener;
+
     private final ConnectionStatusListener sConnectionStatusListener = new ConnectionStatusListener();
     private final ReceiveMessageListener sReceiveMessageListener = new ReceiveMessageListener();
     private final ChatRoomMemberActionListener sChatRoomMemberActionListener = new ChatRoomMemberActionListener();
@@ -87,6 +94,16 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
         error.code = String.valueOf(errorCode);
         error.msg = errorMsg;
         return error;
+    }
+
+    @Override
+    public void setConnectionListener(MessageConnectionListener connectionListener) {
+        mMessageConnectionListener = connectionListener;
+    }
+
+    @Override
+    public void setUnImplListener(MessageUnImplListener unImplListener) {
+        mMessageUnImplListener = unImplListener;
     }
 
     @Override
@@ -126,7 +143,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
             return;
         }
 
-        if (config == null || TextUtils.isEmpty(config.token)) {
+        if (config == null || config.oldToken == null || TextUtils.isEmpty(config.oldToken.access_token)) {
             if (callback != null) {
                 callback.onError(generateError(-1, "config or token is empty."));
             }
@@ -134,7 +151,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
         }
 
         this.userInfo = userInfo;
-        RongCoreClient.connect(config.token, new io.rong.imlib.IRongCoreCallback.ConnectCallback() {
+        RongCoreClient.connect(config.oldToken.access_token, new io.rong.imlib.IRongCoreCallback.ConnectCallback() {
             /**
              * 数据库回调
              *
@@ -249,7 +266,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
     @Override
     public void sendMessageToGroup(SendMessageToGroupRequest req, InteractionCallback<SendMessageToGroupResponse> callback) {
         doSendMessage(
-                req.groupId, req.type, req.data, req.skipAudit, req.groupId, Conversation.ConversationType.CHATROOM, callback,
+                req.groupId, req.msgType, req.data, req.skipAudit, req.groupId, Conversation.ConversationType.CHATROOM, callback,
                 new Function<Message, SendMessageToGroupResponse>() {
                     @Override
                     public SendMessageToGroupResponse apply(Message message) {
@@ -264,7 +281,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
     @Override
     public void sendMessageToGroupUser(SendMessageToGroupUserRequest req, final InteractionCallback<SendMessageToGroupUserResponse> callback) {
         doSendMessage(
-                req.groupId, req.type, req.data, false, req.receiverId, Conversation.ConversationType.PRIVATE, callback,
+                req.groupId, req.msgType, req.data, false, req.receiverId, Conversation.ConversationType.PRIVATE, callback,
                 new Function<Message, SendMessageToGroupUserResponse>() {
                     @Override
                     public SendMessageToGroupUserResponse apply(Message message) {
@@ -368,27 +385,56 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
 
     @Override
     public void muteGroup(MuteGroupRequest req, InteractionCallback<GroupMuteStatusResponse> callback) {
-        // 融云方案，走AppServer实现
+        if (mMessageUnImplListener != null) {
+            mMessageUnImplListener.muteAll(req, callback);
+        } else {
+            if (callback != null) {
+                callback.onError(new InteractionError("unimpl"));
+            }
+        }
     }
 
     @Override
     public void cancelMuteGroup(CancelMuteGroupRequest req, InteractionCallback<GroupMuteStatusResponse> callback) {
-        // 融云方案，走AppServer实现
+        if (mMessageUnImplListener != null) {
+            mMessageUnImplListener.cancelMuteAll(req, callback);
+        } else {
+            if (callback != null) {
+                callback.onError(new InteractionError("unimpl"));
+            }
+        }
     }
 
     @Override
     public void queryMuteGroup(GroupMuteStatusRequest req, InteractionCallback<GroupMuteStatusResponse> callback) {
-        // 融云方案，走AppServer实现
+        if (mMessageUnImplListener != null) {
+            mMessageUnImplListener.queryMuteAll(req, callback);
+        } else {
+            if (callback != null) {
+                callback.onError(new InteractionError("unimpl"));
+            }
+        }
     }
 
     @Override
     public void sendLike(SendLikeRequest req, InteractionCallback<SendLikeResponse> callback) {
-        // 融云方案，走AppServer实现
+        if (mMessageUnImplListener != null) {
+            mMessageUnImplListener.sendLike(req, callback);
+        } else {
+            if (callback != null) {
+                callback.onError(new InteractionError("unimpl"));
+            }
+        }
     }
 
     @Override
     public Object getNativeEngine() {
         return null;
+    }
+
+    @Override
+    public AUIMessageServiceImplType getImplType() {
+        return AUIMessageServiceImplType.RC_CHAT_ROOM;
     }
 
     private static class OperationCallbackAdapter<T> extends IRongCoreCallback.OperationCallback {
@@ -435,7 +481,9 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                 dispatchOnUiThread(new Consumer<MessageListener>() {
                     @Override
                     public void accept(MessageListener messageListener) {
-                        messageListener.onTokenExpire();
+                        if (mMessageConnectionListener != null) {
+                            mMessageConnectionListener.onTokenExpire();
+                        }
                     }
                 });
             }
@@ -479,7 +527,6 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                 senderInfo.userAvatar = jsonObject.getString("avatar");
             } catch (JSONException e) {
                 Logger.e(TAG, "ReceiveMessageListener.onReceivedMessage parse json error", e);
-                return;
             }
 
             messageModel.senderInfo = senderInfo;

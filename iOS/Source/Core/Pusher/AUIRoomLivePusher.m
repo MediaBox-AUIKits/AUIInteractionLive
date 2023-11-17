@@ -81,6 +81,7 @@ static AlivcLivePushFPS g_pushFPS = AlivcLivePushFPS20;
     pushConfig.resolution = AlivcLivePushResolution720P;
     pushConfig.previewDisplayMode = displayMode;
     pushConfig.livePushMode = pushMode;
+    pushConfig.h5CompatibleMode = YES;
     pushConfig.fps = [self.class pushFPS];
     pushConfig.enableAutoBitrate = true;
     pushConfig.videoEncodeGop = AlivcLivePushVideoEncodeGOP_2;
@@ -99,6 +100,11 @@ static AlivcLivePushFPS g_pushFPS = AlivcLivePushFPS20;
     [_pushEngine setCustomFilterDelegate:self];
     [_pushEngine setCustomDetectorDelegate:self];
     [_pushEngine startPreview:self.displayView.renderView];
+    
+    if (pushMode == AlivcLivePushInteractiveMode) {
+        [_pushEngine enableAudioVolumeIndication:400 smooth:3 reportVad:1];
+    }
+    
 #if DEBUG
 //    [self switchCamera];
 //    [self mute:YES];
@@ -297,6 +303,12 @@ static AlivcLivePushFPS g_pushFPS = AlivcLivePushFPS20;
     });
 }
 
+- (void)onMicrophoneVolumeUpdate:(AlivcLivePusher *)pusher volume:(int)volume {
+    dispatch_async(dispatch_get_main_queue(), ^{
+//        NSLog(@"LiveEvent:onPlayoutVolumeUpdate volume:%d", volume);
+    });
+}
+
 #pragma mark - AlivcLivePusherErrorDelegate
 
 - (void)onSystemError:(AlivcLivePusher *)pusher error:(AlivcLivePushError *)error {
@@ -428,6 +440,11 @@ static AlivcLivePushFPS g_pushFPS = AlivcLivePushFPS20;
     });
 }
 
+- (void)onPusherNetworkQualityChanged:(AlivcLivePusher *)pusher upNetworkQuality:(AlivcLiveNetworkQuality)upQuality downNetworkQuality:(AlivcLiveNetworkQuality)downQuality {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"LiveEvent:onPusherNetworkQualityChanged upQuality:%zd downQuality:%zd", upQuality, downQuality);
+    });
+}
 
 #pragma mark - AlivcLivePusherCustomFilterDelegate
 

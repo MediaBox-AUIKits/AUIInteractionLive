@@ -1,5 +1,7 @@
 package com.aliyun.auiappserver.model;
 
+import com.alivc.auimessage.model.token.IMNewToken;
+import com.alivc.auimessage.model.token.IMOldToken;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,17 +12,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
 
-    @JsonProperty("access_token")
-    public String accessToken;
+    @JsonProperty("code")
+    public int code;
 
-    @JsonProperty("refresh_token")
-    public String refreshToken;
+    // 仅针对aliyun_old服务启作用
+    @JsonProperty("aliyun_old_im")
+    public IMOldToken oldToken;
 
-    @Override
-    public String toString() {
-        return "Token{" +
-                "accessToken='" + accessToken + '\'' +
-                ", refreshToken='" + refreshToken + '\'' +
-                '}';
-    }
+    // 仅针对aliyun_new服务启作用
+    @JsonProperty("aliyun_new_im")
+    public IMNewToken newToken;
+
 }

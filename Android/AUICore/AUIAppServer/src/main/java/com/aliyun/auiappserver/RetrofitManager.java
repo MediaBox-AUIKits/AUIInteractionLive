@@ -36,7 +36,7 @@ public class RetrofitManager {
     private static Retrofit getRetrofit() {
         if (sRetrofit == null) {
             sRetrofit = new Retrofit.Builder()
-                    .baseUrl(sAPPServerUrl + "/api/v1/")
+                    .baseUrl(sAPPServerUrl)
                     .addConverterFactory(JacksonConverterFactory.create())
                     .addCallAdapterFactory(new ApiInvokerCallAdapterFactory())
                     .client(new OkHttpClient.Builder()
@@ -66,7 +66,7 @@ public class RetrofitManager {
 
     public static class Const {
         // 互动直播-内部IM使用的APP Server地址
-        public static final String APP_SERVER_URL_ALIVC = "https://appserver.h5video.vip";
+        public static final String APP_SERVER_URL_ALIVC = "http://aui-newppserver-aui-newppserver-kvwbhrkfkw.cn-shanghai.fcapp.run";
         // 互动直播-融云IM使用的APP Server地址
         public static final String APP_SERVER_URL_RONG_CLOUD = "https://aui-ronppserver-aui-ronppserver-bfnwzrekhj.cn-shanghai.fcapp.run";
         // 企业直播-内部IM使用的APP Server地址

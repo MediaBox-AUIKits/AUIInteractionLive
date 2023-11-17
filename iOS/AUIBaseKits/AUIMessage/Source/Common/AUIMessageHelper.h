@@ -11,7 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AUIMessageHelper : NSObject
 
-+ (NSString *)jsonStringWithDict:(NSDictionary *)dict;
++ (nullable NSString *)jsonStringWithDict:(NSDictionary *)dict;
++ (nullable NSDictionary *)parseJson:(NSString *)json;
+
++ (NSError *)error:(NSInteger)code msg:(NSString *)msg;
 
 @end
 

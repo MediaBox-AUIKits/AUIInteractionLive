@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AUIMessage'
-  s.version          = '1.1.0'
+  s.version          = '2.0.0'
   s.summary          = 'A short description of AUIMessage.'
 
 # This description is used to generate tags and improve search results.
@@ -30,24 +30,35 @@ TODO: Add long description of the pod here.
 
   s.ios.deployment_target = '9.0'
   s.static_framework = true
-  s.default_subspec = 'Alivc'
+  s.default_subspec = 'Common'
   
   s.subspec 'Common' do |ss|
     ss.source_files = 'Source/Common/*.{h,m,mm}'
+  end
+  
+  s.subspec 'AliVCIM' do |ss|
+    ss.dependency 'AliVCInteractionMessage', '1.0.0'
+    ss.dependency 'AUIMessage/Common'
+    ss.source_files = 'Source/AliVCIM/*.{h,m,mm}'
+  end
+  
+  s.subspec 'AliVCIMCompat' do |ss|
+    ss.dependency 'AliVCInteractionMessage', '1.0.0'
+    ss.dependency 'AlivcInteraction', '1.2.1'
+    ss.dependency 'AUIMessage/Common'
+    ss.source_files = 'Source/AliVCIMCompat/*.{h,m,mm}'
   end
 
   s.subspec 'Alivc' do |ss|
     ss.dependency 'AlivcInteraction', '1.2.1'
     ss.dependency 'AUIMessage/Common'
     ss.source_files = 'Source/Alivc/*.{h,m,mm}'
-    ss.pod_target_xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) AUIMESSAGE_IMPL_TYPE=0'}
   end
   
   s.subspec 'RC' do |ss|
     ss.dependency 'RongCloudIM/IMLib', '5.4.5'
     ss.dependency 'AUIMessage/Common'
     ss.source_files = 'Source/RC/*.{h,m,mm}'
-    ss.pod_target_xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) AUIMESSAGE_IMPL_TYPE=1'}
   end
 
 end

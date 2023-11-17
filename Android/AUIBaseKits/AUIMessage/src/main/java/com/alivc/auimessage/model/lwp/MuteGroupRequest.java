@@ -13,4 +13,12 @@ public class MuteGroupRequest implements Serializable {
      * 群组id
      */
     public String groupId;
+
+    @Override
+    public String toString() {
+        return "MuteGroupRequest{" +
+                "groupId='" + groupId + '\'' +
+                '}';
+    }
+
 }

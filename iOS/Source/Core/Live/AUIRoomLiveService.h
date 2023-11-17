@@ -94,11 +94,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^onReceivedStopLive)(AUIRoomUser *sender);
 @property (nonatomic, copy) void (^onReceivedLike)(AUIRoomUser *sender, NSInteger likeCount);
 @property (nonatomic, copy) void (^onReceivedPV)(NSInteger pv);
-@property (nonatomic, copy) void (^onReceivedLeaveGroup)(AUIRoomUser *sender, NSDictionary *stat);
 @property (nonatomic, copy) void (^onReceivedMuteAll)(BOOL isMuteAll);
 @property (nonatomic, copy) void (^onReceivedNoticeUpdate)(NSString *notice);
 @property (nonatomic, copy) void (^onReceivedGift)(AUIRoomUser *sender, AUIRoomGiftModel *gift);
-
+@property (nonatomic, copy) void (^onReceivedLeaveRoom)(void);
 
 // 麦控事件
 @property (nonatomic, copy) void (^onReceivedCameraOpened)(AUIRoomUser *sender, BOOL opened);

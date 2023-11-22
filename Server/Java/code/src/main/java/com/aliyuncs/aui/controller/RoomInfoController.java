@@ -7,10 +7,7 @@ import com.aliyuncs.aui.common.utils.Result;
 import com.aliyuncs.aui.common.utils.ValidatorUtils;
 import com.aliyuncs.aui.dto.MeetingMemberInfo;
 import com.aliyuncs.aui.dto.req.*;
-import com.aliyuncs.aui.dto.res.AuthTokenResponse;
-import com.aliyuncs.aui.dto.res.ImTokenResponseDto;
-import com.aliyuncs.aui.dto.res.JumpUrlResponse;
-import com.aliyuncs.aui.dto.res.RoomInfoDto;
+import com.aliyuncs.aui.dto.res.*;
 import com.aliyuncs.aui.service.RoomInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -200,9 +197,9 @@ public class RoomInfoController {
         if (members != null) {
             return members;
         }
-        // 返回404
-        servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        return null;
+        MeetingMemberInfo.Members empty = new MeetingMemberInfo.Members();
+        empty.setMembers(Collections.emptyList());
+        return empty;
     }
 
     /**
@@ -211,7 +208,7 @@ public class RoomInfoController {
      * @author chunlei.zcl
      */
     @RequestMapping("/handlePushStreamEventCallback")
-    public Result handlePushStreamEventCallback(@RequestParam LivePushStreamEventRequestDto livePushStreamEventRequestDto,
+    public Result handlePushStreamEventCallback(LivePushStreamEventRequestDto livePushStreamEventRequestDto,
                                                 @RequestHeader HttpHeaders headers) {
 
         ValidatorUtils.validateEntity(livePushStreamEventRequestDto);
@@ -242,8 +239,8 @@ public class RoomInfoController {
 
         String scheme = request.getScheme();
         String serverName = request.getServerName();
-
-        String serverHost = String.format("%s://%s", scheme, serverName);
+        Integer port = request.getServerPort();
+        String serverHost = String.format("%s://%s:%s", scheme, serverName, port);
 
         return roomInfoService.getLiveJumpUrl(jumpUrlRequestDto, serverHost);
     }
@@ -254,5 +251,14 @@ public class RoomInfoController {
         ValidatorUtils.validateEntity(authTokenRequestDto);
         return roomInfoService.verifyAuthToken(authTokenRequestDto);
     }
+
+
+    @RequestMapping("/getRtcAuthToken")
+    public RtcAuthTokenResponse getRtcAuthToken(@RequestBody RtcAuthTokenRequestDto rtcAuthTokenRequestDto) {
+
+        ValidatorUtils.validateEntity(rtcAuthTokenRequestDto);
+        return roomInfoService.getRtcAuthToken(rtcAuthTokenRequestDto);
+    }
+
 
 }

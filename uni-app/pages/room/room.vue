@@ -1,12 +1,17 @@
 <template>
 	<page-meta :root-font-size="fontSize+'px'"></page-meta>
-	<view>
+	<view
+		:style="{
+			width: windowWidth,
+			height: windowHeight,
+		}"
+	>
 		<liveroom :joined-group-id="joinedGroupId" />
 	</view>
 </template>
 
 <script>
-	import { InteractionEngine } from  '@/utils/aliyun-interaction-sdk.mini.js';
+	import { InteractionEngine } from  '@/utils/Interaction.js';
 	import rootFontSize from '@/mixins/rootFontSize.js';
 	import { LatestLiveidStorageKey } from '@/utils/constants.js';
 	import services from '@/utils/services.js';
@@ -26,6 +31,8 @@
 				fetching: false,
 				liveId: '',
 				joinedGroupId: '', // 已加入的消息组id
+				windowHeight: '100%',
+				windowWidth: '100%',
 			};
 		},
 		
@@ -34,6 +41,10 @@
 			const ins = InteractionEngine.create();
 			getApp().globalData.interaction = ins;
 			this.interaction = ins;
+			
+			const res = uni.getSystemInfoSync();
+			this.windowHeight = res.windowHeight + 'px';
+			this.windowWidth = res.windowWidth + 'px';
 		},
 		
 		onLoad(query) {
@@ -127,6 +138,10 @@
 					this.updateGroupStatistics();
 				}catch(e){
 					console.log('加入消息组失败', e);
+					uni.showToast({
+						title: '加入消息组失败',
+						icon: 'error',
+					});
 				}
 			},
 			
@@ -166,5 +181,4 @@
 </script>
 
 <style lang="scss">
-
 </style>

@@ -40,7 +40,6 @@
 
 .nick-block {
   position: relative;
-  margin-bottom: 1.28rem;
   border-bottom: 1px solid #E6E7EC;
 
   input {
@@ -69,15 +68,9 @@
 }
 
 .login-btn {
-  padding-top: 0.20rem;
-  padding-bottom: 0.20rem;
-  font-size: 0.32rem;
-  line-height: 1.5;
-  color: #fff;
-  background-color: $uni-color-primary;
-  border-radius: 0.44rem;
-  
-  &::after {
+	margin-top: 1.28rem;
+
+	&::after {
 	  display: none;
-  }
+	}
 }

@@ -33,7 +33,7 @@
 		
 		computed: {
 			pvText() {
-				const pv = this.info.metrics.pv;
+				const pv = (this.info.metrics && this.info.metrics.pv) || 0;
 				if (pv > 10000) {
 				  // 若需要国际化，这里得区分地域，比如 14000 国外格式化为 14K
 				  return (pv / 10000).toFixed(1) + 'w';

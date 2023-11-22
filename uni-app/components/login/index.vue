@@ -11,7 +11,16 @@
 				/>
 				<view :class="['nick-tip', { focus: !!nickName || inputFocus }]">昵称（请输入英文字母、数字）</view>
 			</view>
-			<primary-button :disabled="!nickName" :loading="logging" @click="login">进入</primary-button>
+			
+			<view class="login-btn">
+				<primary-button
+					:disabled="!nickName"
+					:loading="logging"
+					@click="login"
+				>
+					进入
+				</primary-button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -69,11 +78,11 @@
 					.finally(() => {
 						this.logging = false;
 					});
-			}
+			},
 		}
 	};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	@import "./index.scss";
 </style>

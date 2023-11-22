@@ -5,6 +5,7 @@ import com.aliyuncs.aui.dto.PullLiveInfo;
 import com.aliyuncs.aui.dto.PushLiveInfo;
 import com.aliyuncs.aui.dto.req.ImTokenRequestDto;
 import com.aliyuncs.aui.dto.res.ImTokenResponseDto;
+import com.aliyuncs.aui.dto.res.NewImTokenResponseDto;
 import com.aliyuncs.aui.dto.res.RoomInfoDto;
 
 /**
@@ -21,11 +22,22 @@ public interface VideoCloudService {
     ImTokenResponseDto getImToken(ImTokenRequestDto imTokenRequestDto);
 
     /**
+     * 获取新Im的Token。
+     * @author chunlei.zcl
+     */
+    NewImTokenResponseDto getNewImToken(ImTokenRequestDto imTokenRequestDto);
+
+    /**
     * 创建消息组。见文档：https://help.aliyun.com/document_detail/465128.html
     * @author chunlei.zcl
     */
     String createMessageGroup(String anchor);
 
+    /**
+     * 创建新im的消息组。
+     * @author chunlei.zcl
+     */
+    String createNewImMessageGroup(String groupId, String creatorId);
 
     /**
     * 获取推流地址。见文档：https://help.aliyun.com/document_detail/199339.html
@@ -64,6 +76,12 @@ public interface VideoCloudService {
     *
     * @author chunlei.zcl
     */
+    RoomInfoDto.Metrics getNewImGroupDetails(String groupId);
+
+    /**
+     *
+     * @author chunlei.zcl
+     */
     RoomInfoDto.Metrics getGroupDetails(String groupId);
 
     /**
@@ -77,4 +95,19 @@ public interface VideoCloudService {
      * @author chunlei.zcl
      */
     boolean validLiveCallbackSign(String liveSignature, String liveTimestamp);
+
+    /**
+     * 获取rtc token信息。见文档https://help.aliyun.com/document_detail/450516.htm、
+     * @author chunlei.zcl
+     */
+    public String getRtcAuth(String channelId, String userId, long timestamp);
+
+    /**
+     * 给N对N连麦做测试
+     * @param channelId
+     * @param userId
+     * @param timestamp
+     * @return
+     */
+    String getSpecialRtcAuth(String channelId, String userId, long timestamp);
 }

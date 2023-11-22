@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 获取IM服务Token的请求参数
@@ -27,5 +28,13 @@ public class ImTokenRequestDto {
     @NotBlank(message="deviceType不能为空")
     @JsonProperty("device_type")
     private String deviceType;
+
+    @ApiModelProperty(value = "im群列表")
+    @JsonProperty("im_server")
+    private List<String> imServer;
+
+    @ApiModelProperty(value = "角色，为admin时，表示该用户可以调用管控接口")
+    @JsonProperty("role")
+    private String role = "";
 
 }

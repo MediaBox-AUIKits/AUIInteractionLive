@@ -12,10 +12,7 @@ import com.aliyuncs.aui.dto.enums.LiveMode;
 import com.aliyuncs.aui.dto.enums.LiveStatus;
 import com.aliyuncs.aui.dto.enums.PushStreamStatus;
 import com.aliyuncs.aui.dto.req.*;
-import com.aliyuncs.aui.dto.res.AuthTokenResponse;
-import com.aliyuncs.aui.dto.res.ImTokenResponseDto;
-import com.aliyuncs.aui.dto.res.JumpUrlResponse;
-import com.aliyuncs.aui.dto.res.RoomInfoDto;
+import com.aliyuncs.aui.dto.res.*;
 import com.aliyuncs.aui.entity.RoomInfoEntity;
 import com.aliyuncs.aui.service.RoomInfoService;
 import com.aliyuncs.aui.service.VideoCloudService;
@@ -30,6 +27,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +37,9 @@ import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
+
+import static com.aliyuncs.aui.common.Constants.IM_NEW;
+import static com.aliyuncs.aui.common.Constants.IM_OLD;
 
 /**
  * 房间服务实现类
@@ -76,10 +77,33 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoDao, RoomInfoEntity
     }
 
     @Override
+    public NewImTokenResponseDto getNewImToken(ImTokenRequestDto imTokenRequestDto) {
+
+        return videoCloudService.getNewImToken(imTokenRequestDto);
+    }
+
+    @Override
     public RoomInfoDto createRoomInfo(RoomCreateRequestDto roomCreateRequestDto) {
 
         long start = System.currentTimeMillis();
-        String groupId = videoCloudService.createMessageGroup(roomCreateRequestDto.getAnchor());
+
+        String groupId = null;
+        if (CollectionUtils.isNotEmpty(roomCreateRequestDto.getImServer())) {
+            if (roomCreateRequestDto.getImServer().contains(IM_OLD)) {
+                groupId = videoCloudService.createMessageGroup(roomCreateRequestDto.getAnchor());
+            }
+
+            if (roomCreateRequestDto.getImServer().contains(IM_NEW)) {
+                if (StringUtils.isEmpty(groupId)) {
+                    groupId = UUID.randomUUID().toString().replaceAll("-", "");
+                }
+                groupId = videoCloudService.createNewImMessageGroup(groupId, roomCreateRequestDto.getAnchor());
+            }
+        } else {
+            // 兼容老的im逻辑
+            groupId = videoCloudService.createMessageGroup(roomCreateRequestDto.getAnchor());
+        }
+
         if (StringUtils.isEmpty(groupId)) {
             log.error("createMessageGroup error. author:{}", roomCreateRequestDto.getAnchor());
             return null;
@@ -95,6 +119,7 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoDao, RoomInfoEntity
                 .anchorId(roomCreateRequestDto.getAnchor())
                 .extendsInfo(roomCreateRequestDto.getExtendsInfo())
                 .chatId(groupId)
+                .anchorNick(roomCreateRequestDto.getAnchorNick())
                 .mode(roomCreateRequestDto.getMode())
                 .status((long) LiveStatus.LiveStatusPrepare.getVal())
                 .build();
@@ -160,12 +185,29 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoDao, RoomInfoEntity
             }
         }
 
-        RoomInfoDto.Metrics metrics = videoCloudService.getGroupDetails(roomInfoEntity.getId());
-        if (metrics != null) {
-            roomInfoDto.setMetrics(metrics);
+        RoomInfoDto.Metrics metrics = null;
+        RoomInfoDto.UserStatus userStatus = null;
+
+        if (CollectionUtils.isNotEmpty(roomGetRequestDto.getImServer())) {
+            if (roomGetRequestDto.getImServer().contains(IM_OLD)) {
+                metrics = videoCloudService.getGroupDetails(roomInfoEntity.getId());
+                userStatus = videoCloudService.getUserInfo(roomInfoEntity.getId(), roomInfoEntity.getAnchorId());
+            } else if (roomGetRequestDto.getImServer().contains(IM_NEW)) {
+                metrics = videoCloudService.getNewImGroupDetails(roomInfoEntity.getId());
+            } else {
+                metrics = videoCloudService.getGroupDetails(roomInfoEntity.getId());
+                userStatus = videoCloudService.getUserInfo(roomInfoEntity.getId(), roomInfoEntity.getAnchorId());
+            }
+        } else {
+            metrics = videoCloudService.getGroupDetails(roomInfoEntity.getId());
+            userStatus = videoCloudService.getUserInfo(roomInfoEntity.getId(), roomInfoEntity.getAnchorId());
         }
 
-        RoomInfoDto.UserStatus userStatus = videoCloudService.getUserInfo(roomInfoEntity.getId(), roomInfoEntity.getAnchorId());
+        if (metrics == null) {
+            metrics = RoomInfoDto.Metrics.builder().pv(0L).uv(0L).onlineCount(0L).build();
+        }
+        roomInfoDto.setMetrics(metrics);
+        
         if (userStatus != null) {
             roomInfoDto.setUserStatus(userStatus);
         }
@@ -193,6 +235,7 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoDao, RoomInfoEntity
             RoomGetRequestDto roomGetRequestDto = new RoomGetRequestDto();
             roomGetRequestDto.setId(record.getId());
             roomGetRequestDto.setUserId(record.getAnchorId());
+            roomGetRequestDto.setImServer(roomListRequestDto.getImServer());
             Future<RoomInfoDto> future = THREAD_POOL.submit(() -> getRoomInfo(roomGetRequestDto, countDownLatch));
             futureList.add(future);
         }
@@ -473,9 +516,18 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoDao, RoomInfoEntity
             String token = JwtUtils.generateToken(userName);
             return AuthTokenResponse.builder().loginToken(token).build();
         } catch (JWTVerificationException e) {
-            log.error("verifyAuthToken:{}", e);
+            log.error("verifyAuthToken:{}", e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public RtcAuthTokenResponse getRtcAuthToken(RtcAuthTokenRequestDto rtcAuthTokenRequestDto) {
+
+        // 24小时有效
+        long timestamp = DateUtils.addDays(new Date(), 1).getTime() / 1000;
+        String token = videoCloudService.getSpecialRtcAuth(rtcAuthTokenRequestDto.getRoomId(), rtcAuthTokenRequestDto.getUserId(), timestamp);
+        return RtcAuthTokenResponse.builder().authToken(token).timestamp(timestamp).build();
     }
 
     private boolean verifyPermission(String roomId, String reqUid) {

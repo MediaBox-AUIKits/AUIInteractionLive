@@ -11,6 +11,7 @@ import com.aliyuncs.aui.dto.PushLiveInfo;
 import com.aliyuncs.aui.dto.enums.MediaStatus;
 import com.aliyuncs.aui.dto.req.ImTokenRequestDto;
 import com.aliyuncs.aui.dto.res.ImTokenResponseDto;
+import com.aliyuncs.aui.dto.res.NewImTokenResponseDto;
 import com.aliyuncs.aui.dto.res.RoomInfoDto;
 import com.aliyuncs.aui.service.VideoCloudService;
 import com.aliyuncs.exceptions.ClientException;
@@ -35,10 +36,7 @@ import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 视频云服务实现类
@@ -78,6 +76,15 @@ public class VideoCloudServiceImpl implements VideoCloudService {
     @Value("${biz.live_callback.auth_key}")
     private String liveCallbackAuthKey;
 
+    @Value("${biz.new_im.appId}")
+    private String appId;
+
+    @Value("${biz.new_im.appKey}")
+    private String appKey;
+
+    @Value("${biz.new_im.appSign}")
+    private String appSign;
+
     private IAcsClient client;
 
     @PostConstruct
@@ -115,6 +122,34 @@ public class VideoCloudServiceImpl implements VideoCloudService {
     }
 
     @Override
+    public NewImTokenResponseDto getNewImToken(ImTokenRequestDto imTokenRequestDto) {
+
+        String role = imTokenRequestDto.getRole();
+        if (role == null) {
+            role = "";
+        }
+        String nonce = UUID.randomUUID().toString();
+        long timestamp = DateUtils.addHours(new Date(), 1).getTime();
+        String signContent = String.format("%s%s%s%s%s%s", appId, appKey, imTokenRequestDto.getUserId(), nonce, timestamp, role);
+        String appToken = org.apache.commons.codec.digest.DigestUtils.sha256Hex(signContent);
+
+        NewImTokenResponseDto newImTokenResponseDto = NewImTokenResponseDto.builder()
+                .appId(appId)
+                .appSign(appSign)
+                .appToken(appToken)
+                .auth(NewImTokenResponseDto.Auth.builder()
+                        .userId(imTokenRequestDto.getUserId())
+                        .nonce(nonce)
+                        .timestamp(timestamp)
+                        .role(role)
+                        .build())
+                .build();
+
+        log.info("getNewImToken. userId:{}, newImTokenResponseDto:{}", imTokenRequestDto.getUserId(), JSONObject.toJSONString(newImTokenResponseDto));
+        return newImTokenResponseDto;
+    }
+
+    @Override
     public String createMessageGroup(String anchor) {
 
         long start = System.currentTimeMillis();
@@ -133,6 +168,30 @@ public class VideoCloudServiceImpl implements VideoCloudService {
             log.error("createMessageGroup ClientException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
         } catch (Exception e) {
             log.error("createMessageGroup Exception. error:{}", e.getMessage());
+        }
+        return null;
+    }
+
+    public String createNewImMessageGroup(String groupId, String creatorId) {
+
+        long start = System.currentTimeMillis();
+        CreateLiveMessageGroupRequest request = new CreateLiveMessageGroupRequest();
+        request.setAppId(appId);
+        request.setGroupId(groupId);
+        request.setCreatorId(creatorId);
+
+        log.info("createNewImMessageGroup, request:{}", JSONObject.toJSONString(request));
+
+        try {
+            CreateLiveMessageGroupResponse acsResponse = client.getAcsResponse(request);
+            log.info("createNewImMessageGroup, response:{}, consume:{}", JSONObject.toJSONString(acsResponse), (System.currentTimeMillis() - start));
+            return acsResponse.getGroupId();
+        } catch (ServerException e) {
+            log.error("createNewImMessageGroup ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
+        } catch (ClientException e) {
+            log.error("createNewImMessageGroup ClientException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
+        } catch (Exception e) {
+            log.error("createNewImMessageGroup Exception. error:{}", e.getMessage());
         }
         return null;
     }
@@ -242,6 +301,40 @@ public class VideoCloudServiceImpl implements VideoCloudService {
     }
 
     @Override
+    public RoomInfoDto.Metrics getNewImGroupDetails(String groupId) {
+
+        long start = System.currentTimeMillis();
+
+        DescribeLiveMessageGroupRequest request = new DescribeLiveMessageGroupRequest();
+
+        request.setAppId(appId);
+        request.setGroupId(groupId);
+
+        try {
+            DescribeLiveMessageGroupResponse response = client.getAcsResponse(request);
+            log.info("getNewImGroupDetails, response:{}, consume:{}", JSONObject.toJSONString(response), (System.currentTimeMillis() - start));
+
+            if (response.getDelete() != null && response.getDelete()) {
+                // 表示群已删除
+                log.warn("getNewImGroupDetails, groupId:{} is deleted", groupId);
+                return null;
+            }
+            return RoomInfoDto.Metrics.builder()
+                    .pv(response.getTotalTimes())
+                    .onlineCount(response.getOnlineUserCounts())
+                    .build();
+        } catch (ServerException e) {
+            log.error("getNewImGroupDetails ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
+        } catch (ClientException e) {
+            log.error("getNewImGroupDetails ClientException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
+        } catch (Exception e) {
+            log.error("getNewImGroupDetails Exception. error:{}", e.getMessage());
+        }
+
+        return null;
+    }
+
+    @Override
     public RoomInfoDto.Metrics getGroupDetails(String groupId) {
 
         long start = System.currentTimeMillis();
@@ -325,9 +418,9 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         String pullAuthKey = getAAuth(streamName, liveStreamPullAuthKey);
         String pullAuthKeyOfOriaac = getAAuth(String.format("%s_oriaac", streamName), liveStreamPullAuthKey);
         String pullAuthKeyWithFlv = getAAuth(String.format("%s%s", streamName, ".flv"), liveStreamPullAuthKey);
-        String pullAuthKeyWithFlvOfOriaac = getAAuth(String.format("%s%s_oriaac", streamName, ".flv"), liveStreamPullAuthKey);
+        String pullAuthKeyWithFlvOfOriaac = getAAuth(String.format("%s_oriaac%s", streamName, ".flv"), liveStreamPullAuthKey);
         String pullAuthKeyWithM3u8 = getAAuth(String.format("%s%s", streamName, ".m3u8"), liveStreamPullAuthKey);
-        String pullAuthKeyWithM3u8OfOriaac = getAAuth(String.format("%s%s_oriaac", streamName, ".m3u8"), liveStreamPullAuthKey);
+        String pullAuthKeyWithM3u8OfOriaac = getAAuth(String.format("%s_oriaac%s", streamName, ".m3u8"), liveStreamPullAuthKey);
 
         PullLiveInfo pullLiveInfo = PullLiveInfo.builder()
                 .rtmpUrl(String.format("%s://%s?auth_key=%s", "rtmp", streamUrl, pullAuthKey))
@@ -344,13 +437,22 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         return pullLiveInfo;
     }
 
-    private String getRtcAuth(String channelId, String userId, long timestamp) {
+    public String getRtcAuth(String channelId, String userId, long timestamp) {
 
         String rtcAuthStr = String.format("%s%s%s%s%d", liveMicAppId, liveMicAppKey, channelId, userId, timestamp);
         String rtcAuth = getSHA256(rtcAuthStr);
         log.info("getRtcAuth. rtcAuthStr:{}, rtcAuth:{}", rtcAuthStr, rtcAuth);
         return rtcAuth;
     }
+
+    public String getSpecialRtcAuth(String channelId, String userId, long timestamp) {
+
+        String rtcAuthStr = String.format("%s%s%s%s%d", "", "", channelId, userId, timestamp);
+        String rtcAuth = getSHA256(rtcAuthStr);
+        log.info("getRtcAuth. rtcAuthStr:{}, rtcAuth:{}", rtcAuthStr, rtcAuth);
+        return rtcAuth;
+    }
+
 
 
     private static String getSHA256(String str) {

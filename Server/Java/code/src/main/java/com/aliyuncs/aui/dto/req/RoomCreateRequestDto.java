@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 创建直播间请求参数
@@ -44,5 +45,9 @@ public class RoomCreateRequestDto {
     @ApiModelProperty(value = "扩展字段, json格式")
     @JsonProperty("extends")
     private String extendsInfo;
+
+    @ApiModelProperty(value = "im群列表")
+    @JsonProperty("im_server")
+    private List<String> imServer;
 
 }

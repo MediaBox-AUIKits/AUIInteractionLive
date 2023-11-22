@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 获取房间信息
@@ -23,4 +24,7 @@ public class RoomGetRequestDto {
     @JsonProperty("user_id")
     private String userId;
 
+    @ApiModelProperty(value = "im群列表")
+    @JsonProperty("im_server")
+    private List<String> imServer;
 }

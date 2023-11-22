@@ -17,7 +17,7 @@
 <script>
 	import Banner from './banner.vue';
 	import ChatBox from './chatBox.vue';
-	import Player from './player.vue';
+	import Player from '../player/player.vue';
 	
 	export default {
 		name:"liveroom",
@@ -59,8 +59,8 @@
 @import 'base.scss';
 .liveroom-wrap {
 	position: relative;
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	height: 100%;
 	color: $info-text-color;
 	background-image: $room-background;
 }

@@ -12,8 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AUIMessageConfig : NSObject
 
 @property (nonatomic, copy, readonly, class) NSString *deviceId;
-@property (nonatomic, copy) NSString *token;
-
+@property (nonatomic, copy, nullable) NSDictionary *tokenData;
 
 @end
 

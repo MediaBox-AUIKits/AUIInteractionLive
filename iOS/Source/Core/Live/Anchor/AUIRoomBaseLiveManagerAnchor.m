@@ -24,6 +24,7 @@
 @synthesize onConnectionPoorBlock;
 @synthesize onConnectionLostBlock;
 @synthesize onConnectErrorBlock;
+@synthesize onReceivedLeaveRoom;
 
 - (instancetype)initWithModel:(AUIRoomLiveInfoModel *)liveInfoModel {
     self = [super init];
@@ -40,7 +41,13 @@
 }
 
 - (void)setupLiveService {
-    
+    __weak typeof(self) weakSelf = self;
+    self.liveService.onReceivedLeaveRoom = ^{
+        [weakSelf destoryLivePusher];
+        if (weakSelf.onReceivedLeaveRoom) {
+            weakSelf.onReceivedLeaveRoom();
+        }
+    };
 }
 
 - (void)setupLivePusher {
@@ -70,12 +77,6 @@
             completed(success);
         }
         if (success) {
-            [weakSelf.liveService queryMuteAll:^(BOOL success) {
-                if (weakSelf.onReceivedMuteAll) {
-                    weakSelf.onReceivedMuteAll(weakSelf.liveService.isMuteAll);
-                }
-            }];
-            
             if (weakSelf.liveService.liveInfoModel.status == AUIRoomLiveStatusNone) {
                 [weakSelf prepareLivePusher];
             }
@@ -94,8 +95,17 @@
 
 - (void)leaveRoom:(void (^)(BOOL))completed {
     [self destoryLivePusher];
-    [self.liveService finishLive:nil];
-    [self.liveService leaveRoom:completed];
+    __weak typeof(self) weakSelf = self;
+    [self.liveService finishLive:^(BOOL success) {
+        if (success) {
+            [weakSelf.liveService leaveRoom:completed];
+        }
+        else {
+            if (completed) {
+                completed(NO);
+            }
+        }
+    }];
 }
 
 - (void)startLive:(void (^)(BOOL))completed {

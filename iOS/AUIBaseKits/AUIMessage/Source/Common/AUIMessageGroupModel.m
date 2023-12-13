@@ -46,6 +46,29 @@
 @end
 
 
+
+@implementation AUIMessageMuteAllRequest
+
+@end
+
+@implementation AUIMessageCancelMuteAllRequest
+
+@end
+
+@implementation AUIMessageQueryMuteAllRequest
+
+@end
+
+@implementation AUIMessageQueryMuteAllResponse
+
+@end
+
+@implementation AUIMessageSendLikeRequest
+
+@end
+
+
+
 @implementation AUIMessageGetGroupInfoRequest
 
 @end

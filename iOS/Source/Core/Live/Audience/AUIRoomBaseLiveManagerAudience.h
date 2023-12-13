@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enterRoom:(nullable void(^)(BOOL))completed;
 - (void)leaveRoom:(nullable void (^)(BOOL))completed;
+@property (nonatomic, copy) void (^onReceivedLeaveRoom)(void);  // 被动离开房间
 
 @property (nonatomic, copy) void (^onReceivedStartLive)(void);
 @property (nonatomic, copy) void (^onReceivedStopLive)(void);

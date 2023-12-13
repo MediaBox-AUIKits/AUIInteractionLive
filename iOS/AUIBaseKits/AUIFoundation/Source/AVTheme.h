@@ -63,6 +63,7 @@ GetColorMethodDefine(bg_weak)
 GetColorMethodDefine(bg_medium)
 GetColorMethodDefine(fg_strong)
 
+GetColorMethodDefine(text_ultrastrong)
 GetColorMethodDefine(text_strong)
 GetColorMethodDefine(text_medium)
 GetColorMethodDefine(text_weak)

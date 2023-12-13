@@ -114,7 +114,15 @@
 }
 
 - (void)onFirstVideoFrameDrawn:(AlivcLivePlayer *)player {
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"RtcPlayerEvent:onFirstVideoFrameDrawn");
+    });
+}
+
+- (void)onPlayoutVolumeUpdate:(AlivcLivePlayer *)player volume:(int)volume speechState:(BOOL)isSpeaking {
+    dispatch_async(dispatch_get_main_queue(), ^{
+//        NSLog(@"RtcPlayerEvent:onPlayoutVolumeUpdate volume:%d isSpeaking:%d", volume, isSpeaking);
+    });
 }
 
 @end

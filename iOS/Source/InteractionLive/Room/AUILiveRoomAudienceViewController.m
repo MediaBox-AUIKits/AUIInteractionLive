@@ -74,8 +74,10 @@
         button.clickBlock = ^(AVBlockButton * _Nonnull sender) {
             
             void (^destroyBlock)(void) = ^{
-                [weakSelf.liveManager leaveRoom:nil];
-                [weakSelf.navigationController popViewControllerAnimated:YES];
+                [weakSelf.liveManager leaveRoom:^(BOOL success) {
+                    UIApplication.sharedApplication.idleTimerDisabled = NO;
+                    [weakSelf.navigationController popViewControllerAnimated:YES];
+                }];
             };
             
             if (weakSelf.liveManager.liveInfoModel.status == AUIRoomLiveStatusLiving && [weakSelf linkMicManager] && [weakSelf linkMicManager].isJoinedLinkMic) {
@@ -294,10 +296,12 @@
         }
         if (!success) {
             [AVAlertController showWithTitle:nil message:@"进入直播间失败，请稍后重试~" needCancel:NO onCompleted:^(BOOL isCanced) {
+                UIApplication.sharedApplication.idleTimerDisabled = NO;
                 [weakSelf.navigationController popViewControllerAnimated:YES];
             }];
         }
     }];
+    UIApplication.sharedApplication.idleTimerDisabled = YES;
 }
 
 - (void)setupBackground {
@@ -414,6 +418,13 @@
     self.liveManager.onReceivedNoticeUpdate = ^(NSString * _Nonnull notice) {
         weakSelf.noticeButton.noticeContent = notice;
         [AVToastView show:@"公告已更新" view:weakSelf.view position:AVToastViewPositionMid];
+    };
+    
+    self.liveManager.onReceivedLeaveRoom = ^{
+        [AVAlertController showWithTitle:@"你被移出房间了" message:@"" needCancel:NO onCompleted:^(BOOL isCanced) {
+            UIApplication.sharedApplication.idleTimerDisabled = NO;
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }];
     };
     
     [self linkMicManager].onReceivedResponseApplyLinkMic = ^(AUIRoomUser * _Nonnull sender, BOOL agree, NSString *pullUrl) {

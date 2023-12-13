@@ -42,6 +42,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)onMessageReceived:(AUIMessageModel *)model;
 
+/**
+ * 被动离开群组
+ */
+- (void)onExitedGroup:(NSString *)groupId;
+
 @end
 
 

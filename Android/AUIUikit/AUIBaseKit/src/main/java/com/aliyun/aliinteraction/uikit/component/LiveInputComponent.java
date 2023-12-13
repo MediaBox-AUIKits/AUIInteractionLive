@@ -345,7 +345,7 @@ public class LiveInputComponent extends FrameLayout implements ComponentHolder {
                 case Actions.GET_GROUP_STATISTICS_SUCCESS: {
                     if (args.length > 0 && args[0] instanceof GroupMuteStatusResponse) {
                         GroupMuteStatusResponse rsp = (GroupMuteStatusResponse) args[0];
-                        isMuteAll = rsp.mute;
+                        isMuteAll = rsp.isMuteAll;
                         updateMuteState();
                     }
                     break;

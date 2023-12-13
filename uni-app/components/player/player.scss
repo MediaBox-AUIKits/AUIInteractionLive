@@ -1,0 +1,32 @@
+.player-wrap {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+.player-object {
+	width: 100%;
+	height: 100%;
+}
+
+.liveroom-status-text {
+	position: absolute;
+	position: absolute;
+	left: 10%;
+	right: 10%;
+	top: 46%;
+	width: 80%;
+	transform: translateY(-50%);
+	text-align: center;
+	line-height: 1.5;
+	font-size: 0.32rem;
+	z-index: 10;
+}
+
+.player-playback {
+	margin-top: 0.24rem;
+	font-size: 0.28rem;
+	line-height: 0.44rem;
+}

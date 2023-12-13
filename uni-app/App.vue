@@ -1,5 +1,5 @@
 <script>
-	import { InteractionEngine } from  '@/utils/aliyun-interaction-sdk.mini.js';
+	import { InteractionEngine } from  '@/utils/Interaction.js';
 	export default {
 		globalData: {
 			interaction: InteractionEngine.create(),

@@ -9,7 +9,7 @@
 #import "AUIRoomMacro.h"
 #import "AUIRoomAppServer.h"
 #import "AUIRoomUser.h"
-
+#import "AUIRoomMessageService.h"
 
 #import <MJRefresh/MJRefresh.h>
 #import <SDWebImage/SDWebImage.h>

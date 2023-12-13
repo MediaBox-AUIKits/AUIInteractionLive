@@ -102,6 +102,11 @@ biz:
   live_mic:
       app_id: 7c61********
       app_key: c461b*********
+  # 新IM应用信息
+  new_im:
+    	appId: "0c8xxxxx"
+    	appKey: "586fxxxxxx"
+    	appSign:	"232sfxxxxxx"
   # 推流状态回调的authKey
   live_callback:
       auth_key: avdsd*******
@@ -121,5 +126,4 @@ mvn package -DskipTests
 cp target/*.jar target/webframework.jar
 java -Dserver.port=9000 -jar target/webframework.jar
 ```
-
 

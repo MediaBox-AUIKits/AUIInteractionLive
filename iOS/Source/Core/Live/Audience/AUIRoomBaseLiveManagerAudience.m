@@ -13,6 +13,7 @@
 @synthesize displayLayoutView;
 @synthesize onReceivedStartLive;
 @synthesize onReceivedStopLive;
+@synthesize onReceivedLeaveRoom;
 @synthesize roomVC;
 
 - (instancetype)initWithModel:(AUIRoomLiveInfoModel *)liveInfoModel {
@@ -45,6 +46,13 @@
         [weakSelf destoryPullPlayer];
         if (weakSelf.onReceivedStopLive) {
             weakSelf.onReceivedStopLive();
+        }
+    };
+    
+    self.liveService.onReceivedLeaveRoom = ^{
+        [weakSelf destoryPullPlayer];
+        if (weakSelf.onReceivedLeaveRoom) {
+            weakSelf.onReceivedLeaveRoom();
         }
     };
 }
@@ -96,10 +104,8 @@
 
 - (void)leaveRoom:(void (^)(BOOL))completed {
     [self destoryPullPlayer];
-    [self.liveService leaveRoom:nil];
+    [self.liveService leaveRoom:completed];
 }
-
-
 
 - (void)preparePullPlayer {
     [self.displayLayoutView addDisplayView:self.cdnPull.displayView];

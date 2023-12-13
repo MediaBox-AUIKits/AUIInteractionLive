@@ -1,7 +1,9 @@
 package com.alivc.auimessage;
 
 import com.alivc.auimessage.listener.InteractionCallback;
+import com.alivc.auimessage.listener.MessageConnectionListener;
 import com.alivc.auimessage.listener.MessageListener;
+import com.alivc.auimessage.listener.MessageUnImplListener;
 import com.alivc.auimessage.model.base.AUIMessageUserInfo;
 import com.alivc.auimessage.model.lwp.CancelMuteGroupRequest;
 import com.alivc.auimessage.model.lwp.CreateGroupRequest;
@@ -28,6 +30,20 @@ import com.alivc.auimessage.observable.IObservable;
  * @version 2023/4/19
  */
 public interface MessageService extends IObservable<MessageListener> {
+
+    /**
+     * 设置连接回调
+     *
+     * @param connectionListener 连接回调
+     */
+    void setConnectionListener(MessageConnectionListener connectionListener);
+
+    /**
+     * 设置IM SDK无法实现的接口回调
+     *
+     * @param unImplListener 回调
+     */
+    void setUnImplListener(MessageUnImplListener unImplListener);
 
     /**
      * 设置配置
@@ -148,4 +164,11 @@ public interface MessageService extends IObservable<MessageListener> {
      * @return SDK引擎
      */
     Object getNativeEngine();
+
+    /**
+     * AUIMessage接口的实现类型
+     *
+     * @return 实现类型
+     */
+    AUIMessageServiceImplType getImplType();
 }

@@ -13,8 +13,17 @@ String getEnvValue(key, defValue) {
     return defValue
 }
 
-// IMType, internal->内部IM，rongcloud->融云IM
-ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", 'internal')
+// 定义BUILD IM TYPE，以决定使用哪种类型的IM方案，对应`AUIMessageServiceImplType`
+//internal->内部IM
+def BUILD_IM_TYPE_INTERNAL = "internal"
+//rongcloud->融云IM
+def BUILD_IM_TYPE_RONGCLOUD = "rongcloud"
+//alivcim->ALIVC_IM
+def BUILD_IM_TYPE_ALIVC_IM = "alivcim"
+
+// 默认切换到Aliyun IM SDK v3.0
+//ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", BUILD_IM_TYPE_INTERNAL)
+ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", BUILD_IM_TYPE_ALIVC_IM)
 
 android {
     compileSdkVersion 31
@@ -53,9 +62,11 @@ dependencies {
     api project(':AUICore:AUIAppServer')
 
     // 切换消息SDK引擎
-    if (BUILD_IM_TYPE == "rongcloud") {
+    if (BUILD_IM_TYPE_INTERNAL.equals(BUILD_IM_TYPE)) {
+        implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-Internal')
+    } else if (BUILD_IM_TYPE_RONGCLOUD.equals(BUILD_IM_TYPE)) {
         implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-RongCloud')
     } else {
-        implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-Internal')
+        implementation project(':AUIBaseKits:AUIMessage:AUIMessageImpl-AliVCIM')
     }
 }

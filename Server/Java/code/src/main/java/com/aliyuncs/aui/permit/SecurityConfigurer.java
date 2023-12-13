@@ -37,7 +37,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**/*.css", "/**/*.js","/swagger-resources/**").permitAll()
                 .antMatchers("/api/v1/live/login", "/login").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/handlePushStreamEventCallback").permitAll()
+                .antMatchers("/api/v1/live/handlePushStreamEventCallback").permitAll()
                 .antMatchers("/api/v1/live/verifyAuthToken").permitAll()
                 .anyRequest().authenticated()
                 .and()

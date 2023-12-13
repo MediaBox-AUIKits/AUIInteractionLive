@@ -3,7 +3,7 @@
 	<view class="room-list-page">
 		<view
 			class="room-list-header"
-			:style="{ height: headerHeight + 'px' }"
+			:style="[headerStyles]"
 		>
 			<view class="room-list-header-content">
 				<view class="auiicon-LeftOutline room-list-header-back" @click="goBack"></view>
@@ -12,7 +12,7 @@
 		</view>
 		<scroll-view
 			class="scroll-list"
-			:style="{ height: 'calc(100vh - ' + headerHeight + 'px)' }"
+			:style="[scrollListStyles]"
 			:refresher-enabled="true"
 			:scroll-y="true"
 			:refresher-threshold="100"
@@ -54,7 +54,8 @@
 				triggered: false,
 				fetching: false,
 				roomList: [],
-				headerHeight: 60,
+				headerPaddingTop: 0,
+				headerHeight: 40, // 注意：和 css 中的高度保持一致
 				lastLiveid: '',
 			};
 		},
@@ -90,13 +91,29 @@
 		computed: {
 			emptyVisible() {
 				return this.roomList.length === 0 && !this.fetching;
-			}
+			},
+			headerStyles() {
+				const styles = {
+					lineHeight: `${this.headerHeight}px`,
+					height: `${this.headerHeight}px`,
+				};
+				if (this.headerPaddingTop) {
+					styles.paddingTop = `${this.headerPaddingTop}px`;
+				}
+				return styles;
+			},
+			scrollListStyles() {
+				return {
+					height: `calc(100% - ${this.headerHeight}px)`,
+				};
+			},
 		},
 		
 		methods: {
 			getMenuPosition() {
 				const res = uni.getMenuButtonBoundingClientRect();
-				this.headerHeight = res.bottom;
+				this.headerPaddingTop = res.top - 4;
+				this.headerHeight = res.bottom - res.top + 8; // 增加4px，优化体验
 			},
 			
 			handleAlipay() {

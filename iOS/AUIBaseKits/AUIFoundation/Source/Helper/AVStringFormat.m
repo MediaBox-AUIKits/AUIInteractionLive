@@ -39,4 +39,11 @@
     return [NSString stringWithFormat:@"00:%@:%@", str_minute, str_second];
 }
 
++ (NSString *)formatWithCount:(int)count {
+    if (count >= 10000) {
+        return [NSString stringWithFormat:@"%0.1f万", count / 10000.0];
+    }
+    return [NSString stringWithFormat:@"%d", count];
+}
+
 @end

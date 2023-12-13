@@ -8,7 +8,7 @@
 #ifndef AUIFoundation_h
 #define AUIFoundation_h
 
-#import "AVTimer.h"
+#import "AVGlobalTimer.h"
 #import "AVStringFormat.h"
 #import "NSString+AVHelper.h"
 #import "UIImage+AVHelper.h"
@@ -31,6 +31,7 @@
 #import "AUIPickerPanel.h"
 #import "AVBlockButton.h"
 #import "AVEdgeInsetLabel.h"
+#import "AVVideoPlayProgressView.h"
 
 #import "AVBaseControllPanel.h"
 #import "AVBaseCollectionControllPanel.h"

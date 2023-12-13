@@ -220,7 +220,7 @@ public class LiveMoreComponent extends FrameLayout implements ComponentHolder {
             if (Actions.GET_GROUP_STATISTICS_SUCCESS.equals(action)) {
                 if (args.length > 0 && args[0] instanceof GroupMuteStatusResponse) {
                     GroupMuteStatusResponse groupMuteStatusResponse = (GroupMuteStatusResponse) args[0];
-                    isMuteGroupAll = groupMuteStatusResponse.mute;
+                    isMuteGroupAll = groupMuteStatusResponse.isMuteAll;
                     changeBandAllUI();
                 }
             }

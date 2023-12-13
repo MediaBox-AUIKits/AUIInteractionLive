@@ -18,7 +18,7 @@
 #import "AUIFoundation.h"
 #import "AUIRoomSDKHeader.h"
 
-static NSString * const kLiveServiceDomainString = @"https://appserver.h5video.vip";
+static NSString * const kLiveServiceDomainString = @"http://aui-newppserver-aui-newppserver-kvwbhrkfkw.cn-shanghai.fcapp.run";
 
 @interface AUIInteractionLiveManager ()
 
@@ -43,12 +43,19 @@ static NSString * const kLiveServiceDomainString = @"https://appserver.h5video.v
     // 设置AppServer地址
     [AUIRoomAppServer setServiceUrl:kLiveServiceDomainString];
     
+    //初始化IM
+    [AUIRoomMessage useAlivcIMWhenCompatMode:YES];
+    [AUIRoomAppServer setIMServers:AUIRoomMessage.currentIMServers];
+    
     // 初始化SDK
     [AlivcBase setIntegrationWay:@"aui-live-interaction"];
     [AlivcLiveBase registerSDK];
     
     // 初始化美颜
     [AUIRoomBeautyManager registerBeautyEngine];
+    
+    [AliPlayer setEnableLog:NO];
+    [AliPlayer setLogCallbackInfo:LOG_LEVEL_NONE callbackBlock:nil];
     
 #if DEBUG
     [AlivcLiveBase setLogLevel:AlivcLivePushLogLevelDebug];
@@ -85,7 +92,7 @@ static NSString * const kLiveServiceDomainString = @"https://appserver.h5video.v
             return;
         }
         
-        [AUIRoomAppServer createLive:nil mode:mode title:title ?: [NSString stringWithFormat:@"%@的直播", AUIRoomAccount.me.nickName] notice:notice extend:nil completed:^(AUIRoomLiveInfoModel * _Nullable model, NSError * _Nullable error) {
+        [AUIRoomAppServer createLive:mode title:title ?: [NSString stringWithFormat:@"%@的直播", AUIRoomAccount.me.nickName] notice:notice extend:nil completed:^(AUIRoomLiveInfoModel * _Nullable model, NSError * _Nullable error) {
             if (error) {
                 [AVAlertController show:@"创建直播间失败" vc:currentVC];
                 if (completedBlock) {

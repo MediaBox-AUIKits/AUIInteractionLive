@@ -5,9 +5,10 @@
 //  Created by Bingo on 2022/9/4.
 //
 
+#import "AUIRoomBeautyQueenController.h"
+
 #ifndef DISABLE_QUEEN
 
-#import "AUIRoomBeautyQueenController.h"
 #import <AliyunQueenUIKit/AliyunQueenUIKit.h>
 #import <CoreMotion/CoreMotion.h>
 

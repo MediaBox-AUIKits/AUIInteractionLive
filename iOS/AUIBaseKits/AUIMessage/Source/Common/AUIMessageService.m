@@ -7,26 +7,38 @@
 
 #import "AUIMessageService.h"
 
-#define AUIMESSAGE_IMPL_ALIVC 0  // 阿里互动SDK
-#define AUIMESSAGE_IMPL_RC_CHATROOM 1   // 融云SDK-聊天室
+#if __has_include(<AliVCInteractionMessage/AliVCInteractionMessage.h>)
 
-//#define AUIMESSAGE_IMPL_TYPE AUIMESSAGE_IMPL_RC_CHATROOM
+#if !__has_include(<AlivcInteraction/AlivcInteraction.h>)
 
-#if AUIMESSAGE_IMPL_TYPE==AUIMESSAGE_IMPL_ALIVC
-#import "AUIMessageServiceImpl_Alivc.h"
+#define AUIMESSAGE_IMPL_CLASS AUIMessageServiceImpl_AliVCIM
+#import "AUIMessageServiceImpl_AliVCIM.h"
+
 #else
-#import "AUIMessageServiceImpl_RCChatRoom.h"
+
+#define AUIMESSAGE_IMPL_CLASS AUIMessageServiceImpl_AliVCIMCompat
+#import "AUIMessageServiceImpl_AliVCIMCompat.h"
+
 #endif
+
+#elif __has_include(<AlivcInteraction/AlivcInteraction.h>)
+#define AUIMESSAGE_IMPL_CLASS AUIMessageServiceImpl_Alivc
+#import "AUIMessageServiceImpl_Alivc.h"
+
+#elif __has_include(<RongIMLib/RongIMLib.h>)
+#define AUIMESSAGE_IMPL_CLASS AUIMessageServiceImpl_RCChatRoom
+#import "AUIMessageServiceImpl_RCChatRoom.h"
+
+#endif
+
 
 @implementation AUIMessageServiceFactory
 
 + (id<AUIMessageServiceProtocol>)getMessageService {
     static id<AUIMessageServiceProtocol> _instance = nil;
     if (!_instance) {
-#if AUIMESSAGE_IMPL_TYPE==AUIMESSAGE_IMPL_ALIVC
-        _instance = [AUIMessageServiceImpl_Alivc new];
-#else
-        _instance = [AUIMessageServiceImpl_RCChatRoom new];
+#ifdef AUIMESSAGE_IMPL_CLASS
+        _instance = [AUIMESSAGE_IMPL_CLASS new];
 #endif
     }
     return _instance;

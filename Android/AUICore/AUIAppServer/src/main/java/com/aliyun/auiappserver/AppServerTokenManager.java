@@ -3,13 +3,13 @@ package com.aliyun.auiappserver;
 import android.text.TextUtils;
 
 import com.alivc.auicommon.common.base.util.CommonUtil;
+import com.alivc.auimessage.MessageServiceFactory;
+import com.alivc.auimessage.listener.InteractionCallback;
+import com.alivc.auimessage.model.base.InteractionError;
 import com.aliyun.auiappserver.model.AppServerToken;
 import com.aliyun.auiappserver.model.LoginRequest;
 import com.aliyun.auiappserver.model.Token;
 import com.aliyun.auiappserver.model.TokenRequest;
-import com.alivc.auimessage.MessageServiceFactory;
-import com.alivc.auimessage.listener.InteractionCallback;
-import com.alivc.auimessage.model.base.InteractionError;
 
 public class AppServerTokenManager {
 
@@ -55,28 +55,27 @@ public class AppServerTokenManager {
         }
     }
 
-    public static void fetchToken(String userId, final InteractionCallback<String> interactionCallback) {
-        if (!MessageServiceFactory.useInternal() && !MessageServiceFactory.useRongCloud()) {
+    public static void fetchToken(String userId, final InteractionCallback<Token> interactionCallback) {
+        if (!MessageServiceFactory.isMessageServiceValid()) {
             throw new RuntimeException("Not support");
         }
+
         TokenRequest request = new TokenRequest();
         request.userId = userId;
         request.deviceId = CommonUtil.getDeviceId();
-        request.deviceType = "android";
+        request.imServer.add("aliyun_new");
         ApiService apiService = AppServerApi.instance();
         apiService.fetchToken(request).invoke(new InteractionCallback<Token>() {
             @Override
             public void onSuccess(Token token) {
-                if (interactionCallback != null) {
-                    if (MessageServiceFactory.useInternal()) {
-                        interactionCallback.onSuccess(String.format("%s_%s", token.accessToken, token.refreshToken));
-                    } else if (MessageServiceFactory.useRongCloud()) {
-                        // 注意：消息组件的live/token接口，融云方案的app server和内部方案的app server地址不一样，后面需要统一掉.
-                        interactionCallback.onSuccess(token.accessToken);
-                    } else {
-                        interactionCallback.onError(new InteractionError("fetch token failed with error type."));
-                    }
+                if (interactionCallback == null) {
+                    return;
                 }
+                if (token == null) {
+                    interactionCallback.onError(new InteractionError("fetch token failed with null data."));
+                    return;
+                }
+                interactionCallback.onSuccess(token);
             }
 
             @Override

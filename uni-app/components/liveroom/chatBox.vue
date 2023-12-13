@@ -82,11 +82,11 @@
 
 <script>
 	import { mapGetters } from 'vuex';
-	import { InteractionEventNames, InteractionMessageTypes } from  '@/utils/aliyun-interaction-sdk.mini.js';
+	import { InteractionEventNames, InteractionMessageTypes } from  '@/utils/Interaction.js';
 	import { CustomMessageTypes, MaxMessageCount } from '@/utils/constants.js';
 	import { getNameColor, throttle } from '@/utils/common.js';
 	import services from '@/utils/services.js';
-	import LikeAnime from './likeAnime.vue';
+	import LikeAnime from '../likeAnime/likeAnime.vue';
 	
 	export default {
 		name: 'chatBox',
@@ -207,6 +207,10 @@
 					    // 用户加入聊天组，更新直播间统计数据
 					    this.handleUserJoined(nickName, data, messageId);
 					    break;
+					case InteractionMessageTypes.PaaSLikeInfo:
+					    // 用户点赞数据，目前页面未使用
+					    // console.log(nickName, data, messageId);
+					    break;
 					case CustomMessageTypes.Comment:
 						// 接收到评论消息
 						if (data && data.content) {
@@ -264,11 +268,14 @@
 			addMessageItem(content, nickName, messageId) {
 				const mid = `m_${messageId}`;
 				const messageItem = { messageId: mid, content, nickName };
-				this.scrollIntoViewId = mid;
 				this.commentList.push(messageItem);
 				if(this.commentList.length > MaxMessageCount) {
 					this.commentList.shift();
 				}
+				// 需要加延时 H5 才生效
+				setTimeout(() => {
+					this.scrollIntoViewId = mid;
+				}, 10);
 			},
 			// 处理禁言
 			handleMuteUser(isMuted, userInfo) {

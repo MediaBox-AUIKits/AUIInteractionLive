@@ -5,11 +5,10 @@
 //  Created by Bingo on 2023/4/20.
 //
 
+#import "AUIRoomBeautyQueenResource.h"
 #ifndef DISABLE_QUEEN
 
-#import "AUIRoomBeautyQueenResource.h"
 #import "AUIFoundation.h"
-#import "AUIRoomSDKHeader.h"
 
 @interface AUIRoomBeautyQueenResource () <QueenMaterialDelegate>
 

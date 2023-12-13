@@ -12,4 +12,12 @@ public class LeaveGroupRequest implements Serializable {
      * 群组id
      */
     public String groupId;
+
+    @Override
+    public String toString() {
+        return "LeaveGroupRequest{" +
+                "groupId='" + groupId + '\'' +
+                '}';
+    }
+
 }

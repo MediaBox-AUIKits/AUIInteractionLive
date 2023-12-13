@@ -30,4 +30,8 @@
 #import <AliyunPlayer/AliyunPlayer.h>
 #endif
 
+#if !__has_include(<AliyunQueenUIKit/AliyunQueenUIKit.h>)
+#define DISABLE_QUEEN
+#endif
+
 #endif /* AUIRoomSDKHeader_h */

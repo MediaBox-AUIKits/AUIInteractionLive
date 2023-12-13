@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 批量获取房间信息
@@ -28,5 +29,9 @@ public class RoomListRequestDto {
     @NotNull(message="page_size不能为空")
     @JsonProperty("page_size")
     private Integer pageSize;
+
+    @ApiModelProperty(value = "im群列表")
+    @JsonProperty("im_server")
+    private List<String> imServer;
 
 }

@@ -14,6 +14,11 @@ public class GetGroupInfoResponse implements Serializable {
     public String groupId;
 
     /**
+     * PV，当实现不支持获取PV时，返回-1
+     */
+    public int pv;
+
+    /**
      * 在线人数
      */
     public int onlineCount;

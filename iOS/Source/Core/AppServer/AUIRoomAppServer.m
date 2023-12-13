@@ -24,6 +24,15 @@ static NSString *g_serviceUrl = nil;
     return g_serviceUrl;
 }
 
+static NSArray<NSString *> *g_imServers = nil;
++ (void)setIMServers:(NSArray<NSString *> *)imServers {
+    g_imServers = imServers;
+}
+
++ (NSArray<NSString *> *)IMServers {
+    return g_imServers ?: @[];
+}
+
 static BOOL g_staging = NO;
 + (void)setEnv:(BOOL)staging {
     g_staging = staging;
@@ -109,46 +118,40 @@ static BOOL g_staging = NO;
     return extends;
 }
 
-+ (void)fetchToken:(void (^)(NSString * _Nullable, NSString * _Nullable, NSError * _Nullable))completed {
++ (void)fetchToken:(void (^)(NSDictionary * _Nullable, NSError * _Nullable))completed {
     NSDictionary *body = @{
         @"device_id":AUIRoomAccount.deviceId ?: @"",
         @"device_type":@"ios",
-        @"user_id":AUIRoomAccount.me.userId ?: @""
+        @"user_id":AUIRoomAccount.me.userId ?: @"",
+        @"im_server":[self IMServers],
+        @"role":@"user",
     };
-    NSString *path = @"/api/v1/live/token";
+    NSString *path = @"/api/v2/live/token";
     [self requestWithPath:path bodyDic:body completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-        if (error) {
+        if (error || ![responseObject isKindOfClass:NSDictionary.class]) {
             if (completed) {
-                completed(nil, nil, error);
+                completed(nil, error);
             }
             return;
         }
-        NSString *access = nil;
-        NSString *refresh = nil;
-        if (responseObject && [responseObject isKindOfClass:NSDictionary.class]) {
-            access = [responseObject objectForKey:@"access_token"];
-            refresh = [responseObject objectForKey:@"refresh_token"];
-        }
+
         if (completed) {
-            completed(access, refresh, nil);
+            completed(responseObject, nil);
         }
     }];
 }
 
-+ (void)createLive:(NSString *)groupId mode:(NSInteger)mode title:(NSString *)title notice:(NSString *)notice extend:(NSDictionary * _Nullable)extend completed:(void (^)(AUIRoomLiveInfoModel * _Nullable, NSError * _Nullable))completed {
-    
-    
-    
++ (void)createLive:(NSInteger)mode title:(NSString *)title notice:(NSString *)notice extend:(NSDictionary * _Nullable)extend completed:(void (^)(AUIRoomLiveInfoModel * _Nullable, NSError * _Nullable))completed {
     NSDictionary *body = @{
         @"anchor":AUIRoomAccount.me.userId ?: @"",
         @"anchor_nick":AUIRoomAccount.me.nickName ?: @"",
-        @"id":groupId ?: @"",
+        @"im_server":[self IMServers],
         @"mode":@(mode),
         @"title":title ?: @"",
         @"notice":notice ?: @"",
         @"extends":[self jsonStringWithDict:[self finalExtends:extend]]
     };
-    NSString *path = @"/api/v1/live/create";
+    NSString *path = @"/api/v2/live/create";
     [self requestWithPath:path bodyDic:body completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
         if (error) {
             if (completed) {
@@ -316,7 +319,8 @@ static BOOL g_staging = NO;
     NSDictionary *body = @{
         @"page_num":@(pageNum),
         @"page_size":@(pageSize),
-        @"user_id":AUIRoomAccount.me.userId ?: @""
+        @"user_id":AUIRoomAccount.me.userId ?: @"",
+        @"im_server":[self IMServers],
     };
     NSString *path = @"/api/v1/live/list";
     [self requestWithPath:path bodyDic:body completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
@@ -344,6 +348,7 @@ static BOOL g_staging = NO;
     NSDictionary *body = @{
         @"id":liveId ?: @"",
         @"user_id":(userId ?: AUIRoomAccount.me.userId) ?: @"",
+        @"im_server":[self IMServers],
     };
     NSString *path = @"/api/v1/live/get";
     [self requestWithPath:path bodyDic:body completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {

@@ -24,7 +24,7 @@
 }
 
 - (NSDictionary *)toData {
-    return _data;
+    return _data ?: @{};
 }
 
 @end

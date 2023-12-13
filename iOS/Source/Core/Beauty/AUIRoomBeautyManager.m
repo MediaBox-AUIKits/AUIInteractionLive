@@ -6,8 +6,6 @@
 //
 
 #import "AUIRoomBeautyManager.h"
-#import "AUIRoomMacro.h"
-
 #import "AUIRoomBeautyResourceProtocol.h"
 
 #ifndef DISABLE_QUEEN

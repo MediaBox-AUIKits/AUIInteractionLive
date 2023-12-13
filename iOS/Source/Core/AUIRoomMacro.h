@@ -18,6 +18,4 @@
 #define AUIRoomColourfulFillStrong [UIColor av_colorWithHexString:@"#FF5722"]
 #define AUIRoomColourfulFillDisable [UIColor av_colorWithHexString:@"#FFCCBC"]
 
-//#define DISABLE_QUEEN
-
 #endif /* AUIRoomMacro_h */

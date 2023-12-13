@@ -65,6 +65,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.moduleColorMap = [NSMutableDictionary dictionary];
+        self.moduleImageBundleMap = [NSMutableDictionary dictionary];
         if (@available(iOS 13.0, *)) {
             _supportsAutoMode = YES;
             self.currentMode = AVThemeModeLight;
@@ -319,6 +321,7 @@ MethodImplementation(bg_medium)
 MethodImplementation(fg_strong)
 
 MethodImplementation(text_strong)
+MethodImplementation(text_ultrastrong)
 MethodImplementation(text_medium)
 MethodImplementation(text_weak)
 MethodImplementation(text_ultraweak)

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.aliyuncs.aui</groupId>
-    <artifactId>appserver</artifactId>
+    <artifactId>aui-appserver</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>aui-appserver</name>
     <description>aui-appserver</description>
@@ -118,7 +118,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-live</artifactId>
-            <version>3.9.35</version>
+            <version>3.9.40</version>
         </dependency>
 
         <dependency>

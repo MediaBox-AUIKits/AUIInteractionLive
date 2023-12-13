@@ -20,6 +20,8 @@ import com.alivc.auicommon.common.base.callback.Callbacks;
 import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.common.base.util.CollectionUtil;
 import com.alivc.auicommon.common.roombase.Const;
+import com.alivc.auimessage.listener.InteractionCallback;
+import com.alivc.auimessage.model.base.InteractionError;
 import com.aliyun.aliinteraction.app.R;
 import com.aliyun.aliinteraction.uikit.uibase.activity.AppBaseActivity;
 import com.aliyun.aliinteraction.uikit.uibase.util.AppUtil;
@@ -31,8 +33,6 @@ import com.aliyun.auiappserver.model.ListLiveRequest;
 import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveRole;
 import com.aliyun.auipusher.config.AliLiveMediaStreamOptions;
-import com.alivc.auimessage.listener.InteractionCallback;
-import com.alivc.auimessage.model.base.InteractionError;
 import com.aliyunsdk.queen.menu.download.BeautyMenuMaterial;
 
 import java.util.ArrayList;
@@ -247,11 +247,13 @@ public class RoomListActivity extends AppBaseActivity {
         final int targetPage = loadMore ? (currentPage + 1) : 1;
 
         isRequesting = true;
+
         ListLiveRequest request = new ListLiveRequest();
         request.userId = Const.getUserId();
         request.pageNum = targetPage;
         request.pageSize = PAGE_SIZE;
-        AppServerApi.instance().getLiveList(request).invoke(new InteractionCallback<List<LiveModel>>() {
+        request.imServer.add("aliyun_new");
+        AppServerApi.instance().fetchLiveList(request).invoke(new InteractionCallback<List<LiveModel>>() {
             @Override
             public void onSuccess(List<LiveModel> data) {
                 isRequesting = false;

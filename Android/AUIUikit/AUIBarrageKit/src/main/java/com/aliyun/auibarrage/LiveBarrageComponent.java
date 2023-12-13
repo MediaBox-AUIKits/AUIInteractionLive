@@ -27,6 +27,9 @@ import com.alivc.auicommon.core.base.Actions;
 import com.alivc.auicommon.core.base.LimitSizeRecyclerView;
 import com.alivc.auicommon.core.base.MessageModel;
 import com.alivc.auicommon.core.utils.MessageHelper;
+import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.alivc.auimessage.model.message.MuteGroupMessage;
+import com.alivc.auimessage.model.message.UnMuteGroupMessage;
 import com.aliyun.aliinteraction.roompaas.message.listener.SimpleOnMessageListener;
 import com.aliyun.aliinteraction.roompaas.message.model.CommentModel;
 import com.aliyun.aliinteraction.roompaas.message.model.StartLiveModel;
@@ -39,9 +42,6 @@ import com.aliyun.aliinteraction.uikit.core.LiveConst;
 import com.aliyun.aliinteraction.uikit.uibase.helper.RecyclerViewHelper;
 import com.aliyun.aliinteraction.uikit.uibase.util.AppUtil;
 import com.aliyun.auipusher.LiveContext;
-import com.alivc.auimessage.model.base.AUIMessageModel;
-import com.alivc.auimessage.model.message.MuteGroupMessage;
-import com.alivc.auimessage.model.message.UnMuteGroupMessage;
 import com.aliyun.auipusher.config.LiveEvent;
 import com.aliyun.auipusher.manager.LiveLinkMicPushManager;
 
@@ -345,18 +345,21 @@ public class LiveBarrageComponent extends RelativeLayout implements ComponentHol
                 addMessageToPanel(Collections.singletonList(model));
             }
 
-            liveContext.getLiveLinkMicPushManager().setCallback(new LiveLinkMicPushManager.Callback() {
-                @Override
-                public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
-                    switch (event) {
-                        case LIVE_PLAYER_ERROR:
-                            if (!isOwner()) {
-                                innerStopLive();
-                            }
-                            break;
+            LiveLinkMicPushManager liveLinkMicPushManager = liveContext.getLiveLinkMicPushManager();
+            if (liveLinkMicPushManager != null) {
+                liveLinkMicPushManager.setCallback(new LiveLinkMicPushManager.Callback() {
+                    @Override
+                    public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
+                        switch (event) {
+                            case LIVE_PLAYER_ERROR:
+                                if (!isOwner()) {
+                                    innerStopLive();
+                                }
+                                break;
+                        }
                     }
-                }
-            });
+                });
+            }
 
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override

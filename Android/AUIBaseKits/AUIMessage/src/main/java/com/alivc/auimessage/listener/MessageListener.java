@@ -1,6 +1,7 @@
 package com.alivc.auimessage.listener;
 
 import com.alivc.auimessage.model.base.AUIMessageModel;
+import com.alivc.auimessage.model.message.ExitGroupMessage;
 import com.alivc.auimessage.model.message.JoinGroupMessage;
 import com.alivc.auimessage.model.message.LeaveGroupMessage;
 import com.alivc.auimessage.model.message.MuteGroupMessage;
@@ -9,6 +10,8 @@ import com.alivc.auimessage.model.message.UnMuteGroupMessage;
 /**
  * @author puke
  * @version 2022/8/31
+ * @apiNote 消息服务回调监听者接口
+ * @brief 对应iOS实现`AUIMessageListenerProtocol`
  */
 public interface MessageListener {
 
@@ -46,7 +49,9 @@ public interface MessageListener {
     void onMessageReceived(AUIMessageModel<String> message);
 
     /**
-     * Token过期事件
+     * 被动离开群组
+     *
+     * @param message 被动离开群组消息
      */
-    void onTokenExpire();
+    void onExitedGroup(AUIMessageModel<ExitGroupMessage> message);
 }

@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.alivc.auimessage.model.base.AUIMessageModel;
 import com.aliyun.aliinteraction.player.SimpleLivePlayerEventHandler;
 import com.aliyun.aliinteraction.roompaas.message.listener.SimpleOnMessageListener;
 import com.aliyun.aliinteraction.roompaas.message.model.StartLiveModel;
@@ -17,7 +18,6 @@ import com.aliyun.aliinteraction.uikit.core.IComponent;
 import com.aliyun.aliinteraction.uikit.uibase.util.AnimUtil;
 import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveContext;
-import com.alivc.auimessage.model.base.AUIMessageModel;
 import com.aliyun.auipusher.config.LiveEvent;
 import com.aliyun.auipusher.manager.LiveLinkMicPushManager;
 
@@ -64,22 +64,26 @@ public class LiveCurtainComponent extends View implements ComponentHolder {
                 showCurtain();
             }
         }
+
         @Override
         public void onInit(LiveContext liveContext) {
             super.onInit(liveContext);
 
-            liveContext.getLiveLinkMicPushManager().setCallback(new LiveLinkMicPushManager.Callback() {
-                @Override
-                public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
-                    switch (event) {
-                        case LIVE_PLAYER_ERROR:
-                            if (!isOwner()) {
-                                innerStopLive();
-                            }
-                            break;
+            LiveLinkMicPushManager liveLinkMicPushManager = liveContext.getLiveLinkMicPushManager();
+            if (liveLinkMicPushManager != null) {
+                liveLinkMicPushManager.setCallback(new LiveLinkMicPushManager.Callback() {
+                    @Override
+                    public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
+                        switch (event) {
+                            case LIVE_PLAYER_ERROR:
+                                if (!isOwner()) {
+                                    innerStopLive();
+                                }
+                                break;
+                        }
                     }
-                }
-            });
+                });
+            }
 
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override

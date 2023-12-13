@@ -18,4 +18,13 @@ public class SendLikeRequest implements Serializable {
      * 点赞数量
      */
     public int likeCount;
+
+    @Override
+    public String toString() {
+        return "SendLikeRequest{" +
+                "groupId='" + groupId + '\'' +
+                ", likeCount=" + likeCount +
+                '}';
+    }
+
 }

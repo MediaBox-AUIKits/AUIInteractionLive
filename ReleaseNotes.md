@@ -25,3 +25,7 @@
 发布时间：2023-11-17
 * Android&iOS：升级AUIMessage，使用新的互动消息SDK，如果已经接入老版本，请勿直接升级到该版本
 * Android&iOS：升级MediaBoxSDK到v6.6.0
+
+## v2.2.1
+发布时间：2023-12-13
+* Web：升级AUIMessage，使用新的互动消息SDK，如果已经接入老版本，请勿直接升级到该版本

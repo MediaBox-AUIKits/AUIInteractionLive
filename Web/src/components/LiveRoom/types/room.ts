@@ -141,3 +141,9 @@ export enum LiveRoomTypeEnum {
 }
 
 export type LiveRoomType = `${LiveRoomTypeEnum}`;
+
+export interface GroupIdObject {
+  aliyunV2GroupId?: string,
+  aliyunV1GroupId?: string,
+  rongIMId?: string,
+}

@@ -5,3 +5,8 @@
 ### Changed
 - 优化代码结构，将直播间组件相关文件统一至 components/LiveRoom 中，方便复制至其他工程使用
 - 完善播放器等相关功能
+
+## 1.0.1 (2023-12-13)
+
+### Changed
+- 集成AUIMessage，支持新版互动消息SDK

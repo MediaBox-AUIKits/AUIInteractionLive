@@ -7,7 +7,7 @@ import { LeftOutlineSvg, LiveSvg, PlaybackSvg } from '@/assets/CustomIcon';
 import { LatestLiveidStorageKey } from '@/utils/constants';
 import services from '@/services';
 import { IRoomInfo, RoomStatusEnum } from '@/types/room';
-import { convertToCamel } from '@/utils';
+import { convertToCamel, getIMServer } from '@/utils';
 import { BasicMap } from '@/types/basic';
 import styles from './index.less';
 
@@ -90,7 +90,7 @@ function RoomList() {
     }
 
     setFetching(true);
-    services.getRoomList(1, 20)
+    services.getRoomList(1, 20, getIMServer())
       .then((res) => {
         if (Array.isArray(res)) {
           setList(res.map((item: any) => {

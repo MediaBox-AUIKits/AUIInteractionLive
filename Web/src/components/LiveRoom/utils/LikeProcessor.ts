@@ -10,7 +10,7 @@ class LikeProcessor {
   likeBubbleCount: number = 0;
   groupId: string = '';
   animeContainerEl?: HTMLDivElement;
-  interactionInstance: any;
+  auiMessage: any;
 
   constructor() {
     this.sendLike = throttle(DelayDuration, this.sendLike.bind(this), { noLeading: true });
@@ -20,8 +20,8 @@ class LikeProcessor {
     this.animeContainerEl = el;
   }
 
-  setInteractionInstance (instance: any) {
-    this.interactionInstance = instance;
+  setAuiMessage (auiMessage: any) {
+    this.auiMessage = auiMessage;
   }
 
   setGroupId (id: string) {
@@ -37,7 +37,7 @@ class LikeProcessor {
   }
 
   sendLike() {
-    if (this.interactionInstance) {
+    if (this.auiMessage) {
       const count = this.count;
       const data = {
         groupId: this.groupId,
@@ -45,7 +45,7 @@ class LikeProcessor {
         broadCastType: BroadcastTypeEnum.all,
       };
       this.count = 0;
-      return this.interactionInstance.sendLike(data).then(() => {
+      return this.auiMessage.sendLike(data).then(() => {
         //
       }).catch(() => {
         // 若是失败了，加回 count

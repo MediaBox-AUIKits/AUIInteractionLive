@@ -105,6 +105,13 @@ const MAX_RETRY_COUNT = 5;
 // 重试时间间隔
 const RETRY_INTERVAL = 2000;
 
+(window as any).Aliplayer.__logCallback__ = function (event: any) {
+	event.extra = JSON.stringify({
+		scene: 'AUIInteractionLive',
+		platform: 'web',
+	});
+}
+
 export class LiveService {
   private player: any;
   private source?: string;
@@ -141,7 +148,7 @@ export class LiveService {
       if (e.paramData.error_code === 4004 && this.retryCount < MAX_RETRY_COUNT) {
         window.setTimeout(() => {
           this.retryCount++;
-          this.player.loadByUrl(this.source || '', 0, true, true)
+          this.player?.loadByUrl(this.source || '', 0, true, true)
         }, RETRY_INTERVAL);
       }
     })

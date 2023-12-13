@@ -190,3 +190,15 @@ export function getNameColor(name?: string) {
   }
   return NicknameColors[name.charCodeAt(0) % NicknameColors.length];
 }
+
+export function getIMServer() {
+  const imServer: string [] = [];
+  if (CONFIG.imServer?.aliyunIMV2?.enable) {
+    imServer.push('aliyun_new');
+  }
+  if (CONFIG.imServer?.aliyunIMV1?.enable) {
+    imServer.push('aliyun_old');
+  }
+
+  return imServer;
+}

@@ -80,6 +80,7 @@ function Login(props: LoginProps) {
           />
           <div className={nickTipClassNames}>{tr('nickname_tip')}</div>
         </div>
+
         <div className={styles['login-btn']}>
           <Button
             disabled={!nickname}

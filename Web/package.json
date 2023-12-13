@@ -1,6 +1,6 @@
 {
-  "name": "AUIInteractionLive_web",
-  "version": "0.0.5",
+  "name": "aui-web-liveroom",
+  "version": "1.0.1",
   "license": "MIT",
   "scripts": {
     "dev": "umi dev",
@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@rongcloud/engine": "^5.7.9",
+    "@rongcloud/imlib-next": "^5.7.9",
+    "ahooks": "^3.7.8",
     "antd-mobile": "^5.24.0",
     "axios": "^1.1.3",
     "classnames": "^2.3.2",
@@ -19,14 +22,17 @@
     "react-i18next": "^11.18.6",
     "react-toastify": "^9.1.1",
     "throttle-debounce": "^5.0.0",
-    "umi": "^4.0.19"
+    "umi": "^4.0.19",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/md5": "^2.3.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@types/throttle-debounce": "^5.0.0",
+    "@types/uuid": "^9.0.7",
     "typescript": "^4.1.2",
     "yargs-parser": "^21.1.1"
-  }
+  },
+  "repository": "update your repository"
 }

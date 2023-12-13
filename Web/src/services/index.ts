@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { serialize, parse } from 'cookie-es';
 import { ApiNames, RequestBaseUrl } from './base';
 import { convertToCamel, getParamFromSearch, getRandomAvatar } from '@/utils';
 import { IRoomInfo } from '@/types/room';
+import { IMDeviceIdStorageKey } from '@/utils/constants'
 
 // 用于本地测试储存用户信息的 cookie key，可以换成您实际自己的 key
 const AuiUserNameCookieKey = 'aui_usernick';
@@ -120,9 +122,17 @@ class Services {
   }
 
   // 这里的 token 是 Interaction SDK 所需要使用的，不是接口所使用的登录 token
-  public async getToken(userId?: string) {
+  public async getToken(im_server: string[], role?: string, userId?: string) {
+    // 这里使用旧IM的getDeviceId方法，device_id仅对旧IM起作用
     const { InteractionEngine } = window.AliyunInteraction;
     let device_id = InteractionEngine.getDeviceId();
+    if(!device_id && localStorage.getItem(IMDeviceIdStorageKey)) {
+      device_id = localStorage.getItem(IMDeviceIdStorageKey) as string;
+    } else if (!device_id) {
+      device_id = uuidv4();
+      localStorage.setItem(IMDeviceIdStorageKey, device_id);
+    }
+
     // liveroom demo 是通过 location.search 中的 env 参数传到 appserver token 接口来取到不同环境的 token
     // 当 env=production 时是线上环境
     // 若您实际是其他方案，请修改！
@@ -133,23 +143,29 @@ class Services {
         user_id: userId || this.userId,
         device_type: 'web',
         device_id,
+        role,
+        im_server,
       }, {
         // token 接口通过请求 header 的 x-live-env 字段来切换环境
         headers: env ? { 'x-live-env': env } : undefined,
       });
-      return res;
+      return {
+        aliyunIMV2: convertToCamel(res).aliyunNewIm,
+        aliyunIMV1: convertToCamel(res).aliyunOldIm,
+      };
     } catch (error) {
       throw error;
     }
   }
 
   // 获取房间列表
-  public async getRoomList(pageNum: number, pageSize: number) {
+  public async getRoomList(pageNum: number, pageSize: number, im_server: string[]) {
     try {
       const res = await this.request.post(ApiNames.list, {
         user_id: this.userId,
         page_num: pageNum,
         page_size: pageSize,
+        im_server,
       });
       return res;
     } catch (error) {
@@ -158,11 +174,12 @@ class Services {
   }
 
   // 获取房间详情
-  public async getRoomDetail(roomId: string): Promise<IRoomInfo> {
+  public async getRoomDetail(roomId: string, im_server: string[]): Promise<IRoomInfo> {
     try {
       const res = await this.request.post(ApiNames.get, {
         user_id: this.userId,
         id: roomId,
+        im_server,
       });
       const detail: any = convertToCamel(res);
       return detail;

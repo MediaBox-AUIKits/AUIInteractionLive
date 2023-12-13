@@ -1,4 +1,5 @@
 import React from 'react';
+import AUIMessage from '@/BaseKits/AUIMessage';
 import {
   IRoomInfo,
   IRoomState,
@@ -61,7 +62,7 @@ function flatRoomDetail(info: IRoomInfo) {
 
   let groupMuted = false;
   let selfMuted = false;
-  if (info.userStatus.mute && Array.isArray(info.userStatus.muteSource)) {
+  if (info.userStatus && info.userStatus.mute && Array.isArray(info.userStatus.muteSource)) {
     groupMuted = info.userStatus.muteSource.includes('group');
     selfMuted = info.userStatus.muteSource.includes('user');
   }
@@ -118,10 +119,8 @@ export function roomReducer(state: IRoomState, action: IRoomReducerAction) {
   }
 }
 
-const { InteractionEngine } = window.AliyunInteraction;
-
 type RoomContextType = {
-  interaction?: InstanceType<typeof InteractionEngine>,
+  auiMessage: InstanceType<typeof AUIMessage>,
   roomState: IRoomState;
   roomType: LiveRoomType;
   animeContainerEl: React.RefObject<HTMLDivElement>,
@@ -133,6 +132,7 @@ type RoomContextType = {
 }
 
 export const RoomContext  = React.createContext<RoomContextType>({
+  auiMessage: new AUIMessage(CONFIG.imServer),
   roomState: defaultRoomState,
   roomType: LiveRoomTypeEnum.Interaction,
   animeContainerEl: React.createRef(),

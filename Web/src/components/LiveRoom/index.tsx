@@ -1,11 +1,19 @@
 /**
  * 该文件为直播间入口，统一处理数据、事件等，本地无 UI 相关
  */
-import React, { useEffect, useReducer, useRef, useCallback, useMemo } from 'react';
+import React, {
+  useEffect,
+  useReducer,
+  useRef,
+  useCallback,
+  useMemo,
+  useContext
+} from 'react';
 import { useTranslation, I18nextProvider } from 'react-i18next';
 import { throttle } from 'throttle-debounce';
 import { Toast } from 'antd-mobile';
 import { toast } from 'react-toastify';
+import { useMemoizedFn } from 'ahooks';
 import MobileRoom from './components/MobileRoom';
 import PCRoom from './components/PCRoom';
 import {
@@ -15,12 +23,14 @@ import {
   InteractionMessage,
   RoomStatusEnum,
   CustomMessageTypes,
-  BroadcastTypeEnum,
+  LiveRoomTypeEnum,
+  GroupIdObject,
 } from './types';
 import { RoomContext, defaultRoomState, roomReducer } from './RoomContext';
 import { createDom, UA, assignObjectByParams } from './utils/common';
 import LikeProcessor from './utils/LikeProcessor';
 import { usePrevious } from './utils/hooks';
+import { AUIMessageEvents, AUIMessageTypes, AUIMessageInsType } from '@/BaseKits/AUIMessage/types';
 import i18n from './locales';
 import './styles/anime.less';
 import './styles/mobileBullet.less';
@@ -32,7 +42,6 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
   const { t: tr } = useTranslation();
   const [roomState, dispatch] = useReducer<(state: IRoomState, action: any) => IRoomState>(roomReducer, defaultRoomState);
   const previousRoomState = usePrevious(roomState);
-  const InteractionRef = useRef<any>(); // 互动 sdk 实例
   const groupIdRef = useRef<string>(''); // 解决评 groupId 闭包问题
   const commentListCache = useRef<InteractionMessage[]>([]); // 解决评论列表闭包问题
   const animeContainerEl = useRef<HTMLDivElement>(null); // 用于点赞动画
@@ -40,10 +49,9 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
   // 创建点赞处理实例
   const likeProcessor = useMemo(() => (new LikeProcessor()), []);
 
-  useEffect(() => {
-    const { InteractionEngine } = window.AliyunInteraction;
-    InteractionRef.current = InteractionEngine.create();
+  const { auiMessage } = useContext(RoomContext);
 
+  useEffect(() => {
     if (animeContainerEl.current) {
       likeProcessor.setAnimeContainerEl(animeContainerEl.current);
     }
@@ -52,21 +60,22 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
 
     return () => {
       if (groupIdRef.current) {
-        InteractionRef.current
-          .leaveGroup({
-            groupId: groupIdRef.current,
-            broadCastType: BroadcastTypeEnum.nobody, // 离开不广播
-          })
+        auiMessage
+          .leaveGroup()
           .finally(() => {
-            InteractionRef.current.logout();
-            InteractionRef.current.removeAllEvents();
+            destroyAuiMessage();
           });
       } else {
-        InteractionRef.current.logout();
-        InteractionRef.current.removeAllEvents();
+        destroyAuiMessage();
       }
     };
   }, []);
+
+  const destroyAuiMessage = () => {
+    auiMessage.logout();
+    auiMessage.removeAllListeners();
+    auiMessage.unInit();
+  }
 
   const fetchRoomDetail = () => {
     getRoomInfo()
@@ -80,61 +89,71 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
 
   useEffect(() => {
     // 通过 chatId 从无变有来触发初始化互动消息 SDK
+    // 当前默认只使用新版IM，如果需要多通道则需加上对应通道的IM群组id的条件
     if (previousRoomState && !previousRoomState.chatId && roomState.chatId) {
-      initInteraction(roomState.chatId);
+      // group id存在，就初始化对应的IM实例
+      initAUIMessage({
+        aliyunV2GroupId: roomState.chatId,
+      });
     }
   }, [previousRoomState, roomState]);
 
-  const initInteraction = async (groupId: string) => {
-    try {
-      // 获取token
-      const token = await getToken();
-      // im 服务认证
-      await InteractionRef.current.auth(token);
-      // 加入房间
-      await InteractionRef.current.joinGroup({
-        groupId,
-        userNick: userInfo.userName,
-        userAvatar: userInfo.userAvatar, // 随机取头像
-        broadCastType: BroadcastTypeEnum.all, // 广播所有人
-        broadCastStatistics: true,
-      });
-      groupIdRef.current = groupId;
-      // 更新 likeProcessor
-      likeProcessor.setGroupId(groupId);
-      likeProcessor.setInteractionInstance(InteractionRef.current);
+  const initAUIMessage = useMemoizedFn(
+    async (groupIdObject: GroupIdObject) => {
+      // 支持多通道的AUIMessage，如果没有获取某个通道的群组id，就会销毁该通道的IM实例
+      const { aliyunV2GroupId, aliyunV1GroupId, rongIMId } = groupIdObject;
 
-      listenInteractionMessage();
-      // 检查更新自己信息
-      updateSelfInfo();
-      // 更新直播统计数据
-      updateGroupStatistics();
-    } catch (error) {
-      console.log('initInteraction err', error);
-    }
-  };
+      try {
+        if (!aliyunV1GroupId && !rongIMId && !aliyunV2GroupId) {
+          throw { code: -1, message: 'IM group id is empty' };
+        }
 
-  const updateSelfInfo = () => {
-    InteractionRef.current.getGroupUserByIdList({
-      groupId: groupIdRef.current,
-      userIdList: [userInfo.userId],
-    }).then((res: any) => {
-      const info = ((res || {}).userList || [])[0];
-      if (info) {
-        const muteBy: string[] = info.muteBy || [];
-        updateRoomState({
-          selfMuted: muteBy.includes('user'),
-          groupMuted: muteBy.includes('group'),
+        if (!aliyunV1GroupId || !rongIMId || !aliyunV2GroupId) {
+          const destroyInstances = [];
+          if (!aliyunV1GroupId) {
+            destroyInstances.push(AUIMessageInsType.AliyunIMV1);
+          }
+          if (!rongIMId) {
+            destroyInstances.push(AUIMessageInsType.RongIM);
+          }
+          if (!aliyunV2GroupId) {
+            destroyInstances.push(AUIMessageInsType.AliyunIMV2);
+          }
+          auiMessage.destroyInstance(destroyInstances);
+        }
+
+        // 用户为主播时，才有阿里云新版IM admin管理员权限
+        const role = roomState.anchorId === userInfo.userId ? 'admin' : undefined;
+        const tokenConfig = await getToken(role);
+        auiMessage.setConfig(tokenConfig);
+        await auiMessage.init();
+        await auiMessage.login({
+          userId: userInfo.userId,
+          userNick: userInfo.userName,
+          userAvatar: userInfo.userAvatar,
         });
-      }
-    });
-  };
+        await auiMessage.joinGroup(groupIdObject);
+        groupIdRef.current = aliyunV2GroupId || aliyunV1GroupId || rongIMId as string;
 
+        // 更新 likeProcessor
+        likeProcessor.setGroupId(groupIdRef.current);
+        likeProcessor.setAuiMessage(auiMessage);
+  
+        // 监听 AUIMesssage 消息
+        listenAUIMesssageEvents();
+
+        // 更新直播统计数据
+        updateGroupStatistics();
+      } catch (error) {
+        console.log('initAUIMessage err', error);
+      }
+    }
+  );
+  
   const updateGroupStatistics = () => {
-    InteractionRef.current
-      .getGroupStatistics({ groupId: groupIdRef.current })
+    auiMessage.getGroupStatistics(groupIdRef.current)
       .then((res: any) => {
-        const payload = assignObjectByParams(res, ['likeCount', 'onlineCount', 'pv', 'uv']);
+        const payload = assignObjectByParams(res, ['onlineCount', 'pv']);
         if (payload) {
           dispatch({ type: 'updateMetrics', payload });
         }
@@ -142,17 +161,26 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
       .catch(() => {});
   };
 
-  // 监听 Interaction SDK 消息
-  const listenInteractionMessage = useCallback(() => {
-    const { InteractionEventNames } = window.AliyunInteraction;
-    InteractionRef.current.on(InteractionEventNames.Message, (eventData: any) => {
-      console.log('收到信息啦', eventData);
-      handleReceivedMessage(eventData || {});
-    });
+  // 监听 AUIMesssage 消息
+  const listenAUIMesssageEvents = useCallback(() => {
+    [
+      AUIMessageEvents.onLikeInfo,
+      AUIMessageEvents.onJoinGroup,
+      AUIMessageEvents.onLeaveGroup,
+      AUIMessageEvents.onMuteGroup,
+      AUIMessageEvents.onUnmuteGroup,
+      AUIMessageEvents.onMuteUser,
+      AUIMessageEvents.onUnmuteUser,
+      AUIMessageEvents.onMessageReceived,
+    ].map((eventName) => {
+      auiMessage.addListener(eventName, (eventData: any) => {
+        console.log('收到信息啦', eventName, eventData);
+        handleReceivedMessage(eventData || {});
+      });
+    })
   }, [roomState]);
 
   const handleReceivedMessage = useCallback((eventData: any) => {
-    const { InteractionMessageTypes } = window.AliyunInteraction;
     const { type, data, messageId, senderId, senderInfo = {} } = eventData || {};
     const nickName = senderInfo.userNick || senderId;
 
@@ -169,39 +197,31 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
           });
         }
         break;
-      case InteractionMessageTypes.PaaSLikeInfo:
-        // 用户点赞数据，更新对应数据，后续考虑做节流
-        if (data && data.likeCount) {
-          dispatch({
-            type: 'updateMetrics',
-            payload: {
-              likeCount: data.likeCount,
-            },
-          });
-        }
+      case AUIMessageTypes.PaaSLikeInfo:
+        // 接收到点赞消息逻辑，业务根据 发送点赞 约定的消息体类型自行实现
         break;
-      case InteractionMessageTypes.PaaSUserJoin:
+      case AUIMessageTypes.PaaSUserJoin:
         // 用户加入聊天组，更新直播间统计数据
         handleUserJoined(nickName, data);
         break;
-      case InteractionMessageTypes.PaaSUserLeave:
+      case AUIMessageTypes.PaaSUserLeave:
         // 用户离开聊天组，不需要展示
         break;
-      case InteractionMessageTypes.PaaSMuteGroup:
+      case AUIMessageTypes.PaaSMuteGroup:
         // 互动消息组被禁言
         updateRoomState({ groupMuted: true, commentInput: '' });
         showInfoMessage(tr('chat_all_banned_start'));
         break;
-      case InteractionMessageTypes.PaaSCancelMuteGroup:
+      case AUIMessageTypes.PaaSCancelMuteGroup:
         // 互动消息组取消禁言
         updateRoomState({ groupMuted: false });
         showInfoMessage(tr('chat_all_banned_stop'));
         break;
-      case InteractionMessageTypes.PaaSMuteUser:
+      case AUIMessageTypes.PaaSMuteUser:
         // 个人被禁言
         handleMuteUser(true, messageId, data);
         break;
-      case InteractionMessageTypes.PaaSCancelMuteUser:
+      case AUIMessageTypes.PaaSCancelMuteUser:
         // 个人被取消禁言
         handleMuteUser(false, messageId, data);
         break;
@@ -230,30 +250,27 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
 
   // 节流展示进入房间的消息
   const handleUserJoined = useCallback(throttle(1500, (nickName: string, data: any) => {
-    if (data && data.statistics) {
-      dispatch({
-        type: 'updateMetrics',
-        payload: data.statistics,
-      });
-    }
+    updateGroupStatistics();
     addBulletItem(`${nickName} ${tr('liveroom_enter')}`);
   }), [])
 
   const handleMuteUser = (isMuted: boolean, messageId: string, userData: any = {}) => {
-    // 只展示你个人的禁言消息
-    if (userInfo.userId !== userData.userId) {
-      return;
-    }
+    console.log('当前暂不支持禁言个人');
+    return;
+    // 支持个人禁言后可以参考以下注释的逻辑
+    // if (userInfo.userId !== userData.userId) {
+    //   return;
+    // }
 
-    const data: any = { selfMuted: isMuted };
-    if (isMuted) {
-      data.commentInput = ''; // 若当前输入框有内容要清空
-      showInfoMessage(`${userData.userNick || ''}${tr('chat_someone_banned_start')}`);
-    } else {
-      showInfoMessage(`${userData.userNick || ''}${tr('chat_someone_banned_stop')}`);
-    }
+    // const data: any = { selfMuted: isMuted };
+    // if (isMuted) {
+    //   data.commentInput = ''; // 若当前输入框有内容要清空
+    //   showInfoMessage(`${userData.userNick || ''}${tr('chat_someone_banned_start')}`);
+    // } else {
+    //   showInfoMessage(`${userData.userNick || ''}${tr('chat_someone_banned_stop')}`);
+    // }
 
-    updateRoomState(data);
+    // updateRoomState(data);
   };
 
   const showInfoMessage = (text: string) => {
@@ -267,7 +284,7 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
   const addMessageItem = (messageItem: InteractionMessage) => {
     let list: InteractionMessage[] = [];
     // 只有是移动端互动直播间时才是添加到数组前面
-    const isTail = UA.isPC;
+    const isTail = UA.isPC || roomType === LiveRoomTypeEnum.Enterprise;
     if (isTail) {
       list = [...commentListCache.current, messageItem];
     } else {
@@ -301,9 +318,9 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
     const options = {
       groupId: groupIdRef.current,
       type: CustomMessageTypes.Comment,
-      data: JSON.stringify({ content }),
+      data: { content },
     }
-    return InteractionRef.current.sendMessageToGroup(options);
+    return auiMessage.sendMessageToGroup(options);
   };
 
   const sendLike = () => {
@@ -332,7 +349,7 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
   return (
     <RoomContext.Provider
       value={{
-        interaction: InteractionRef.current,
+        auiMessage,
         roomState,
         roomType,
         animeContainerEl,

@@ -1,11 +1,11 @@
-import fs from 'fs';
-import path from 'path';
-
-const packagejson = fs.readFileSync(path.resolve('./package.json'));
-const json = JSON.parse(packagejson.toString());
+import config from './src/config';
 
 // 详细配置文档请阅读官方文档：https://umijs.org/docs/api/config
 export default {
+  define: {
+    ASSETS_VERSION: require("./package.json").version,
+    CONFIG: config,
+  },
   alias: {
     '@': './src'
   },
@@ -36,15 +36,13 @@ export default {
       component: 'room-list',
       wrappers: ['@/wrappers/auth'],
     },
+    { exact: true, path: '/test/im', component: 'test/im' },
     { exact: true, path: '/', component: 'index' },
   ],
   // 这里是修改打包的 index.html 要使用的 umi.js 、umi.css 地址的公共路径，默认是 /
   // 若并非直接访问 index.html，而是其他页面加载生成的 umi.js 、umi.css 的话，可以删去 publicPath、chainWebpack
   // 若需要定义，请按你实际情况，区分使用线上、预发等环境
-  publicPath:
-    process.env.NODE_ENV === 'production'
-      ? `/publicPath/${json.name}/${json.version}/`
-      : '/',
+  publicPath: '/',
   // 兼容 es5，使用这两个压缩工具
   jsMinifier: 'terser',
   cssMinifier: 'cssnano',
@@ -55,4 +53,5 @@ export default {
   //     'changeOrigin': true,
   //   },
   // },
+  npmClient: 'npm'
 };

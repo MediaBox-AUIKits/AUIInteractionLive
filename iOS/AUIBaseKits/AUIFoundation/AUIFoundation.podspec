@@ -30,7 +30,8 @@ TODO: Add long description of the pod here.
 
   s.ios.deployment_target = '9.0'
   s.static_framework = true
-  
+  s.default_subspec = 'All'
+
   s.dependency 'Masonry'
 
   s.subspec 'All' do |ss|

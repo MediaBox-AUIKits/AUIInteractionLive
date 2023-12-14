@@ -209,7 +209,7 @@
                 android:textSize="50dp" />
         </LinearLayout>
 
-        <com.aliyunsdk.queen.menu.BeautyMenuPanel
+        <com.aliyunsdk.queen.menu.QueenBeautyMenu
             android:id="@+id/beauty_beauty_menuPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

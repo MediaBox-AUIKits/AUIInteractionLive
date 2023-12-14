@@ -231,10 +231,10 @@ static AlivcLivePushFPS g_pushFPS = AlivcLivePushFPS20;
 
 #pragma mark - AlivcLivePusherInfoDelegate
 - (void)onPreviewStarted:(AlivcLivePusher *)pusher {
+    [self.beautyController setupPanelController];
     dispatch_async(dispatch_get_main_queue(), ^{
         NSLog(@"LiveEvent:onPreviewStarted");
     });
-    [self.beautyController setupBeautyController];
 }
 
 - (void)onPreviewStoped:(AlivcLivePusher *)pusher {
@@ -479,7 +479,7 @@ static AlivcLivePushFPS g_pushFPS = AlivcLivePushFPS20;
     dispatch_async(dispatch_get_main_queue(), ^{
         NSLog(@"LiveEvent:onDestory");
     });
-    [self.beautyController destroyBeautyController];
+    [self.beautyController destroyEngine];
 }
 
 #pragma mark - AlivcLivePusherCustomDetectorDelegate

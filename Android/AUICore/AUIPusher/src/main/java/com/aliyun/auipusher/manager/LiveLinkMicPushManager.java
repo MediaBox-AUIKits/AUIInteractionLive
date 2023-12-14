@@ -208,6 +208,11 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         }
 
         @Override
+        public void onRemoteUserAudioStream(AlivcLivePusher pusher, String userId, boolean isPushing) {
+
+        }
+
+        @Override
         public void onRemoteUserVideoStream(AlivcLivePusher pusher, String userId, AlivcLivePlayVideoStreamType videoStreamType, boolean isPushing) {
 
         }
@@ -708,19 +713,12 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
      * 切换摄像头
      */
     public void switchCamera() {
-//        if (mALivcLivePusher == null || isPushDisable()) {
-//            return;
-//        }
         if (mCameraId == CAMERA_TYPE_FRONT.getCameraId()) {
             mCameraId = CAMERA_TYPE_BACK.getCameraId();
         } else {
             mCameraId = CAMERA_TYPE_FRONT.getCameraId();
         }
         mALivcLivePusher.switchCamera();
-
-//        if (mBeautyManager != null) {
-//            mBeautyManager.switchCameraId(mCameraId);
-//        }
     }
 
     /**

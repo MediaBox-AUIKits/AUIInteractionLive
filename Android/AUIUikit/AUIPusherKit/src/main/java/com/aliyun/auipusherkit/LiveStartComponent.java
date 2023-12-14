@@ -17,6 +17,8 @@ import com.alivc.auicommon.common.base.exposable.Callback;
 import com.alivc.auicommon.common.base.util.Utils;
 import com.alivc.auicommon.common.roombase.Const;
 import com.alivc.auicommon.core.base.Actions;
+import com.alivc.auimessage.listener.InteractionCallback;
+import com.alivc.auimessage.model.base.InteractionError;
 import com.aliyun.aliinteraction.uikit.core.BaseComponent;
 import com.aliyun.aliinteraction.uikit.core.ComponentHolder;
 import com.aliyun.aliinteraction.uikit.core.IComponent;
@@ -28,9 +30,8 @@ import com.aliyun.auiappserver.model.StartLiveRequest;
 import com.aliyun.auipusher.LiveContext;
 import com.aliyun.auipusher.SimpleLiveEventHandler;
 import com.aliyun.auipusher.config.LiveEvent;
-import com.alivc.auimessage.listener.InteractionCallback;
-import com.alivc.auimessage.model.base.InteractionError;
-import com.aliyunsdk.queen.menu.BeautyMenuPanel;
+import com.aliyunsdk.queen.menu.QueenBeautyMenu;
+import com.aliyunsdk.queen.menu.QueenMenuPanel;
 
 import java.util.Map;
 
@@ -46,7 +47,11 @@ public class LiveStartComponent extends FrameLayout implements ComponentHolder {
     private LinearLayout timeDownLayout;//倒计时layout
     private TextView roomTitle;//房间title
     private TextView roomTips;//房间公告
-    private BeautyMenuPanel beautyBeautyContainerView;//美颜menu
+
+    // 美颜menu
+    private QueenBeautyMenu beautyBeautyContainerView;
+    private QueenMenuPanel queenMenuPanel;
+
     private LinearLayout beautyFaceLayout;//美颜layout
 
     public LiveStartComponent(@NonNull Context context) {
@@ -60,10 +65,15 @@ public class LiveStartComponent extends FrameLayout implements ComponentHolder {
     public LiveStartComponent(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.ilr_view_live_start, this);
+
+        queenMenuPanel = QueenBeautyMenu.getPanel(context);
+        queenMenuPanel.onHideMenu();
+        queenMenuPanel.onHideValidFeatures();
+        queenMenuPanel.onHideCopyright();
+
         beautyBeautyContainerView = findViewById(R.id.beauty_beauty_menuPanel);
-        beautyBeautyContainerView.onHideMenu();
-        beautyBeautyContainerView.onHideCopyright();
-        beautyBeautyContainerView.onSetMenuBackgroundResource(R.color.white);
+        beautyBeautyContainerView.addView(queenMenuPanel);
+
         timeCount = findViewById(R.id.time_down);
         beautyFaceLayout = findViewById(R.id.beauty_face_layout);
         beautyFaceLayout.setOnClickListener(new OnClickListener() {
@@ -127,7 +137,7 @@ public class LiveStartComponent extends FrameLayout implements ComponentHolder {
             @Override
             public void onClick(View v) {
                 if (beautyBeautyContainerView.getVisibility() == View.VISIBLE) {
-                    beautyBeautyContainerView.onHideMenu();
+                    queenMenuPanel.onHideMenu();
                     beautyBeautyContainerView.setVisibility(View.GONE);
                 }
             }
@@ -142,10 +152,10 @@ public class LiveStartComponent extends FrameLayout implements ComponentHolder {
 
     private void changeBeautyContainerVisibility() {
         if (beautyBeautyContainerView.getVisibility() == View.VISIBLE) {
-            beautyBeautyContainerView.onHideMenu();
+            queenMenuPanel.onHideMenu();
             beautyBeautyContainerView.setVisibility(View.GONE);
         } else {
-            beautyBeautyContainerView.onShowMenu();
+            queenMenuPanel.onShowMenu();
             beautyBeautyContainerView.setVisibility(View.VISIBLE);
         }
     }

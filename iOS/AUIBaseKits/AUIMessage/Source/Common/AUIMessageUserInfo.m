@@ -9,14 +9,16 @@
 
 @implementation AUIMessageUserInfo
 
-@synthesize userAvatar;
-@synthesize userNick;
+@synthesize userAvatar = _userAvatar;
+@synthesize userNick = _userNick;
 @synthesize userId = _userId;
 
 - (instancetype)init:(NSString *)userId {
     self = [super init];
     if (self) {
-        _userId = userId;
+        _userId = userId ?: @"";
+        _userNick = @"";
+        _userAvatar = @"";
     }
     return self;
 }

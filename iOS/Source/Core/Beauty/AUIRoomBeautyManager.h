@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AUIRoomBeautyManager : NSObject
 
 + (void)registerBeautyEngine;
-+ (id<AUIRoomBeautyControllerProtocol>)createController:(UIView *)presentView contextMode:(BOOL)contextMode;
++ (id<AUIRoomBeautyControllerProtocol>)createController:(UIView *)presentView pixelBufferMode:(BOOL)pixelBufferMode;
 + (void)checkResourceWithCurrentView:(UIView *)view completed:(void (^)(BOOL completed))completed;
 
 @end

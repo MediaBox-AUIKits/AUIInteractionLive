@@ -14,8 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AUIRoomBeautyQueenController : NSObject <AUIRoomBeautyControllerProtocol>
 
-+ (void)setupMotionManager;
-+ (void)destroyMotionManager;
+- (instancetype)initWithPresentView:(UIView *)presentView pixelBufferMode:(BOOL)pixelBufferMode;
 
 @end
 

@@ -45,11 +45,11 @@ MessageServiceFactory类，通过反射创建实例；
 
 * **AUIMessageServiceImplType**：该类中，定义了当前**AUIMessage**模块所有支持的IM解决方案，如下：
 
-| Module Name              | 模块含义          | IM 类型               |
-| ------------------------ | ----------------- | --------------------- |
-| AUIMessageImpl-Internal  | 阿里云IM v2.0实现 | 阿里云IM v2.0         |
-| AUIMessageImpl-RongCloud | 融云IM实现        | 融云IM                |
-| AUIMessageImpl-AliVCIM   | 阿里云IM v3.0实现 | 阿里云IM v3.0（推荐） |
+| Module Name              | 模块含义                | IM 类型                         |
+| ------------------------ | ----------------------- | ------------------------------- |
+| AUIMessageImpl-Internal  | 视频云互动消息SDK（旧） | 视频云互动消息SDK（旧）         |
+| AUIMessageImpl-RongCloud | 融云IM实现              | 融云IM                          |
+| AUIMessageImpl-AliVCIM   | 视频云互动消息SDK（新） | 视频云互动消息SDK（新）（推荐） |
 
 **注意：不同IM解决方案，消息信令不互通。**
 

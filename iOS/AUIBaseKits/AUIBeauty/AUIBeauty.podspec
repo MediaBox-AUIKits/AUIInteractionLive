@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AUIBeauty'
-  s.version          = '6.3.0'
+  s.version          = '6.7.0'
   s.summary          = 'A short description of AUIBeauty.'
 
 # This description is used to generate tags and improve search results.
@@ -30,36 +30,48 @@ TODO: Add long description of the pod here.
 
   s.ios.deployment_target = '9.0'
   s.static_framework = true
-  s.default_subspec = 'Queen'
+  s.default_subspec = 'Common'
   
   s.subspec 'Common' do |ss|
     ss.vendored_frameworks = 'AliyunQueenUIKit.framework'
-    ss.resource = 'AliyunQueenUIKit.framework/queen_res.bundle'
+    ss.source_files = 'Source/**/*.{h,m,mm}'
+  end
+  
+  s.subspec 'Pro' do |ss|
+    ss.dependency 'AUIBeauty/Common'
+    ss.resource = 'Resource/Pro/queen_res.bundle'
+    ss.pod_target_xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 ENABLE_QUEEN_PRO ENABLE_QUEEN'}
+  end
+  
+  s.subspec 'Lite' do |ss|
+    ss.dependency 'AUIBeauty/Common'
+    ss.resource = 'Resource/Lite/queen_res.bundle'
+    ss.pod_target_xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 ENABLE_QUEEN'}
   end
 
   s.subspec 'Queen' do |ss|
-    ss.dependency 'Queen', '6.1.0-official-pro'
-    ss.dependency 'AUIBeauty/Common'
+    ss.dependency 'Queen', '6.7.0-official-pro'
+    ss.dependency 'AUIBeauty/Pro'
   end
   
-  s.subspec 'AliVCSDK_Premium' do |ss|
-    ss.dependency 'AliVCSDK_Premium'
-    ss.dependency 'AUIBeauty/Common'
+  s.subspec 'AliVCSDK_Standard' do |ss|
+    ss.dependency 'AliVCSDK_Standard'
+    ss.dependency 'AUIBeauty/Lite'
   end
   
-  s.subspec 'AliVCSDK_UGCPro' do |ss|
-    ss.dependency 'AliVCSDK_UGCPro'
-    ss.dependency 'AUIBeauty/Common'
+  s.subspec 'AliVCSDK_InteractiveLive' do |ss|
+    ss.dependency 'AliVCSDK_InteractiveLive'
+    ss.dependency 'AUIBeauty/Lite'
   end
   
-  s.subspec 'AliVCSDK_StandardLive' do |ss|
-    ss.dependency 'AliVCSDK_StandardLive'
-    ss.dependency 'AUIBeauty/Common'
+  s.subspec 'AliVCSDK_UGC' do |ss|
+    ss.dependency 'AliVCSDK_UGC'
+    ss.dependency 'AUIBeauty/Lite'
   end
   
-  s.subspec 'AliVCSDK_PremiumLive' do |ss|
-    ss.dependency 'AliVCSDK_PremiumLive'
-    ss.dependency 'AUIBeauty/Common'
+  s.subspec 'AliVCSDK_BasicLive' do |ss|
+    ss.dependency 'AliVCSDK_BasicLive'
+    ss.dependency 'AUIBeauty/Lite'
   end
 
 end

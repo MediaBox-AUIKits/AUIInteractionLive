@@ -44,6 +44,8 @@ Android 5.0或以上版本的真机，暂不支持模拟器调试。
 
 4.安装到Android真机上，运行互动直播应用。
 
+**注意**：Demo源码里面的相关配置，如License以及APP Server地址，需要手动填写才可完整体验功能。
+
 ## 快速集成
 
 ### 导入源码
@@ -99,7 +101,7 @@ maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
 
 ```groovy
 implementation "com.aliyun.sdk.android:AliVCInteractionMessage:1.0.0"
-implementation 'com.aliyun.aio:AliVCSDK_PremiumLive:6.6.0'
+implementation 'com.aliyun.aio:AliVCSDK_InteractiveLive:6.7.0'
 ```
 
 #### 混淆配置

@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol AUIUserProtocol <NSObject>
 
 @property (nonatomic, copy, readonly) NSString *userId;
-@property (nonatomic, copy, nullable) NSString *userNick;
-@property (nonatomic, copy, nullable) NSString *userAvatar;
+@property (nonatomic, copy) NSString *userNick;
+@property (nonatomic, copy) NSString *userAvatar;
 
 @end
 

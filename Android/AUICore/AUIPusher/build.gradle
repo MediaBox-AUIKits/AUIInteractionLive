@@ -26,7 +26,7 @@ android {
 
 dependencies {
     implementation project(':AUIBaseKits:AUICommon')
-    implementation project(':AUIBaseKits:AUIBeauty')
+    implementation project(':AUIBaseKits:AUIBeauty:live_queenbeauty')
     implementation project(':AUICore:AUILiveMessage')
     implementation project(':AUICore:AUIAppServer')
     implementation project(':AUICore:AUIPlayer')

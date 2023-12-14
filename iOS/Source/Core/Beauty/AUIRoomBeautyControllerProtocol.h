@@ -12,20 +12,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol AUIRoomBeautyControllerProtocol <NSObject>
 
-- (instancetype)initWithPresentView:(UIView *)presentView contextMode:(BOOL)contextMode;
+// 初始化美颜控制面板，需要在主线程调用
+- (void)setupPanelController;
+// 创建美颜引擎
+- (void)createEngine;
+// 释放美颜引擎
+- (void)destroyEngine;
+// 显示美颜控制面板
+- (void)showPanel:(BOOL)animated;
 
-- (void)setupBeautyController;
-- (void)destroyBeautyController;
-
+// Texture 模式处理
 - (void)detectVideoBuffer:(long)buffer withWidth:(int)width withHeight:(int)height withVideoFormat:(AlivcLivePushVideoFormat)videoFormat withPushOrientation:(AlivcLivePushOrientation)pushOrientation;
-
-// contextMode=NO进行处理
 - (int)processGLTextureWithTextureID:(int)textureID withWidth:(int)width withHeight:(int)height;
 
-// contextMode=YES进行处理
+// PixelBuffer模式处理
 - (BOOL)processPixelBuffer:(CVPixelBufferRef)pixelBufferRef withPushOrientation:(AlivcLivePushOrientation)pushOrientation;
-
-- (void)showPanel:(BOOL)animated;
 
 @end
 

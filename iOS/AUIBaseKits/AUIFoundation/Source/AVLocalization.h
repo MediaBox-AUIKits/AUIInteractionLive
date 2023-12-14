@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)stringWithKey:(NSString *)key withModule:(NSString *)module;
 
++ (NSString *)currentLanguage;
++ (BOOL)isInternational;
+
 @end
 
 NS_ASSUME_NONNULL_END

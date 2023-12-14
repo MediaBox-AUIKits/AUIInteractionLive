@@ -27,6 +27,7 @@ android {
 dependencies {
     implementation project(':AUIUikit:AUIBaseKit')
 
-    implementation "com.aliyunsdk.components:queen_menu:2.4.1-official-menu-ultimate-tiny"
-    implementation "com.aliyun.aio:AliVCSDK_PremiumLive:6.6.0"
+    implementation project(':AUIBaseKits:AUIBeauty:live_queenbeauty')
+
+    implementation "com.aliyun.aio:AliVCSDK_InteractiveLive:6.7.0"
 }

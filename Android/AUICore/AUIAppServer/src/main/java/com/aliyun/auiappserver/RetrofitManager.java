@@ -64,12 +64,23 @@ public class RetrofitManager {
         return sRetrofit;
     }
 
+    /**
+     * TODO: 请在此处填写您已搭建好的APP Server地址
+     */
     public static class Const {
-        // 互动直播-内部IM使用的APP Server地址
-        public static final String APP_SERVER_URL_ALIVC = "http://aui-newppserver-aui-newppserver-kvwbhrkfkw.cn-shanghai.fcapp.run";
-        // 互动直播-融云IM使用的APP Server地址
-        public static final String APP_SERVER_URL_RONG_CLOUD = "https://aui-ronppserver-aui-ronppserver-bfnwzrekhj.cn-shanghai.fcapp.run";
-        // 企业直播-内部IM使用的APP Server地址
-        public static final String APP_SERVER_URL_ENTERPRISE = "https://appserverjava.h5video.vip";
+        /**
+         * 互动直播-内部IM使用的APP Server地址
+         */
+        public static final String APP_SERVER_URL_ALIVC = "";
+
+        /**
+         * 互动直播-融云IM使用的APP Server地址
+         */
+        public static final String APP_SERVER_URL_RONG_CLOUD = "";
+
+        /**
+         * 企业直播-内部IM使用的APP Server地址
+         */
+        public static final String APP_SERVER_URL_ENTERPRISE = "";
     }
 }

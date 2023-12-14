@@ -27,5 +27,6 @@ android {
 dependencies {
     implementation project(':AUIUikit:AUIBaseKit')
 
-    api "com.aliyunsdk.components:queen_menu:2.4.1-official-menu-ultimate-tiny"
+    // 美颜UI面板
+    api "com.aliyun.maliang.android:queen_menu:6.7.0-official-pro-tiny"
 }

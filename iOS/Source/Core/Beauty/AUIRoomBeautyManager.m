@@ -6,17 +6,15 @@
 //
 
 #import "AUIRoomBeautyManager.h"
-#import "AUIRoomBeautyResourceProtocol.h"
 
 #ifndef DISABLE_QUEEN
 #import "AUIRoomBeautyQueenController.h"
-#import "AUIRoomBeautyQueenResource.h"
+#import "AUIBeauty/AUIBeautyManager.h"
+#import "AUIFoundation.h"
 #endif
 
 
 @interface AUIRoomBeautyManager ()
-
-@property (nonatomic, strong) id<AUIRoomBeautyResourceProtocol> resource;
 
 @end
 
@@ -24,35 +22,41 @@
 
 + (void)registerBeautyEngine {
 #ifndef DISABLE_QUEEN
-    [AUIRoomBeautyQueenResource requestResource];
-    [AUIRoomBeautyQueenController setupMotionManager];
+    [[AUIBeautyManager resourceChecker] startCheck];
 #endif
 }
 
-+ (id<AUIRoomBeautyControllerProtocol>)createController:(UIView *)presentView contextMode:(BOOL)contextMode {
++ (id<AUIRoomBeautyControllerProtocol>)createController:(UIView *)presentView pixelBufferMode:(BOOL)pixelBufferMode {
 #ifndef DISABLE_QUEEN
-    return [[AUIRoomBeautyQueenController alloc] initWithPresentView:presentView contextMode:contextMode];
+    return [[AUIRoomBeautyQueenController alloc] initWithPresentView:presentView pixelBufferMode:pixelBufferMode];
 #else
     return nil;
 #endif
 }
 
-static id<AUIRoomBeautyResourceProtocol> g_resource = nil;
 + (void)checkResourceWithCurrentView:(UIView *)view completed:(void (^)(BOOL completed))completed {
-    if (!g_resource) {
 #ifndef DISABLE_QUEEN
-        g_resource = [AUIRoomBeautyQueenResource new];
-#endif
-    }
-    if (g_resource) {
-        g_resource.checkResult = completed;
-        [g_resource startCheckWithCurrentView:view];
+    id<AUIBeautyResourceProtocol> checker = [AUIBeautyManager resourceChecker];
+    if (checker) {
+        AVProgressHUD *loading = [AVProgressHUD ShowHUDAddedTo:view animated:YES];
+        loading.labelText = @"正在下载美颜模型中，请等待";
+        [checker checkResource:^(BOOL result) {
+            [loading hideAnimated:YES];
+            if (completed) {
+                completed(result);
+            }
+        }];
     }
     else {
         if (completed) {
             completed(YES);
         }
     }
+#else
+    if (completed) {
+        completed(YES);
+    }
+#endif
 }
 
 @end

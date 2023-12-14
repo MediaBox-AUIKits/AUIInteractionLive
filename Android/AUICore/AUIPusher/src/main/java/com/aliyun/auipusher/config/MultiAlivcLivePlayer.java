@@ -69,6 +69,11 @@ public class MultiAlivcLivePlayer extends AlivcLivePlayerImpl implements AlivcLi
     }
 
     @Override
+    public void onVideoMuted(boolean mute) {
+
+    }
+
+    @Override
     public void onVideoEnabled(boolean enable) {
 
     }

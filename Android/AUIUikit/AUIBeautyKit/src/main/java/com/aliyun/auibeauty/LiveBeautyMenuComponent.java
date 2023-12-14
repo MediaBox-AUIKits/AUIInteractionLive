@@ -13,7 +13,8 @@ import com.aliyun.aliinteraction.uikit.core.BaseComponent;
 import com.aliyun.aliinteraction.uikit.core.ComponentHolder;
 import com.aliyun.aliinteraction.uikit.core.IComponent;
 import com.aliyun.auiappserver.model.LiveModel;
-import com.aliyunsdk.queen.menu.BeautyMenuPanel;
+import com.aliyunsdk.queen.menu.QueenBeautyMenu;
+import com.aliyunsdk.queen.menu.QueenMenuPanel;
 
 /**
  * @author puke
@@ -34,8 +35,14 @@ public class LiveBeautyMenuComponent extends FrameLayout implements ComponentHol
     public LiveBeautyMenuComponent(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.irl_beauty, LiveBeautyMenuComponent.this);
-        BeautyMenuPanel beautyMenuPanel = findViewById(R.id.beauty_beauty_menuPanel);
+
+        QueenMenuPanel beautyMenuPanel = QueenBeautyMenu.getPanel(context);
+        beautyMenuPanel.onHideMenu();
+        beautyMenuPanel.onHideValidFeatures();
         beautyMenuPanel.onHideCopyright();
+
+        QueenBeautyMenu beautyBeautyContainerView = findViewById(R.id.beauty_beauty_menuPanel);
+        beautyBeautyContainerView.addView(beautyMenuPanel);
     }
 
     @Override

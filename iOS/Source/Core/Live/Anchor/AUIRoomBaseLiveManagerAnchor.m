@@ -65,7 +65,7 @@
     self.livePusher.onReconnectSuccessBlock = self.onReconnectSuccessBlock;
     self.livePusher.onReconnectErrorBlock = self.onReconnectErrorBlock;
     if (self.roomVC) {
-        self.livePusher.beautyController = [AUIRoomBeautyManager createController:self.roomVC.view contextMode:self.liveService.liveInfoModel.mode == AUIRoomLiveModeLinkMic];
+        self.livePusher.beautyController = [AUIRoomBeautyManager createController:self.roomVC.view pixelBufferMode:self.liveService.liveInfoModel.mode == AUIRoomLiveModeLinkMic];
     }
     self.isLiving = NO;
 }

@@ -33,7 +33,6 @@ import com.aliyun.auiappserver.model.ListLiveRequest;
 import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveRole;
 import com.aliyun.auipusher.config.AliLiveMediaStreamOptions;
-import com.aliyunsdk.queen.menu.download.BeautyMenuMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,6 @@ public class RoomListActivity extends AppBaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BeautyMenuMaterial.getInstance().prepare(context);//提前初始化Beauty ，防止部分贴纸失效
 
         setContentView(R.layout.activity_room_list);
         ExStatusBarUtils.setStatusBarColor(this, AppUtil.getColor(R.color.bus_login_status_bar_color));

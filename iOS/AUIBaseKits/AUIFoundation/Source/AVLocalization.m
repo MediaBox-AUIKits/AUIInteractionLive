@@ -49,4 +49,13 @@
     return NSLocalizedStringFromTableInBundle(key, nil, bundle, nil);
 }
 
++ (NSString *)currentLanguage {
+    NSString *currentLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+    return currentLanguage;
+}
+
++ (BOOL)isInternational {
+    return ![[[self currentLanguage] lowercaseString] hasPrefix:@"zh"];
+}
+
 @end

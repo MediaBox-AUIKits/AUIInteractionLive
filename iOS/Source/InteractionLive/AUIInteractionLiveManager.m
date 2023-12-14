@@ -18,7 +18,7 @@
 #import "AUIFoundation.h"
 #import "AUIRoomSDKHeader.h"
 
-static NSString * const kLiveServiceDomainString = @"http://aui-newppserver-aui-newppserver-kvwbhrkfkw.cn-shanghai.fcapp.run";
+static NSString * const kLiveServiceDomainString = @"你的AppServer域名";
 
 @interface AUIInteractionLiveManager ()
 

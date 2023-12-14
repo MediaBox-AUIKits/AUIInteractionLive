@@ -114,7 +114,7 @@
 - (void)setupLivePusher {
     self.livePusher = [[AUIRoomLivePusher alloc] init];
     self.livePusher.liveInfoModel = self.liveService.liveInfoModel;
-    self.livePusher.beautyController = self.roomVC ? [AUIRoomBeautyManager createController:self.roomVC.view contextMode:YES] : nil;
+    self.livePusher.beautyController = self.roomVC ? [AUIRoomBeautyManager createController:self.roomVC.view pixelBufferMode:YES] : nil;
     self.livePusher.isMute = !self.micOpened;
     self.livePusher.isPause = !self.cameraOpened;
 }

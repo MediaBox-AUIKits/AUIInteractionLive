@@ -276,7 +276,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
         ImCreateGroupReq imCreateGroupReq = new ImCreateGroupReq();
         imCreateGroupReq.groupId = TextUtils.isEmpty(req.groupId) ? UUID.randomUUID().toString().toLowerCase() : req.groupId;
         imCreateGroupReq.groupName = TextUtils.isEmpty(req.groupName) ? "default" : req.groupName;
-        imCreateGroupReq.groupMeta = req.groupExtension;
+        imCreateGroupReq.groupMeta = TextUtils.isEmpty(req.groupExtension) ? "" : req.groupExtension;
 
         groupInterface.createGroup(imCreateGroupReq, new ValueCallbackAdapter<>(callback, new Function<ImCreateGroupRsp, CreateGroupResponse>() {
             @Override

@@ -8,7 +8,8 @@ if (debuggerPath != null && new File(debuggerPath).exists()) {
 }
 
 include ':AUIBaseKits:AUICommon'
-include ':AUIBaseKits:AUIBeauty'
+include ':AUIBaseKits:AUIBeauty:live_beauty'
+include ':AUIBaseKits:AUIBeauty:live_queenbeauty'
 include ':AUIBaseKits:AUIMessage'
 include ':AUIBaseKits:AUIMessage:AUIMessageImpl-Internal'
 include ':AUIBaseKits:AUIMessage:AUIMessageImpl-RongCloud'

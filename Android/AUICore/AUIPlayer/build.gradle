@@ -26,6 +26,6 @@ android {
 dependencies {
     implementation project(':AUIBaseKits:AUICommon')
 
-    api "com.aliyun.aio:AliVCSDK_PremiumLive:6.6.0"
+    api "com.aliyun.aio:AliVCSDK_InteractiveLive:6.7.0"
 }
 

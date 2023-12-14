@@ -192,6 +192,11 @@ public class LivePushManager implements AlivcLiveBaseListener {
         }
 
         @Override
+        public void onRemoteUserAudioStream(AlivcLivePusher pusher, String userId, boolean isPushing) {
+
+        }
+
+        @Override
         public void onRemoteUserVideoStream(AlivcLivePusher pusher, String userId, AlivcLivePlayVideoStreamType videoStreamType, boolean isPushing) {
 
         }

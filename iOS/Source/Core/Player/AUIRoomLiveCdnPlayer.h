@@ -25,7 +25,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic) void(^onLoadingEndBlock)(void);
 @property (copy, nonatomic) void(^onPlayErrorBlock)(void);
 
-@property (assign, nonatomic, class) BOOL canRtsPull; // 是否使用rts进行拉流，默认为YES
+// 是否使用rts_url地址进行拉流，默认为YES
+@property (assign, nonatomic, class) BOOL canRtsPull;
+
+// 是否使用flv_oriaac_url地址进行拉流，默认为NO
+// 符合以下条件的话，需要设置为YES
+// 1、没开通rts，也就是canRtsPull设置为NO
+// 2、来做web端的推流，且需要配置一个aac模板
+@property (assign, nonatomic, class) BOOL canOriaccPull;
 
 - (void)prepare;
 - (BOOL)start;

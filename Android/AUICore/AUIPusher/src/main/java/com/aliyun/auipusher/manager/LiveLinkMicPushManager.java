@@ -1045,7 +1045,7 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         if (mAlivcLivePlayerMap.containsKey(audiencePull)) {
             return false;
         }
-        MultiAlivcLivePlayer alivcLivePlayer = new MultiAlivcLivePlayer(mContext, AlivcLiveMode.AlivcLiveInteractiveMode);
+        final MultiAlivcLivePlayer alivcLivePlayer = new MultiAlivcLivePlayer(mContext, AlivcLiveMode.AlivcLiveInteractiveMode);
         alivcLivePlayer.setAudienceId(audiencePull);
         alivcLivePlayer.setMultiInteractPlayInfoListener(new MultiInteractLivePushPullListener() {
             @Override
@@ -1055,7 +1055,9 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
             @Override
             public void onPullError(String audiencePull, AlivcLivePlayError errorType, String errorMsg) {
                 if (errorType == AlivcLivePlayError.AlivcLivePlayErrorStreamStopped) {
-                    onEvent(LiveEvent.LIVE_PLAYER_ERROR);
+                    if (alivcLivePlayer != null) {
+                        alivcLivePlayer.stopPlay();
+                    }
                 }
             }
 

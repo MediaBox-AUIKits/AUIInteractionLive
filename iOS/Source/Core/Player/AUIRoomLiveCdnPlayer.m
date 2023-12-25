@@ -16,8 +16,8 @@
 @property (assign, nonatomic) BOOL playOnError;
 @property (assign, nonatomic) BOOL isDestroy;
 
-@property (assign, nonatomic) BOOL playRts;
 @property (assign, nonatomic) BOOL canRts;
+@property (assign, nonatomic) NSInteger retryCount;
 
 @end
 
@@ -32,6 +32,15 @@ static BOOL g_canRtsPull = YES;
 
 + (void)setCanRtsPull:(BOOL)canRtsPull {
     g_canRtsPull = canRtsPull;
+}
+
+static BOOL g_canOriaccPull = NO;
++ (BOOL)canOriaccPull {
+    return g_canOriaccPull;
+}
+
++ (void)setCanOriaccPull:(BOOL)canOriaccPull {
+    g_canOriaccPull = canOriaccPull;
 }
 
 - (AUIRoomDisplayView *)displayView {
@@ -61,7 +70,7 @@ static BOOL g_canRtsPull = YES;
         canRts = NO;
     }
     self.canRts = canRts;
-    self.playRts = canRts;
+    self.retryCount = 0;
     NSLog(@"cdn拉流：%@支持rts播放", self.canRts ? @"" : @"不");
 }
 
@@ -88,7 +97,7 @@ static BOOL g_canRtsPull = YES;
 
 - (void)prepare {
     self.playOnError = NO;
-    AVPConfig *config = self.playRts ? [self rtsConfig] : [self playConfig];
+    AVPConfig *config = self.canRts ? [self rtsConfig] : [self playConfig];
 
     _player = [[AliPlayer alloc] init];
     [_player setConfig:config];
@@ -105,10 +114,10 @@ static BOOL g_canRtsPull = YES;
     
     NSString *playUrl = nil;
     if (self.liveInfoModel.mode == AUIRoomLiveModeBase) {
-        if (self.playRts) {
+        if (self.canRts) {
             playUrl = self.liveInfoModel.pull_url_info.rts_url;
         }
-        else if (self.liveInfoModel.pull_url_info.flv_oriaac_url.length > 0)  {
+        else if (self.class.canOriaccPull) {
             playUrl = self.liveInfoModel.pull_url_info.flv_oriaac_url;
         }
         else {
@@ -116,10 +125,10 @@ static BOOL g_canRtsPull = YES;
         }
     }
     else if (self.liveInfoModel.mode == AUIRoomLiveModeLinkMic) {
-        if (self.playRts) {
+        if (self.canRts) {
             playUrl = self.liveInfoModel.link_info.cdn_pull_info.rts_url;
         }
-        else if (self.liveInfoModel.link_info.cdn_pull_info.flv_oriaac_url.length > 0) {
+        else if (self.class.canOriaccPull) {
             playUrl = self.liveInfoModel.link_info.cdn_pull_info.flv_oriaac_url;
         }
         else {
@@ -179,6 +188,7 @@ static BOOL g_canRtsPull = YES;
                 self.onPrepareDoneBlock();
             }
             self.startCompleted = YES;
+            self.retryCount = 0;
         }
             break;
         case AVPEventLoadingStart: {
@@ -217,9 +227,9 @@ static BOOL g_canRtsPull = YES;
             return;
         }
         
-        if (self.playRts) {
-            NSLog(@"cdn拉流：rts播放失败，使用flv进行播放");
-            self.playRts = NO;
+        self.retryCount++;
+        if (self.retryCount <= 5) {
+            NSLog(@"cdn拉流：第%zd次重试拉流播放", self.retryCount);
             [self destory];
             [self prepare];
             [self start];
@@ -227,15 +237,18 @@ static BOOL g_canRtsPull = YES;
         }
 
         self.playOnError = YES;
-        NSLog(@"cdn拉流：使用flv播放失败，是否重试");
+        NSLog(@"cdn拉流：已经超过最大重试次数，弹框由业务层决定是否尝试再次拉流");
         NSString *title = @"直播中断，您可尝试再次拉流";
         [AVAlertController showWithTitle:nil message:title cancelTitle:@"取消" okTitle:@"重试" onCompleted:^(BOOL isCanced) {
             if (!isCanced) {
-                NSLog(@"cdn拉流：开始重试");
-                self.playRts = self.canRts;
+                NSLog(@"cdn拉流：开始尝试再次拉流");
+                self.retryCount = 0;
                 [self destory];
                 [self prepare];
                 [self start];
+            }
+            else {
+                NSLog(@"cdn拉流：已取消再次尝试拉流");
             }
         }];
         

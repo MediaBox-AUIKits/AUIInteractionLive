@@ -92,22 +92,6 @@ public class LiveRenderComponent extends FrameLayout implements ComponentHolder 
         public void onInit(final LiveContext liveContext) {
             super.onInit(liveContext);
 
-            LiveLinkMicPushManager liveLinkMicPushManager = liveContext.getLiveLinkMicPushManager();
-            if (liveLinkMicPushManager != null) {
-                liveLinkMicPushManager.setCallback(new LiveLinkMicPushManager.Callback() {
-                    @Override
-                    public void onEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
-                        switch (event) {
-                            case LIVE_PLAYER_ERROR:
-                                if (!isOwner()) {
-                                    innerStopLive();
-                                }
-                                break;
-                        }
-                    }
-                });
-            }
-
             getMessageService().addMessageListener(new SimpleOnMessageListener() {
                 @Override
                 public void onStartLive(AUIMessageModel<StartLiveModel> message) {

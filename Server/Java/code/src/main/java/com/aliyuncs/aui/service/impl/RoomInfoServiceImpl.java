@@ -465,12 +465,24 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoDao, RoomInfoEntity
                     .withClaim("exp", exp)
                     .sign(Algorithm.HMAC256(TOKEN_SECRET));
 
-            String liveJumpUrl = String.format("auipusher://page/live-room?app_server=%s&token=%s&user_id=%s&user_name=%s&live_id=%s",
-                    UriUtils.encodePath(serverHost, StandardCharsets.UTF_8),
-                    token,
-                    UriUtils.encodePath(jumpUrlRequestDto.getUserId(), StandardCharsets.UTF_8),
-                    UriUtils.encodePath(jumpUrlRequestDto.getUserName(), StandardCharsets.UTF_8),
-                    UriUtils.encodePath(jumpUrlRequestDto.getLiveId(), StandardCharsets.UTF_8));
+            String liveJumpUrl;
+            if (StringUtils.isNotEmpty(jumpUrlRequestDto.getVersion())) {
+                liveJumpUrl = String.format("auipusher://page/live-room?app_server=%s&token=%s&user_id=%s&user_name=%s&live_id=%s&version=%s",
+                        UriUtils.encodePath(serverHost, StandardCharsets.UTF_8),
+                        token,
+                        UriUtils.encodePath(jumpUrlRequestDto.getUserId(), StandardCharsets.UTF_8),
+                        UriUtils.encodePath(jumpUrlRequestDto.getUserName(), StandardCharsets.UTF_8),
+                        UriUtils.encodePath(jumpUrlRequestDto.getLiveId(), StandardCharsets.UTF_8),
+                        UriUtils.encodePath(jumpUrlRequestDto.getVersion(), StandardCharsets.UTF_8)
+                        );
+            } else {
+                liveJumpUrl = String.format("auipusher://page/live-room?app_server=%s&token=%s&user_id=%s&user_name=%s&live_id=%s",
+                        UriUtils.encodePath(serverHost, StandardCharsets.UTF_8),
+                        token,
+                        UriUtils.encodePath(jumpUrlRequestDto.getUserId(), StandardCharsets.UTF_8),
+                        UriUtils.encodePath(jumpUrlRequestDto.getUserName(), StandardCharsets.UTF_8),
+                        UriUtils.encodePath(jumpUrlRequestDto.getLiveId(), StandardCharsets.UTF_8));
+            }
             return JumpUrlResponse.builder().liveJumpUrl(liveJumpUrl).build();
         } catch (Exception e) {
             log.error("getLiveJumpUrl exception:{}", e);

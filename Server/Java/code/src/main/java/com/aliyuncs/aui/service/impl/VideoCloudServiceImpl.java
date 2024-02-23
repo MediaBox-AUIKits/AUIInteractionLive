@@ -129,7 +129,7 @@ public class VideoCloudServiceImpl implements VideoCloudService {
             role = "";
         }
         String nonce = UUID.randomUUID().toString();
-        long timestamp = DateUtils.addHours(new Date(), 1).getTime();
+        long timestamp = DateUtils.addHours(new Date(), 1).getTime() / 1000;
         String signContent = String.format("%s%s%s%s%s%s", appId, appKey, imTokenRequestDto.getUserId(), nonce, timestamp, role);
         String appToken = org.apache.commons.codec.digest.DigestUtils.sha256Hex(signContent);
 
@@ -447,7 +447,7 @@ public class VideoCloudServiceImpl implements VideoCloudService {
 
     public String getSpecialRtcAuth(String channelId, String userId, long timestamp) {
 
-        String rtcAuthStr = String.format("%s%s%s%s%d", "", "", channelId, userId, timestamp);
+        String rtcAuthStr = String.format("%s%s%s%s%d", "79a51aa1-7127-4f32-90ce-cdfe618835d9", "181a27773a0f06f6042800ede171279e", channelId, userId, timestamp);
         String rtcAuth = getSHA256(rtcAuthStr);
         log.info("getRtcAuth. rtcAuthStr:{}, rtcAuth:{}", rtcAuthStr, rtcAuth);
         return rtcAuth;

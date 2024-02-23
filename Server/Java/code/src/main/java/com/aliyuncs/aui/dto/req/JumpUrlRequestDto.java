@@ -26,4 +26,6 @@ public class JumpUrlRequestDto {
 
     @JsonProperty("user_name")
     private String userName;
+
+    private String version;
 }

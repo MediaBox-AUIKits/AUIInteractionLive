@@ -14,20 +14,20 @@
 			@error="handleVideoError"
 		></video>
 		
-		<!-- <live-player
+		<live-player
 			v-if="liveUrl"
 			:src="liveUrl"
 			autoplay
 			class="player-object"
-		></live-player> -->
+		></live-player>
 		<!-- 使用 video 播 hls 模拟 live-player -->
-		<video
+		<!-- <video
 			v-if="liveUrl"
 			:src="liveUrl"
 			autoplay
 			:controls="false"
 			class="player-object"
-		></video>
+		></video> -->
 	</view>
 </template>
 

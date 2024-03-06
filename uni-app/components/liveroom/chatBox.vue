@@ -82,10 +82,13 @@
 
 <script>
 	import { mapGetters } from 'vuex';
-	import { InteractionEventNames, InteractionMessageTypes } from  '@/utils/Interaction.js';
-	import { CustomMessageTypes, MaxMessageCount } from '@/utils/constants.js';
-	import { getNameColor, throttle } from '@/utils/common.js';
+	import { 
+		CustomMessageTypes, 
+		MaxMessageCount,
+		InteractionMessageTypes
+	} from '@/utils/constants.js';
 	import services from '@/utils/services.js';
+	import { getNameColor, throttle } from '@/utils/common.js';
 	import LikeAnime from '../likeAnime/likeAnime.vue';
 	
 	export default {
@@ -119,7 +122,18 @@
 				bullets: [],
 				inputFixedBottom: 0, // 绝对定位时的值
 				scrollIntoViewId: '', // 聊天列表自动定位滚动到的id
+				muteAllStatus: undefined,
+				muteUserStatus: undefined,
 			};
+		},
+
+		watch: {
+			imReady(val) {
+				if (val) {
+					this.listenInteraction();
+					console.log('chatbox imReady listenInteraction');
+				}
+			}
 		},
 		
 		computed: {
@@ -133,8 +147,6 @@
 			chatPlaceholder() {
 				if (this.roomInfo.groupMuted) {
 					return '全员禁言中';
-				} else if (this.roomInfo.selfMuted) {
-					return '您已被禁言';
 				}
 				if (!this.allowChat) {
 					return ' '; // 真机模拟时发现不展示输入框
@@ -142,18 +154,11 @@
 				return '和主播说点什么';
 			},
 			chatInputDisbale() {
-				return !this.allowChat || this.sending || this.roomInfo.groupMuted || this.roomInfo.selfMuted;
+				return !this.allowChat || this.sending || !!this.roomInfo.groupMuted;
+			},
+			imReady() {
+				return this.roomInfo.imReady;
 			}
-		},
-		
-		created() {
-			this.interaction = getApp().globalData.interaction;
-			this.interaction.on(InteractionEventNames.Message, (eventData) => {
-			    this.handleReceivedMessage(eventData || {});
-			});
-			
-			this.sendLike = throttle(this.sendLike, 1500, { noLeading: true });
-			this.handleUserJoined = throttle(this.handleUserJoined, 1500);
 		},
 		
 		methods: {
@@ -167,13 +172,12 @@
 			},
 			// 发送消息
 			handleConfirm(evt) {
-				const content = this.text.trim();
+				const content = this.text?.trim();
 				if(
 					!content ||
 					!this.joinedGroupId ||
 					this.sending ||
-					this.roomInfo.groupMuted ||
-					this.roomInfo.selfMuted
+					this.roomInfo.groupMuted
 				) {
 					return;
 				}
@@ -184,7 +188,8 @@
 				    data: JSON.stringify({ content }),
 				};
 				this.interaction
-					.sendMessageToGroup(options)
+					?.getMessageManager()
+					?.sendGroupMessage(options)
 					.then(() => {
 						// console.log('发送成功');
 						this.text = '';
@@ -196,11 +201,99 @@
 						this.sending = false;
 					});
 			},
+
+			async listenInteraction() {
+				this.interaction = getApp().globalData.interaction;
+
+				const userInfo = services.getUserInfo();
+				const groupManager = this.interaction?.getGroupManager();
+				groupManager?.on('memberchange', (groupId, memberCount, joinUsers, leaveUsers) => {
+					joinUsers.length > 0 && joinUsers.forEach(user => {
+						this.handleReceivedMessage({
+							type: InteractionMessageTypes.PaaSUserJoin,
+							data: JSON.stringify({
+								user,
+							}),
+							groupId,
+							messageId: '',
+							sender: user,
+						});
+					});
+
+					leaveUsers.length > 0 && leaveUsers.forEach(user => {
+						this.handleReceivedMessage({
+							type: InteractionMessageTypes.PaaSUserLeave,
+							data: JSON.stringify({
+								user,
+							}),
+							groupId,
+							messageId: '',
+							sender: user,
+						});
+					});
+				});
+				groupManager?.on('mutechange', (groupId, status) => {
+					let type;
+					const newMuteUserStatus = status.muteUserList.includes(
+						userInfo?.userId
+					);
+					if (status.muteAll !== this.muteAllStatus) {
+						type = status.muteAll
+							? InteractionMessageTypes.PaaSMuteGroup
+							: InteractionMessageTypes.PaaSCancelMuteGroup;
+						this.muteAllStatus = status.muteAll;
+						this.handleReceivedMessage({
+							type,
+							data: JSON.stringify({
+								status,
+							}),
+							groupId,
+							messageId: '',
+							sender: {
+								userId: 'send from V2 IM sdk',
+								userNick: '',
+								userAvatar: '',
+							},
+						});
+					}
+					if (newMuteUserStatus !== this.muteUserStatus) {
+						type = newMuteUserStatus
+							? InteractionMessageTypes.PaaSMuteUser
+							: InteractionMessageTypes.PaaSCancelMuteUser;
+						this.muteUserStatus = newMuteUserStatus;
+						this.handleReceivedMessage({
+							type,
+							data: JSON.stringify({
+								status,
+							}),
+							groupId,
+							messageId: '',
+							sender: {
+								userId: 'send from V2 IM sdk',
+								userNick: '',
+								userAvatar: '',
+							},
+						});
+					}
+				});
+
+				const messageManager = this.interaction?.getMessageManager();
+				messageManager?.on("recvc2cmessage", (eventData) => {
+					this.handleReceivedMessage(eventData || {});
+				});
+				messageManager?.on("recvgroupmessage", (eventData) => {
+					this.handleReceivedMessage(eventData || {});
+				});
+
+				this.handleUserJoined = throttle(this.handleUserJoined, 1500);
+			},
+
 			// 处理接收到的信息
 			handleReceivedMessage(eventData) {
-				const { type, data, messageId, senderId, senderInfo = {} } = eventData || {};
-				const nickName = senderInfo.userNick || senderId;
-				// console.log('chatbox 消息', type, data);
+				const { type, data: _data, messageId, sender = {} } = eventData || {};
+				console.log('收到消息了', eventData);
+				let data = _data && JSON.parse(_data || '{}');
+				const nickName = sender.userNick ?? sender.userId;
 
 				switch (type){
 					case InteractionMessageTypes.PaaSUserJoin:
@@ -209,7 +302,6 @@
 					    break;
 					case InteractionMessageTypes.PaaSLikeInfo:
 					    // 用户点赞数据，目前页面未使用
-					    // console.log(nickName, data, messageId);
 					    break;
 					case CustomMessageTypes.Comment:
 						// 接收到评论消息
@@ -243,11 +335,18 @@
 						break;
 				}
 			},
+
 			handleUserJoined(nickName, data, messageId) {
-				// 更新统计数据
-				if (data && data.statistics) {
-				    this.$store.commit('liveroom/updateMetrics', data.statistics);
-				}
+				this.interaction
+					.getGroupManager()
+					?.queryGroup(this.joinedGroupId)
+					.then(res => {
+						this.$store.commit('liveroom/updateMetrics', {
+							pv: res?.statistics?.pv,
+							onlineCount: res?.statistics?.onlineCount,
+						});
+					});
+
 				this.addBulletItem(nickName, messageId);
 			},
 			// 用于显示会消失的的气泡消息，如 入会 相关
@@ -279,19 +378,7 @@
 			},
 			// 处理禁言
 			handleMuteUser(isMuted, userInfo) {
-				const userData = services.getUserInfo();
-				// 只展示你个人的禁言消息
-				if (userData.userId !== userInfo.userId) {
-				    return;
-				}
-				if (isMuted) {
-					this.text = '';
-					this.$store.commit('liveroom/updateInfo', { selfMuted: true });
-					this.showToast('已被禁言');
-				} else {
-					this.$store.commit('liveroom/updateInfo', { selfMuted: false });
-					this.showToast('已被解除禁言');
-				}
+				// 暂不支持个人禁言
 			},
 			showToast(text) {
 				uni.showToast({
@@ -303,27 +390,7 @@
 				return getNameColor(name);
 			},
 			handleClickLike() {
-				this.$refs.animeRef.add();
-				this.likeCount += 1;
-				// 执行发送点赞数据
-				this.sendLike();
-			},
-			// 点赞
-			sendLike() {
-				const count = this.likeCount;
-				const options = {
-				    groupId: this.joinedGroupId,
-				    count: count,
-				    broadCastType: 2,
-				};
-				this.likeCount = 0;
-				this.interaction.sendLike(options)
-					.then(() => {
-				        // console.log('sendLike 成功', count);
-				    }).catch(() => {
-				        // 若是失败了，加回 count
-				        this.likeCount += count;
-				    });
+				this.showToast('点赞请自行实现');
 			},
 			handleShare() {
 				this.showToast('分享请自行实现');

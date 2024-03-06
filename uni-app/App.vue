@@ -1,8 +1,8 @@
 <script>
-	import { InteractionEngine } from  '@/utils/Interaction.js';
+	import { ImEngine } from  '@/utils/Interaction.js';
 	export default {
 		globalData: {
-			interaction: InteractionEngine.create(),
+			interaction: ImEngine.createEngine(),
 		},
 		
 		onLaunch() {

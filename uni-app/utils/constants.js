@@ -34,3 +34,13 @@ export const RoomStatus = {
   started: 1, // 已开始
   ended: 2, // 已结束
 }
+
+export const InteractionMessageTypes = {
+  PaaSLikeInfo: 1001, // 点赞数据
+  PaaSUserJoin: 1002, // 用户进入消息组
+  PaaSUserLeave: 1003, // 用户离开消息组
+  PaaSMuteGroup: 1004, // 禁言消息组
+  PaaSCancelMuteGroup: 1005, // 取消禁言消息组
+  PaaSMuteUser: 1006, // 禁言消息组某个用户
+  PaaSCancelMuteUser: 1007, // 取消禁言消息组某个用户
+};

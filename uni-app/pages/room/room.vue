@@ -11,11 +11,20 @@
 </template>
 
 <script>
-	import { InteractionEngine } from  '@/utils/Interaction.js';
+	import { mapGetters } from 'vuex';
+	import { 
+		ImEngine, 
+		// ImLogLevel
+	} from '@/utils/Interaction.js';
 	import rootFontSize from '@/mixins/rootFontSize.js';
-	import { LatestLiveidStorageKey } from '@/utils/constants.js';
+	import { 
+		LatestLiveidStorageKey,
+		CustomMessageTypes,
+		InteractionMessageTypes,
+		RoomStatus
+	} from '@/utils/constants.js';
 	import services from '@/utils/services.js';
-	import { convertToCamel } from '@/utils/common.js';
+	import { convertToCamel, throttle } from '@/utils/common.js';
 	import Liveroom from '@/components/liveroom/liveroom.vue';
 	
 	export default {
@@ -27,7 +36,6 @@
 		
 		data() {
 			return {
-				interaction: null,
 				fetching: false,
 				liveId: '',
 				joinedGroupId: '', // 已加入的消息组id
@@ -35,16 +43,21 @@
 				windowWidth: '100%',
 			};
 		},
+
+		computed: {
+			...mapGetters({
+				roomInfo: 'liveroom/info',
+			}),
+		},
 		
 		created() {
 			// 每次进入重新创建互动消息实例，并更新 globalData 中的数据
-			const ins = InteractionEngine.create();
-			getApp().globalData.interaction = ins;
-			this.interaction = ins;
-			
 			const res = uni.getSystemInfoSync();
 			this.windowHeight = res.windowHeight + 'px';
 			this.windowWidth = res.windowWidth + 'px';
+			const engine = ImEngine.createEngine();
+			getApp().globalData.interaction = engine;
+			this.interaction = engine;
 		},
 		
 		onLoad(query) {
@@ -54,7 +67,7 @@
 				});
 				return;
 			}
-			
+
 			this.fetchRoomDetail(query.liveId);
 		},
 		
@@ -73,9 +86,10 @@
 			// #endif
 		},
 		
-		onUnload() {
+		async onUnload() {
 			this.$store.commit('liveroom/reset');
-			this.interaction.logout();
+			await this.interaction.logout();
+			this.interaction.unInit();
 		},
 		
 		methods: {
@@ -115,28 +129,58 @@
 			},
 			
 			async initInteraction(groupId) {
-				try{
-					// 获取token
-					const token = await services.getToken();
-					console.log(token);
-					// im 服务认证
-					await this.interaction.auth(token.access_token);
-					// 加入房间
-					const userData = services.getUserInfo();
-					await this.interaction.joinGroup({
-						groupId,
-						userNick: userData.userName,
-						userAvatar: '', // 随机取头像
-						broadCastType: 2, // 广播所有人
-						broadCastStatistics: true,
+				try {
+					// 获取token， 用户为主播时，才有阿里云新版IM admin管理员权限
+					const userInfo = services.getUserInfo();
+					const role = this.roomInfo?.anchorId === userInfo.userId ? 
+						'admin' : undefined;
+					const { 
+						aliyunIMV2: tokenConfig
+					} = await services.getToken(['aliyun_new'], role);
+					await this.interaction.init({
+						deviceId: 'uniapp',    // 设备ID，可选传入
+						appId: tokenConfig?.appId,     // 开通应用后可以在控制台上拷贝
+						appSign: tokenConfig?.appSign, // 开通应用后可以在控制台上拷贝
+						// logLevel: ImLogLevel.ERROR,  // 日志级别，调试时使用 ImLogLevel.DBUG
+						// 指定引入的 wasm 的地址
+						locateFile: (url) => {
+							if (url.endsWith('.wasm')) {
+								return '/static/mp-weixin/alivc-im.wasm.br';
+							}
+							return url;
+						},
 					});
+					await this.interaction.login({
+						user: {
+							userId: userInfo?.userId,
+							userExtension: JSON.stringify({
+								userNick: userInfo?.userName,
+								userAvatar: userInfo?.userAvatar,
+							}),
+						},
+						userAuth: {
+							nonce: tokenConfig?.auth.nonce,
+							timestamp: tokenConfig?.auth.timestamp,
+							role: tokenConfig?.auth.role,
+							token: tokenConfig?.appToken,
+						},
+					});
+
+					const groupInfo = 
+						await this.interaction?.getGroupManager()?.joinGroup(groupId);
+					const { statistics, muteStatus } = groupInfo;
+					this.$store.commit('liveroom/updateInfo', {
+						groupMuted: muteStatus?.muteAll,
+						imReady: true,
+					});
+					this.$store.commit('liveroom/updateMetrics', {
+						pv: statistics?.pv,
+						onlineCount: statistics?.onlineCount,
+					});
+
+					this.listenInteraction();
 					this.joinedGroupId = groupId;
-					
-					// 检查更新自己信息
-					this.updateSelfInfo();
-					// 更新直播统计数据
-					this.updateGroupStatistics();
-				}catch(e){
+				} catch (e) {
 					console.log('加入消息组失败', e);
 					uni.showToast({
 						title: '加入消息组失败',
@@ -144,37 +188,41 @@
 					});
 				}
 			},
-			
-			updateSelfInfo() {
-			    const userData = services.getUserInfo();
-			    this.interaction.getGroupUserByIdList({
-					groupId: this.joinedGroupId,
-					userIdList: [userData.userId],
-			    }).then((res) => {
-					const info = ((res || {}).userList || [])[0];
-					if (info) {
-						const muteBy = info.muteBy || [];
-						this.$store.commit('liveroom/updateInfo', {
-							selfMuted: muteBy.includes('user'),
-							groupMuted: muteBy.includes('group'),
-						});
-					}
-			    });
+
+			async listenInteraction() {
+				const messageManager = this.interaction?.getMessageManager();
+				messageManager?.on("recvc2cmessage", (eventData) => {
+					this.handleReceivedMessage(eventData || {});
+				});
+				messageManager?.on("recvgroupmessage", (eventData) => {
+					this.handleReceivedMessage(eventData || {});
+				});
+				
+				this.handleUserJoined = throttle(this.handleUserJoined, 1500);
 			},
-			
-			updateGroupStatistics() {
-			    this.interaction.getGroupStatistics({
-					groupId: this.joinedGroupId,
-				})
-				.then((res) => {
-					this.$store.commit('liveroom/updateMetrics', {
-						pv: res.pv,
-						uv: res.uv,
-						likeCount: res.likeCount,
-						onlineCount: res.onlineCount,
-					});
-				})
-				.catch(() => {});
+
+			handleReceivedMessage(eventData) {
+				const { type, data: _data, messageId, sender = {} } = eventData || {};
+				console.log('收到消息了', eventData);
+				let data = _data && JSON.parse(_data || '{}');
+				const nickName = sender.userNick ?? sender.userId;
+
+				switch (type){
+					case CustomMessageTypes.LiveStart:
+						// 直播开始
+						this.$store.commit('liveroom/updateInfo', {
+							status: RoomStatus.started,
+						});
+						break;
+					case CustomMessageTypes.LiveStop:
+						// 直播结束
+						this.$store.commit('liveroom/updateInfo', {
+							status: RoomStatus.ended,
+						});
+						break;
+					default:
+						break;
+				}
 			},
 		},
 	}

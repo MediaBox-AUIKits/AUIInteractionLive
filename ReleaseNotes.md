@@ -25,6 +25,7 @@
 发布时间：2023-11-17
 * Android&iOS：升级AUIMessage，使用新的互动消息SDK，如果已经接入老版本，请勿直接升级到该版本
 * Android&iOS：升级MediaBoxSDK到v6.6.0
+* uni-app：优化项目结构，安卓H5环境支持播放 FLV 直播流等
 
 ## v2.2.1
 发布时间：2023-12-13
@@ -33,3 +34,7 @@
 ## v2.3.0
 发布时间：2023-12-14
 * Android&iOS：升级MediaBoxSDK到v6.7.0，默认使用AliVCSDK_InteractiveLive
+
+## v2.3.1
+发布时间：2024-03-05
+* uni-app：升级使用新版互动消息SDK

@@ -35,8 +35,7 @@
 
 <script>
 	import { mapGetters } from 'vuex';
-	import { RoomStatus, CustomMessageTypes, RoomModeMap } from '@/utils/constants.js';
-	import { InteractionEventNames, InteractionMessageTypes } from  '@/utils/Interaction.js';
+	import { RoomStatus, RoomModeMap } from '@/utils/constants.js';
 	import WxPlayer from './wxPlayer.vue';
 	import H5Player from './h5Player/index.vue';
 	
@@ -99,12 +98,6 @@
 				return false;
 			},
 		},
-		created() {
-			this.interaction = getApp().globalData.interaction;
-			this.interaction.on(InteractionEventNames.Message, (eventData) => {
-			    this.handleReceivedMessage(eventData || {});
-			});
-		},
 		methods: {
 			playback() {
 				const vodInfo = this.roomInfo.vodInfo;
@@ -114,28 +107,6 @@
 				// 当前例子直播回看使用第一个播放地址，可根据您业务调整
 				this.vodInfo = vodInfo.playlist[0];
 				this.$emit('update-is-playback', true);
-			},
-			// 互动消息处理
-			handleReceivedMessage(eventData) {
-				const { type, data, messageId, senderId, senderInfo = {} } = eventData || {};
-				const nickName = senderInfo.userNick || senderId;
-				
-				switch (type){
-					case CustomMessageTypes.LiveStart:
-						// 直播开始
-						this.$store.commit('liveroom/updateInfo', {
-							status: RoomStatus.started,
-						});
-						break;
-					case CustomMessageTypes.LiveStop:
-						// 直播结束
-						this.$store.commit('liveroom/updateInfo', {
-							status: RoomStatus.ended,
-						});
-						break;
-					default:
-						break;
-				}
 			},
 			controlsToggle(bool) {
 				this.$emit('controlstoggle', bool);

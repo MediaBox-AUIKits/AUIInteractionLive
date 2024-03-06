@@ -41,9 +41,12 @@
 		
 		data() {
 			return {
-				player: new H5Player(),
 				errorDisplayVisible: true,
 			}
+		},
+		
+		created() {
+			this.player = new H5Player();
 		},
 		
 		mounted() {

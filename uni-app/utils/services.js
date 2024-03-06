@@ -1,10 +1,11 @@
 import config from '../config';
+import { convertToCamel } from '@/utils/common.js';
 
 // 配置 APPServer 服务域名
 export const ServicesOrigin = config.appServer;
 
 // 配置api接口路径前缀
-export const ApiPrefixPath = '/api/v1/live/';
+export const ApiPrefixPath = '/api';
 
 const UserInfoStorageKey = 'user_info';
 
@@ -66,7 +67,7 @@ class Services {
 	login(userId, username) {
 		// 实际场景请勿明文传密码
 		return this.request(
-			'login',
+			'/v1/live/login',
 			{
 				username,
 				password: username,
@@ -91,8 +92,9 @@ class Services {
 	
 	getRoomList(pageNum, pageSize) {
 		return this.request(
-			'list',
+			'/v1/live/list',
 			{
+				im_server: ["aliyun_new"],
 				user_id: this.userId,
 				page_num: pageNum,
 				page_size: pageSize,
@@ -105,7 +107,7 @@ class Services {
 	
 	getRoomDetail(roomId) {
 		return this.request(
-			'get',
+			'/v1/live/get',
 			{
 				user_id: this.userId,
 				id: roomId,
@@ -116,18 +118,24 @@ class Services {
 		);
 	}
 	
-	getToken() {
+	getToken(im_server, role) {
 		return this.request(
-			'token',
+			'/v2/live/token',
 			{
 				user_id: this.userId,
 				device_type: 'web',
 				device_id: 'isuniapp',
+				role,
+				im_server,
 			},
 			{
 				Authorization: `Bearer ${this.authToken}`,
 			}
-		);
+		).then((res) => {
+			return {
+				aliyunIMV2: convertToCamel(res).aliyunNewIm,
+			};
+		});
 	}
 }
 

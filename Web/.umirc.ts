@@ -36,7 +36,6 @@ export default {
       component: 'room-list',
       wrappers: ['@/wrappers/auth'],
     },
-    { exact: true, path: '/test/im', component: 'test/im' },
     { exact: true, path: '/', component: 'index' },
   ],
   // 这里是修改打包的 index.html 要使用的 umi.js 、umi.css 地址的公共路径，默认是 /

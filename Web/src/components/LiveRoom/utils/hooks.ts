@@ -10,3 +10,15 @@ export function usePrevious<T>(value: T): T | undefined {
   // Return previous value (happens before update in useEffect above)
   return ref.current;
 }
+
+/**
+ * 返回当前最新值的 Hook
+ * @param value
+ * @returns
+ */
+export function useLatest<T>(value: T) {
+  const ref = useRef(value);
+  ref.current = value;
+
+  return ref;
+}

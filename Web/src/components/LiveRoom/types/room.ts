@@ -1,3 +1,5 @@
+import { ISpectatorInfo } from '@/types/interaction';
+
 export interface IMetricsInfo {
   likeCount: number; // 点赞数
   onlineCount: number; // 当前在线数
@@ -74,6 +76,7 @@ export interface IRoomInfo {
   userStatus: IUserStatus;
   // 连麦有的字段
   linkInfo?: ILinkUrlInfo;
+  meetingInfo?: string;
   // vod 回看数据
   vodInfo?: IVODInfo;
 }
@@ -132,6 +135,15 @@ export interface IRoomState {
 
   pcTheme: 'light' | 'dark',
 
+  // 连麦
+  connectedSpectators: ISpectatorInfo[];
+  rtcPushUrl: string,
+  rtcPullUrl: string,
+  cameraOpened: boolean,
+  micOpened: boolean,
+  selfPushReady: boolean,
+  facingMode: 'user'|'environment'
+
   [x: string]: any,
 }
 
@@ -144,6 +156,5 @@ export type LiveRoomType = `${LiveRoomTypeEnum}`;
 
 export interface GroupIdObject {
   aliyunV2GroupId?: string,
-  aliyunV1GroupId?: string,
   rongIMId?: string,
 }

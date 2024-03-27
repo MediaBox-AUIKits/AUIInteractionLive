@@ -5,6 +5,7 @@ export interface IConfig {
     origin: string;
   };
   imServer: AUIMessageServerProps;
+  isShoppingMode: boolean;
 }
 
 // 在 .umirc.ts 中将 config 对象挂在全局的 CONFIG 下
@@ -15,15 +16,13 @@ const config: IConfig = {
     origin: '', // 配置 APPServer 服务域名，例子: https://xxx.xxx.xxx
   },
   imServer: {
-    aliyunIMV1: {
-      enable: false,
-      primary: false,
-    },
     aliyunIMV2: {
       enable: true,
       primary: true,
     },
   },
+  // 是否是电商直播间模式
+  isShoppingMode: false,
 };
 
 export default config;

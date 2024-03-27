@@ -12,6 +12,8 @@ export enum ApiNames {
   token = '/v2/live/token',
   list = '/v1/live/list',
   get = '/v1/live/get',
+  getMeetingInfo = '/v1/live/getMeetingInfo',
+  updateMeetingInfo = '/v1/live/updateMeetingInfo',
 };
 
 export function getApiUrl(name: ApiNames) {

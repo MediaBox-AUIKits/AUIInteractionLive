@@ -101,18 +101,15 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
   const initAUIMessage = useMemoizedFn(
     async (groupIdObject: GroupIdObject) => {
       // 支持多通道的AUIMessage，如果没有获取某个通道的群组id，就会销毁该通道的IM实例
-      const { aliyunV2GroupId, aliyunV1GroupId, rongIMId } = groupIdObject;
+      const { aliyunV2GroupId, rongIMId } = groupIdObject;
 
       try {
-        if (!aliyunV1GroupId && !rongIMId && !aliyunV2GroupId) {
+        if (!rongIMId && !aliyunV2GroupId) {
           throw { code: -1, message: 'IM group id is empty' };
         }
 
-        if (!aliyunV1GroupId || !rongIMId || !aliyunV2GroupId) {
+        if (!rongIMId || !aliyunV2GroupId) {
           const destroyInstances = [];
-          if (!aliyunV1GroupId) {
-            destroyInstances.push(AUIMessageInsType.AliyunIMV1);
-          }
           if (!rongIMId) {
             destroyInstances.push(AUIMessageInsType.RongIM);
           }
@@ -125,15 +122,28 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
         // 用户为主播时，才有阿里云新版IM admin管理员权限
         const role = roomState.anchorId === userInfo.userId ? 'admin' : undefined;
         const tokenConfig = await getToken(role);
+        if (aliyunV2GroupId && tokenConfig.aliyunIMV2) {
+          tokenConfig.aliyunIMV2.extra = {
+            scene: 'AUIInteractionLive',
+            platform: 'web',
+          };
+        }
         auiMessage.setConfig(tokenConfig);
         await auiMessage.init();
-        await auiMessage.login({
-          userId: userInfo.userId,
-          userNick: userInfo.userName,
-          userAvatar: userInfo.userAvatar,
-        });
+        await auiMessage.login(userInfo);
         await auiMessage.joinGroup(groupIdObject);
-        groupIdRef.current = aliyunV2GroupId || aliyunV1GroupId || rongIMId as string;
+        groupIdRef.current = aliyunV2GroupId || rongIMId as string;
+
+        // 初始化禁言状态
+        auiMessage
+          .queryMuteStatus()
+          .then(res => {
+            if (res.groupMuted) {
+              updateRoomState({ groupMuted: true, commentInput: '' });
+              showInfoMessage(tr('chat_all_banned_start'));
+            }
+          })
+          .catch(() => {});
 
         // 更新 likeProcessor
         likeProcessor.setGroupId(groupIdRef.current);
@@ -219,11 +229,9 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
         break;
       case AUIMessageTypes.PaaSMuteUser:
         // 个人被禁言
-        handleMuteUser(true, messageId, data);
         break;
       case AUIMessageTypes.PaaSCancelMuteUser:
         // 个人被取消禁言
-        handleMuteUser(false, messageId, data);
         break;
       case CustomMessageTypes.LiveStart:
         // 开始直播
@@ -253,25 +261,6 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
     updateGroupStatistics();
     addBulletItem(`${nickName} ${tr('liveroom_enter')}`);
   }), [])
-
-  const handleMuteUser = (isMuted: boolean, messageId: string, userData: any = {}) => {
-    console.log('当前暂不支持禁言个人');
-    return;
-    // 支持个人禁言后可以参考以下注释的逻辑
-    // if (userInfo.userId !== userData.userId) {
-    //   return;
-    // }
-
-    // const data: any = { selfMuted: isMuted };
-    // if (isMuted) {
-    //   data.commentInput = ''; // 若当前输入框有内容要清空
-    //   showInfoMessage(`${userData.userNick || ''}${tr('chat_someone_banned_start')}`);
-    // } else {
-    //   showInfoMessage(`${userData.userNick || ''}${tr('chat_someone_banned_stop')}`);
-    // }
-
-    // updateRoomState(data);
-  };
 
   const showInfoMessage = (text: string) => {
     if (UA.isPC) {
@@ -346,6 +335,42 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
     }, 1500);
   };
 
+  const applyCall = () => {
+    const options = {
+      groupId: groupIdRef.current,
+      type: CustomMessageTypes.ApplyRTC,
+      receiverId: roomState.anchorId,
+      skipAudit: true,
+      noStorage: true,
+    };
+    return auiMessage.sendMessageToGroupUser(options);
+  };
+
+  const cancelApplyCall = () => {
+    const options = {
+      groupId: groupIdRef.current,
+      type: CustomMessageTypes.CancelApplyRTC,
+      receiverId: roomState.anchorId,
+      skipAudit: true,
+      noStorage: true,
+    };
+    return auiMessage.sendMessageToGroupUser(options);
+  };
+
+  const sendRTCStop = async (reason?: string) => {
+    const options = {
+      groupId: groupIdRef.current,
+      type: CustomMessageTypes.RTCStop,
+      skipMuteCheck: true,
+      skipAudit: true,
+      noStorage: true,
+      data: { 
+        reason,
+      },
+    };
+    return auiMessage.sendMessageToGroup(options);
+  };
+
   return (
     <RoomContext.Provider
       value={{
@@ -358,6 +383,9 @@ const LiveRoom: React.FC<ILiveRoomProps> = (props: ILiveRoomProps) => {
         sendComment,
         sendLike,
         exit: onExit,
+        applyCall,
+        cancelApplyCall,
+        sendRTCStop,
       }}
     >
       {UA.isPC ? <PCRoom /> : <MobileRoom />}

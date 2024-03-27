@@ -1,4 +1,5 @@
-import { PlayerParams } from "./player";
+import { PlayerParams } from "./playerTypes";
+import { UA } from '../../utils/common';
 
 // H5自定义错误UI：https://help.aliyun.com/document_detail/63069.htm
 // 配置skinLayout属性：https://help.aliyun.com/document_detail/62948.htm
@@ -104,6 +105,13 @@ export const PCSkinLayoutPlayback = [
 const MAX_RETRY_COUNT = 5;
 // 重试时间间隔
 const RETRY_INTERVAL = 2000;
+// 默认 poster 地址
+let posterUrl = '';
+// 生成一个小透明poster，解决安卓 webview 会给 video 加上默认图的问题
+const canvas  = document.createElement('canvas');
+canvas.width = 20;
+canvas.height = 20;
+posterUrl = canvas.toDataURL('image/png');
 
 (window as any).Aliplayer.__logCallback__ = function (event: any) {
 	event.extra = JSON.stringify({
@@ -116,6 +124,27 @@ export class LiveService {
   private player: any;
   private source?: string;
   private retryCount = 0;
+
+  private handleVisibilityChange() {
+	  // console.log('change---->', document.visibilityState);
+    // PC 不处理
+    if (UA.isPC) {
+      return;
+    }
+	  if (document.visibilityState === "visible") {
+	    this.player?.play();
+	  } else {
+	    this.player?.pause();
+	  }
+  }
+  
+  private listenVisibility() {
+	  document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
+  }
+  
+  private unlistenVisibility() {
+  	document.removeEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
+  }
   
   public play(config: Partial<PlayerParams>) {
     const options: PlayerParams = {
@@ -129,6 +158,7 @@ export class LiveService {
       preload: true,
       controlBarVisibility: 'never',
       useH5Prism: true,
+      extraInfo: { poster: posterUrl },
       ...config,
     };
 
@@ -140,6 +170,7 @@ export class LiveService {
     // console.log('player options->', options);
     this.player = new window.Aliplayer(options, () => {
       console.log('created');
+      this.listenVisibility();
     });
 
     this.player.on('error', (e: any) => {
@@ -166,6 +197,7 @@ export class LiveService {
       useH5Prism: true,
       keyShortCuts: true,
       keyFastForwardStep: 5,
+      extraInfo: { poster: posterUrl },
       ...config,
     };
 
@@ -175,6 +207,7 @@ export class LiveService {
 
     this.player = new window.Aliplayer(options, () => {
       console.log('playback created');
+      this.listenVisibility();
     });
   }
 
@@ -198,6 +231,7 @@ export class LiveService {
 
   public destroy() {
     if (this.player) {
+      this.unlistenVisibility();
       this.player.dispose();
       this.player = null;
     }

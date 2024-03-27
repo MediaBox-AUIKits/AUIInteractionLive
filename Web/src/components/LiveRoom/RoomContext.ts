@@ -48,6 +48,15 @@ export const defaultRoomState: IRoomState = {
 
   // 样式相关
   pcTheme: 'light', // pc直播间主题
+
+  // 直播连麦
+  connectedSpectators: [],
+  rtcPushUrl: '',
+  rtcPullUrl: '',
+  cameraOpened: true,
+  micOpened: true,
+  selfPushReady: false,
+  facingMode: 'user',
 };
 
 interface IRoomReducerAction {
@@ -67,18 +76,22 @@ function flatRoomDetail(info: IRoomInfo) {
     selfMuted = info.userStatus.muteSource.includes('user');
   }
 
-  let pullUrlInfo = {};
+  let urlInfo = {};
   // 普通直播时使用 pullUrlInfo 中的播放地址
   if (info.mode === RoomModeEnum.normal) {
-    pullUrlInfo = info.pullUrlInfo || {};
+    urlInfo = info.pullUrlInfo || {};
   } else if (info.linkInfo) {
-    // 连麦直播时使用 linkInfo.cdnPullInfo 中的播放地址
-    pullUrlInfo = info.linkInfo.cdnPullInfo || {};
+    // 连麦直播时使用 linkInfo 中的推拉流地址
+    urlInfo = {
+      ...info.linkInfo.cdnPullInfo,
+      rtcPullUrl: info.linkInfo.rtcPullUrl,
+      rtcPushUrl: info.linkInfo.rtcPushUrl
+    } || {};
   }
 
   return {
     ...obj,
-    ...pullUrlInfo,
+    ...urlInfo,
     ...(info.metrics || {}),
     groupMuted,
     selfMuted,
@@ -129,6 +142,9 @@ type RoomContextType = {
   sendComment: (text: string) => Promise<any>;
   sendLike: () => void;
   exit: () => void;
+  applyCall: () => Promise<any>;
+  cancelApplyCall: () => Promise<any>;
+  sendRTCStop: (reason: string) => Promise<any>;
 }
 
 export const RoomContext  = React.createContext<RoomContextType>({
@@ -141,4 +157,7 @@ export const RoomContext  = React.createContext<RoomContextType>({
   sendComment: () => Promise.resolve(),
   sendLike: () => {},
   exit: () => {},
+  applyCall: () => Promise.resolve(),
+  cancelApplyCall: () => Promise.resolve(),
+  sendRTCStop: (reason: string) => Promise.resolve(),
 });

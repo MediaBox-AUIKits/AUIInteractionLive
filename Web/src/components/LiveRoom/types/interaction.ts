@@ -10,6 +10,12 @@ export enum CustomMessageTypes {
   RTCStart = 20003, // 上麦通知
   RTCStop = 20004, // 下麦通知
   RTCKick = 20005, // 踢下麦（主播发送，观众接收）
+  CancelApplyRTC = 20006, // 取消申请连麦（仅观众）
+  MicChanged = 20007, // 麦克风状态变化
+  CameraChanged = 20008, // 摄像头状态变化
+  ToggleSpectatorMic = 20009, // 打开/关闭观众麦克风（仅主播）
+  ToggleSpectatorCamera = 20010, // 打开/关闭观众摄像头（仅主播）
+  ShoppingProduct = 30011,  // 电商卡片消息
 }
 
 // 扩散类型

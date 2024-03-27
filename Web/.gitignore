@@ -5,7 +5,6 @@
 /src/.umi
 /src/.umi-production
 /src/.umi-test
-/src/pages/test
 /dist
 .DS_Store
 /abc.json

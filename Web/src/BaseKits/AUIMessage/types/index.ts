@@ -1,4 +1,3 @@
-export * from './aliyunIMV1';
 export * from './aliyunIMV2';
 
 export enum AUIMessageEvents {
@@ -40,10 +39,9 @@ export interface AUIMessageConfig {
       timestamp: number;
       userId: string;
     };
-  },
-  aliyunIMV1?: {
-    accessToken: string;
-    refreshToken: string;
+    extra?: {
+      [key: string]: string;
+    };
   },
   rongCloud?: {
     accessToken: string;
@@ -51,7 +49,6 @@ export interface AUIMessageConfig {
 }
 
 export enum AUIMessageInsType {
-  AliyunIMV1,
   RongIM,
   AliyunIMV2,
 }
@@ -70,10 +67,6 @@ export interface IMessageOptions {
 }
 
 export interface AUIMessageServerProps {
-  aliyunIMV1?: {
-    enable: boolean; // 是否开启旧阿里云互动消息服务
-    primary?: boolean; // 是否是主消息服务
-  };
   rongCloud?: {
     enable: boolean; // 是否开启融云互动消息服务
     appKey: string; // 融云的AppKey，用于初始化
@@ -87,7 +80,6 @@ export interface AUIMessageServerProps {
 
 export interface AUIMessageGroupIdObject {
   aliyunV2GroupId?: string,
-  aliyunV1GroupId?: string,
   rongIMId?: string,
 }
 

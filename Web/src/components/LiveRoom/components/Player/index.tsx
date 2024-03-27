@@ -12,6 +12,7 @@ import { ResetSvg } from '../CustomIcon';
 import { RoomContext } from '../../RoomContext';
 import { RoomStatusEnum, VODStatusEnum, LiveRoomTypeEnum } from '../../types';
 import { replaceHttps, UA } from '../../utils/common';
+import { useLatest } from '../../utils/hooks';
 import './index.less';
 
 interface PlayerProps {
@@ -23,12 +24,19 @@ interface PlayerProps {
 }
 
 export default function Player(props: PlayerProps) {
-  const { device, wrapClassName, onReady, onBarVisibleChange, onError } = props;
+  const {
+    device,
+    wrapClassName,
+    onReady,
+    onBarVisibleChange,
+    onError,
+  } = props;
   const { roomState, roomType, dispatch } = useContext(RoomContext);
   const { status, vodInfo, isPlayback } = roomState;
   const { t } = useTranslation();
   const [errorDisplayVisible, setErrorDisplayVisible] = useState(true);
   const isLiving = status === RoomStatusEnum.started;
+  const isLivingRef = useLatest(isLiving);
 
   const callbacksRef = useRef({ onReady, onBarVisibleChange, onError }); // 解决闭包问题
 
@@ -69,60 +77,78 @@ export default function Player(props: PlayerProps) {
     return arr.join(' ');
   }, [errorDisplayVisible]);
 
-  useEffect(() => {
+  /**
+   * 获取直播流地址
+   * @param {boolean} [excludeFlv=false] 是否排除FLV
+   * @param {boolean} [excludeRts=false] 是否排除RTS
+   * @return {{ source: string, rtsFallbackSource: string }} 
+   */
+  const getLiveSource = (excludeFlv = false, excludeRts = false) => {
+    // hlsOriaacUrl 为模板转码流，请参考 https://help.aliyun.com/document_detail/2402111.html?spm=a2c4g.2401427.0.0.47b377b9UomvbA#section-h5o-tza-bo3  配置模板
+    // 若非开播小助手推流，可以删掉 hlsOriaacUrl、flvOriaacUrl 的逻辑
+    // 若是开播小助手推流，不配置转码，观看端直播流将会无声音
+    const { hlsOriaacUrl, hlsUrl, flvOriaacUrl, flvUrl, rtsUrl } = roomState;
+    // 因为目前 ios 设备不支持 FLV 因此若是 ios 直接使用 HLS
+    let rtsFallbackSource = hlsOriaacUrl || hlsUrl;
+    if (!(UA.isiPad || UA.isiPhone) && !excludeFlv) {
+      rtsFallbackSource = flvOriaacUrl || flvUrl;
+    }
+    let source = '';
+    // excludeRts 为 true 时，不使用 RTS
+    // 因为 夸克、UC 有点问题，无法正常播放 rts，所以降级
+    if (excludeRts || UA.isQuark || UA.isUC) {
+      source = rtsFallbackSource;
+      rtsFallbackSource = '';
+    } else {
+      source = rtsUrl || rtsFallbackSource;
+    }
+    if (window.location.protocol === 'https:' && (new URL(rtsFallbackSource)).protocol === 'http:') {
+      rtsFallbackSource = replaceHttps(rtsFallbackSource) || '';
+      source = replaceHttps(source) || '';
+    }
+    return { source, rtsFallbackSource };
+  };
 
+  const playLive = (excludeFlv = false) => {
+    // 若不使用 RTS，可传入第二个参数 true
+    const { source, rtsFallbackSource } = getLiveSource(excludeFlv);
+
+    let skinLayout: any = undefined;
+    let controlBarVisibility: string = 'never';
+    if (device === 'pc') {
+      skinLayout = PCSkinLayoutLive;
+      controlBarVisibility = 'hover';
+    } else if (roomType === LiveRoomTypeEnum.Enterprise) {
+      // 企业直播
+      skinLayout = EnterpriseSkinLayoutLive;
+      controlBarVisibility = 'click';
+    }
+    liveService.play({
+      source,
+      rtsFallbackSource,
+      skinLayout,
+      controlBarVisibility,
+      useFlvPlugOnMobile: !excludeFlv,
+    });
+
+    listenPlayerEvents();
+
+    // 若未开播就进去直播间，等到开播后如果加载 hls 流，很大可能流内容未准备好，就会加载失败
+    // 虽然live.ts中有自动重新加载的逻辑，但不想这时展示错误提示
+    // 所以先通过 css 隐藏，10 秒后若还是有错误提示就展示
+    setTimeout(() => {
+      setErrorDisplayVisible(false);
+    }, 10000);
+  };
+
+  useEffect(() => {
     const dispose = () => {
       // 销毁实例
       liveService.destroy();
     }
 
     if (isLiving) {
-      // PC 环境优先用 flv，因为延时比 hls 小
-      // flvOriaacUrl 、hlsOriaacUrl 是音频转码为 aac 之后的播放地址，若有问题，请改用 flvUrl、hlsUrl
-      let arr: string[] = [];
-      if (UA.isPC) {
-        arr = [roomState.flvOriaacUrl || roomState.flvUrl, roomState.hlsOriaacUrl || roomState.hlsUrl];
-      } else {
-        arr = [roomState.hlsOriaacUrl || roomState.hlsUrl, roomState.flvOriaacUrl || roomState.flvUrl];
-      }
-
-      let rtsFallbackSource = arr[0] || arr[1];
-      let source = roomState.rtsUrl || rtsFallbackSource;
-      
-      // 因为 夸克、UC 有点问题，无法正常播放 rts，所以降级
-      if (UA.isQuark || UA.isUC) {
-        source = rtsFallbackSource;
-      }
-      if (window.location.protocol === 'https:' && (new URL(rtsFallbackSource)).protocol === 'http:') {
-        rtsFallbackSource = replaceHttps(rtsFallbackSource) || '';
-        source = replaceHttps(source) || '';
-      }
-
-      let skinLayout: any = undefined;
-      let controlBarVisibility: string = 'never';
-      if (device === 'pc') {
-        skinLayout = PCSkinLayoutLive;
-        controlBarVisibility = 'hover';
-      } else if (roomType === LiveRoomTypeEnum.Enterprise) {
-        // 企业直播
-        skinLayout = EnterpriseSkinLayoutLive;
-        controlBarVisibility = 'click';
-      }
-      liveService.play({
-        source,
-        rtsFallbackSource,
-        skinLayout,
-        controlBarVisibility,
-      });
-
-      listenPlayerEvents();
-
-      // 若未开播就进去直播间，等到开播后如果加载 hls 流，很大可能流内容未准备好，就会加载失败
-      // 虽然live.ts中有自动重新加载的逻辑，但不想这时展示错误提示
-      // 所以先通过 css 隐藏，10 秒后若还是有错误提示就展示
-      setTimeout(() => {
-        setErrorDisplayVisible(false);
-      }, 10000);
+      playLive();
     } else {
       dispose()
     }
@@ -166,6 +192,27 @@ export default function Player(props: PlayerProps) {
     listenPlayerEvents();
   };
 
+  const handlePlayerError = (e: any) => {
+    if (
+      e &&
+      e.paramData &&
+      e.paramData.error_code === 4011 &&
+      typeof e.paramData.error_msg === 'string' &&
+      e.paramData.error_msg.indexOf('format:flv')
+    ) {
+      console.log('4011 err ->', e);
+      // 若错误码是 4011 且尝试播放 HLS
+      if (isLivingRef.current) {
+        // 目前只处理直播模式，因为点播返回一般都是 m3u8，不需要判断
+        liveService.destroy();
+        playLive(true);
+      }
+    } else {
+      callbacksRef.current.onError &&
+        callbacksRef.current.onError();
+    }
+  }
+
   const listenPlayerEvents = () => {
     liveService.on('ready', () => {
       callbacksRef.current.onReady && callbacksRef.current.onReady();
@@ -176,10 +223,7 @@ export default function Player(props: PlayerProps) {
       liveService.pause();
     });
 
-    liveService.on('error', () => {
-      callbacksRef.current.onError &&
-        callbacksRef.current.onError();
-    });
+    liveService.on('error', handlePlayerError);
 
     liveService.on('hideBar', () => {
       callbacksRef.current.onBarVisibleChange &&
@@ -193,7 +237,9 @@ export default function Player(props: PlayerProps) {
   };
 
   return (
-    <div className={containerClassNames}>
+    <div
+      className={containerClassNames}
+    >
       <div id="player"></div>
       {!isLiving && !isPlayback && (
         <div className="player-nolive">

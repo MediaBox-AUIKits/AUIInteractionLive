@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import AliyunIMV1 from './AliyunIMV1';
 import RongIM from './RongIM';
 import AliyunIMV2 from './AliyunIMV2';
 import {
@@ -16,10 +15,9 @@ import {
 } from './types';
 import EventBus from './utils/EventBus';
 
-type IMType = AliyunIMV1 | RongIM | AliyunIMV2;
+type IMType = RongIM | AliyunIMV2;
 
 class AUIMessage extends EventBus {
-  private aliyunIMV1?: AliyunIMV1;
   private rongIM?: RongIM;
   private aliyunIMV2?: AliyunIMV2;
   private primaryIns?: IMType;
@@ -27,7 +25,7 @@ class AUIMessage extends EventBus {
   private config?: AUIMessageConfig;
   private userInfo?: AUIMessageUserInfo;
   private sidSet = new Set<string>();
-  private groupMuted = false;
+  private groupMuted?: boolean;
   private _removeMessageType?: number;
   private removedMessageSidSet = new Set<string>();
 
@@ -35,17 +33,6 @@ class AUIMessage extends EventBus {
     super();
 
     const instances: IMType[] = [];
-    if (serverProps.aliyunIMV1 && serverProps.aliyunIMV1.enable) {
-      this.aliyunIMV1 = new AliyunIMV1();
-      this.aliyunIMV1.addListener(
-        'event',
-        this.handleInteractionMessage.bind(this)
-      );
-      instances.push(this.aliyunIMV1);
-      if (serverProps.aliyunIMV1.primary) {
-        this.primaryIns = this.aliyunIMV1;
-      }
-    }
 
     if (
       serverProps.rongCloud &&
@@ -53,10 +40,6 @@ class AUIMessage extends EventBus {
       serverProps.rongCloud.appKey
     ) {
       this.rongIM = new RongIM(serverProps.rongCloud.appKey);
-      this.rongIM.addListener(
-        'event',
-        this.handleInteractionMessage.bind(this)
-      );
       if (serverProps.rongCloud.primary) {
         this.primaryIns = this.rongIM;
         instances.unshift(this.rongIM);
@@ -67,10 +50,6 @@ class AUIMessage extends EventBus {
 
     if (serverProps.aliyunIMV2 && serverProps.aliyunIMV2.enable) {
       this.aliyunIMV2 = new AliyunIMV2();
-      this.aliyunIMV2.addListener(
-        'event',
-        this.handleInteractionMessage.bind(this)
-      );
       if (serverProps.aliyunIMV2.primary) {
         this.primaryIns = this.aliyunIMV2;
         instances.unshift(this.aliyunIMV2);
@@ -81,7 +60,7 @@ class AUIMessage extends EventBus {
     this.instances = instances;
 
     if (!this.primaryIns) {
-      this.primaryIns = this.aliyunIMV2 || this.aliyunIMV1 || this.rongIM;
+      this.primaryIns = this.aliyunIMV2 || this.rongIM;
     }
   }
 
@@ -114,14 +93,14 @@ class AUIMessage extends EventBus {
         this.emit(AUIMessageEvents.onLeaveGroup, eventData);
         break;
       case AUIMessageTypes.PaaSMuteGroup:
-        if (this.groupMuted) {
+        if (this.groupMuted === true) {
           return;
         }
         this.groupMuted = true;
         this.emit(AUIMessageEvents.onMuteGroup, eventData);
         break;
       case AUIMessageTypes.PaaSCancelMuteGroup:
-        if (!this.groupMuted) {
+        if (this.groupMuted === false) {
           return;
         }
         this.groupMuted = false;
@@ -150,13 +129,11 @@ class AUIMessage extends EventBus {
         return;
       }
       const idx = this.instances.indexOf(ins);
+      if (idx === -1) return;
       this.instances.splice(idx, 1);
       this.primaryIns = this.instances[0];
     };
 
-    if (insTypes.includes(AUIMessageInsType.AliyunIMV1)) {
-      handleDestroyInstance(this.aliyunIMV1);
-    }
     if (insTypes.includes(AUIMessageInsType.RongIM)) {
       handleDestroyInstance(this.rongIM);
     }
@@ -167,15 +144,21 @@ class AUIMessage extends EventBus {
 
   init() {
     return new Promise<void>((resolve, reject) => {
-      const list = this.instances.map(ins => ins.init());
+      const list = this.instances.map(ins => {
+        ins.addListener(
+          'event',
+          this.handleInteractionMessage.bind(this)
+        );
+        return ins.init();
+      });
       Promise.all(list)
         .then(() => {
           resolve();
         })
         .catch(err => {
           reject(err);
-        })
-    })
+        });
+    });
   }
 
   unInit() {
@@ -187,8 +170,8 @@ class AUIMessage extends EventBus {
         })
         .catch(err => {
           reject(err);
-        })
-    })
+        });
+    });
   }
 
   login(userInfo: AUIMessageUserInfo) {
@@ -226,26 +209,14 @@ class AUIMessage extends EventBus {
   }
 
   removeAllListeners() {
-    return new Promise<void>((resolve, reject) => {
-      const list = this.instances.map(ins => ins.removeAllListeners());
-      Promise.all(list)
-        .then(() => {
-          resolve();
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
+    super.removeAllEvent();
+    this.instances.map(ins => ins.removeAllListeners());
   }
 
   joinGroup(groupIdObject: AUIMessageGroupIdObject) {
-    const { aliyunV1GroupId, aliyunV2GroupId, rongIMId } = groupIdObject;
+    const { aliyunV2GroupId, rongIMId } = groupIdObject;
     return new Promise<void>((resolve, reject) => {
       const list = [];
-      if (this.aliyunIMV1 && aliyunV1GroupId) {
-        const p1 = this.aliyunIMV1.joinGroup(aliyunV1GroupId);
-        list.push(p1);
-      }
       if (this.rongIM && rongIMId) {
         const p2 = this.rongIM.joinGroup(rongIMId);
         list.push(p2);
@@ -361,7 +332,9 @@ class AUIMessage extends EventBus {
         ...(options.data || {}),
         sid,
       };
-      const list = this.instances.map(ins => ins.sendMessageToGroupUser(options));
+      const list = this.instances.map(ins =>
+        ins.sendMessageToGroupUser(options)
+      );
       Promise.any(list)
         .then(() => {
           resolve();
@@ -453,7 +426,9 @@ class AUIMessage extends EventBus {
     if (!this.primaryIns) {
       throw new Error('primary im server is empty');
     }
-    const chatRoomMessagesRes = await this.primaryIns.listRecentMessage(messageType);
+    const chatRoomMessagesRes = await this.primaryIns.listRecentMessage(
+      messageType
+    );
     if (!chatRoomMessagesRes) throw new Error('return no listMessageRsp');
 
     const { messageList } = chatRoomMessagesRes;

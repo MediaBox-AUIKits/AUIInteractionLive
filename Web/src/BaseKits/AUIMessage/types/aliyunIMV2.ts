@@ -2,8 +2,7 @@ export enum InteractionV2EventNames {
   RecvC2cMessage = 'recvc2cmessage',
   RecvGroupMessage = 'recvgroupmessage',
   MuteChange = 'mutechange',
-  Join = 'join',
-  Leave = 'leave',
+  Memberchange = 'memberchange',
 }
 
 export interface ImGroupInfo {

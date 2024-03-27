@@ -1,10 +1,19 @@
-import React, { useContext, useRef, useMemo, useState, KeyboardEvent } from 'react';
+import React, { 
+  useContext, 
+  useRef, 
+  useMemo, 
+  useState, 
+  KeyboardEvent 
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toast } from 'antd-mobile';
 import Icon from '@ant-design/icons';
 import classNames from 'classnames';
 import { ReplySvg, HeartSvg } from '../CustomIcon';
 import { RoomContext } from '../../RoomContext';
+import { LiveRoomTypeEnum } from '@/types/room';
+import ShoppingCard from '../ShoppingCard';
+import ShoppingList from '../ShoppingList';
 import styles from './index.less';
 
 interface IChatControlsProps {
@@ -18,9 +27,21 @@ const ChatControls: React.FC<IChatControlsProps> = (props) => {
   const { allowChat, className, heartIconActive, theme = 'dark' } = props;
   const { t: tr } = useTranslation();
   const operationRef = useRef<HTMLDivElement>(null);
-  const { roomState, animeContainerEl, dispatch, sendComment, sendLike } = useContext(RoomContext);
-  const { commentInput, groupMuted, selfMuted } = roomState;
+  const { 
+    roomState, 
+    animeContainerEl, 
+    dispatch, 
+    sendComment, 
+    sendLike,
+    roomType
+  } = useContext(RoomContext);
+  const { commentInput, groupMuted, selfMuted, mode } = roomState;
   const [sending, setSending] = useState<boolean>(false);
+
+  const isShowShopping = useMemo(() => {
+    return roomType === LiveRoomTypeEnum.Interaction
+      && CONFIG.isShoppingMode;
+  }, [mode]);
 
   const commentPlaceholder = useMemo(() => {
     let text = tr('liveroom_talkto_anchor');
@@ -79,6 +100,8 @@ const ChatControls: React.FC<IChatControlsProps> = (props) => {
       )}
       ref={operationRef}
     >
+      {isShowShopping ? <ShoppingList /> : null}
+
       <form
         action=""
         className="chat-input-form"
@@ -103,6 +126,8 @@ const ChatControls: React.FC<IChatControlsProps> = (props) => {
           <Icon component={ReplySvg} />
         </span>
       </span>
+
+      {isShowShopping ? <ShoppingCard /> : null}
 
       <span className="chat-btn-wrap">
         <span className="chat-btn" onClick={() => sendLike()}>

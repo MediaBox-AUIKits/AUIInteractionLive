@@ -15,13 +15,11 @@ export default (api: IApi) => {
           var vConsole = new VConsole();
         }
       </script>`,
-      `<link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.15.5/skins/default/aliplayer-min.css" />`,
-      `<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.15.5/aliplayer-min.js"></script>`,
+      `<link rel="stylesheet" href="https://g.alicdn.com/apsara-media-box/imp-web-player/2.20.1/skins/default/aliplayer-min.css" />`,
+      `<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-web-player/2.20.1/aliplayer-min.js"></script>`,
+      `<script charset="utf-8" type="text/javascript" src="https://dev.g.alicdn.com/apsara-media-box/imp-web-live-push/6.4.8/alivc-live-push.js"></script>`,
+      `<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-interaction/1.2.1/alivc-im.iife.js"></script>`,
     ];
-    // 老互动消息 SDK，后续迁移完成可以删掉
-    afterArr.push('<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/video-cloud-fe/aliyun-interaction-sdk/1.0.3/aliyun-interaction-sdk.web.min.js"></script>');
-    // 新阿里云互动消息 IM SDK
-    afterArr.push('<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-interaction/1.0.0/imp-interaction.iife.js"></script>');
 
     $('#root').after(afterArr);
     return $;

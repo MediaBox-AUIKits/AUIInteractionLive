@@ -7,8 +7,15 @@ import { BasicMap } from '../../types';
 import styles from './index.less';
 
 export default function Banner() {
-  const { roomState, exit } = useContext(RoomContext);
-  const { extends: extension, title, pv, notice, anchorId } = roomState;
+  const { roomState, exit, sendRTCStop } = useContext(RoomContext);
+  const { 
+    extends: extension, 
+    title, 
+    pv, 
+    notice, 
+    anchorId, 
+    connectedSpectators 
+  } = roomState;
   const [showNotice, setShowNotice] = useState(false);
   const { t } = useTranslation();
 
@@ -32,7 +39,10 @@ export default function Banner() {
     return pv;
   }, [pv]);
 
-  const closeRoom = () => {
+  const closeRoom = async() => {
+    if (connectedSpectators.length > 1) {
+      await sendRTCStop('bySelf');
+    }
     exit();
   };
 

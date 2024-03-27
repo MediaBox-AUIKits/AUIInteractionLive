@@ -4,7 +4,7 @@ export const LatestLiveidStorageKey = 'aliyun_interaction_latest_liveid';
 // 直播间类型储存 localstorage 中的 key
 export const LiveRoomTypeStorageKey = 'aui-liveroom-type';
 
-// 旧IM sdk的 device_id不存在，会生成一个uuid存入localstorage，作为终端设备ID，唯一代表一个用户终端设备。
+// 会生成一个uuid作为终端设备ID，存入localstorage，唯一代表一个用户终端设备
 export const IMDeviceIdStorageKey = 'im-device-id';
 
 // 当前项目并无真实用户系统，所以使用随机的默认头像

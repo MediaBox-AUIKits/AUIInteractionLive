@@ -1,8 +1,9 @@
 import { Fragment, useMemo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import ChatControls from '../ChatControls';
+import ConnectingManager from './ConnectingManager';
 import { RoomContext } from '../../RoomContext';
-import { RoomStatusEnum } from '../../types';
+import { RoomModeEnum, RoomStatusEnum } from '../../types';
 import { getNameColor } from '../../utils/common';
 import styles from './ChatBox.less';
 
@@ -14,7 +15,7 @@ function ChatBox(props: ChatBoxProps) {
   const { hidden } = props;
   const { roomState, bulletContainerEl } = useContext(RoomContext);
   const { t: tr } = useTranslation();
-  const { status, messageList, isPlayback } = roomState;
+  const { status, messageList, isPlayback, mode } = roomState;
 
   const allowChat = useMemo(() => {
     // 未开播、直播中时允许使用聊天功能
@@ -46,6 +47,13 @@ function ChatBox(props: ChatBoxProps) {
             {tr('liveroom_notice')}
           </div>
         </div>
+        
+        {
+          status === RoomStatusEnum.started && mode === RoomModeEnum.rtc ?
+            <ConnectingManager
+              className={styles['connecting-manager']}
+            /> : null
+        }
 
         <ChatControls
           className={styles['operations-wrap']}

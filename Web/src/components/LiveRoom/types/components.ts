@@ -2,7 +2,7 @@ import { IRoomInfo, LiveRoomType } from './room';
 
 export interface IUserInfo {
   userId: string;
-  userName: string;
+  userNick: string;
   userAvatar?: string;
 }
 
@@ -17,10 +17,9 @@ export interface IInteracationTokenObject {
       timestamp: number;
       userId: string;
     };
-  },
-  aliyunIMV1?: {
-    accessToken: string;
-    refreshToken: string;
+    extra?: {
+      [key: string]: string;
+    };
   },
 }
 

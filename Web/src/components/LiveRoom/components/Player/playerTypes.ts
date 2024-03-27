@@ -45,6 +45,8 @@ export interface PlayerParams {
   liveRetry?: number;
   keyShortCuts?: boolean;
   keyFastForwardStep?: number;
+  useFlvPlugOnMobile?: boolean;
+  extraInfo?: any;
 }
 
 interface progressMarker {

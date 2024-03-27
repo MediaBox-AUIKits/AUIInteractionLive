@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'umi';
-import { DotLoading } from 'antd-mobile';
+import { DotLoading, Toast } from 'antd-mobile';
 import { useTranslation } from 'react-i18next';
 import Icon from '@ant-design/icons';
 import { LeftOutlineSvg, LiveSvg, PlaybackSvg } from '@/assets/CustomIcon';
@@ -107,7 +107,15 @@ function RoomList() {
       });
   };
 
-  const enterRoom = (liveId: string) => {
+  const enterRoom = async (liveId: string) => {
+    const { support } = await window.AlivcLivePush.AlivcLivePusher.checkSystemRequirements();
+    if (!support) {
+      Toast.show({
+        icon: 'fail',
+        content: '当前环境不支持webrtc',
+      });
+      return;
+    }
     navigate(`/room/${liveId}`);
   }
 

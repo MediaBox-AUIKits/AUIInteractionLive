@@ -24,7 +24,7 @@
 }
 
 .chat-item {
-  max-width: 70%;
+  max-width: 60%;
   display: inline-block;
   background-color: @block-background-color;
   margin-bottom: 0.1rem;
@@ -32,6 +32,7 @@
   border-radius: 2px;
   align-self: flex-start;
   word-break: normal;
+  word-wrap: break-word;
   line-height: 0.44rem;
 
   a {
@@ -111,4 +112,10 @@
   right: 0.2rem;
   display: flex;
   flex-direction: column;
+}
+
+.connecting-manager {
+  position: absolute;
+  bottom: 1.96rem;
+  right: 0.32rem;
 }

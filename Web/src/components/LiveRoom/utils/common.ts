@@ -155,3 +155,55 @@ export function supportSafeArea(side: 'top' | 'bottom'): boolean {
   }
   return bool;
 };
+
+/**
+ * 检测 WebRTC 各项功能支持情况
+ */
+export function checkSystemRequirements(): Promise<{
+  support: boolean;
+  isBrowserSupported?: boolean;
+  isH264DecodeSupported?: boolean;
+  isH264EncodeSupported?: boolean;
+  isWebRTCSupported?: boolean;
+}> {
+  return window.AlivcLivePush.AlivcLivePusher.checkSystemRequirements();
+}
+
+/**
+ * 检测设备麦克风、摄像头权限
+ */
+export async function checkMediaDevicePermission(options: {
+  audio?: boolean;
+  video?: boolean;
+}) {
+  const ret: {
+    audio?: boolean;
+    video?: boolean;
+  } = {};
+  if (options.audio) {
+    try {
+      const stream = await navigator?.mediaDevices?.getUserMedia({
+        audio: true,
+      });
+      ret.audio = true;
+      stream.getAudioTracks()[0].stop();
+    } catch (error) {
+      console.log('麦克风设备异常', error);
+      ret.audio = false;
+    }
+  }
+  if (options.video) {
+    try {
+      const stream = await navigator?.mediaDevices?.getUserMedia({
+        video: true,
+      });
+      ret.video = true;
+      stream.getVideoTracks()[0].stop();
+    } catch (error) {
+      console.log('摄像头设备异常', error);
+      ret.video = false;
+    }
+  }
+
+  return ret;
+}

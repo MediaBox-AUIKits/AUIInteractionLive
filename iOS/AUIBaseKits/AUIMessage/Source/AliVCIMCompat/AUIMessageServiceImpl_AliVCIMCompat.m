@@ -48,6 +48,10 @@
     [self.currIM setConfig:config];
 }
 
+- (AUIMessageConfig *)getConfig {
+    return [self.currIM getConfig];
+}
+
 - (void)setConnectionDelegate:(id<AUIMessageServiceConnectionDelegate>)connectionDelegate {
     _connectionDelegate = connectionDelegate;
     [self.currIM setConnectionDelegate:_connectionDelegate];
@@ -91,6 +95,10 @@
 
 - (void)joinGroup:(AUIMessageJoinGroupRequest *)req callback:(AUIMessageDefaultCallback)callback {
     [self.currIM joinGroup:req callback:callback];
+}
+
+- (void)joinGroup:(AUIMessageJoinGroupRequest *)req groupInfoCallback:(AUIMessageGetGroupInfoCallback)groupInfoCallback {
+    [self.currIM joinGroup:req groupInfoCallback:groupInfoCallback];
 }
 
 - (void)leaveGroup:(AUIMessageLeaveGroupRequest *)req callback:(AUIMessageDefaultCallback)callback {

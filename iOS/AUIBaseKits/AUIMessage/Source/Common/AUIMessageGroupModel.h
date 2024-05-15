@@ -37,6 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSString *groupId;
 
+/**
+ 群组是否已存在
+ */
+@property (nonatomic, assign) BOOL alreadyExist;
+
 @end
 
 
@@ -86,9 +91,24 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL skipAudit;
 
 /**
- * 跳过禁言检测，true:忽略被禁言用户，还可发消息；false：当被禁言时，消息无法发送，默认为false，即为不跳过禁言检测。
+ * 跳过禁言检测
+ * YES：忽略被禁言用户，还可发消息；NO：当被禁言时，消息无法发送
+ * 默认为NO，即为不跳过禁言检测。
  */
 @property (nonatomic, assign) BOOL skipMuteCheck;
+
+/**
+ * 消息是否可被存储
+ * NO：表示该消息不需要存储，也无法拉取查询；YES：消息进行存储，可以拉取查询
+ * 默认为NO，如果在直播间的弹幕场景，需要设置为YES
+ */
+@property (nonatomic, assign) BOOL storage;
+
+/**
+ * 本消息重复数量，内容完成一样的消息可以使用该字段进行聚合，并发送一次即可
+ * 默认为1。
+ */
+@property (nonatomic, assign) NSUInteger repeatCount;
 
 @end
 

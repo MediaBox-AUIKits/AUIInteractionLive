@@ -17,11 +17,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, readonly) AUILiveRoomLikeButton* likeButton;
 @property (strong, nonatomic, readonly) UIButton *linkMicButton;
 @property (strong, nonatomic, readonly) UIButton *shareButton;
+@property (strong, nonatomic, readonly) UIButton *smallWinBtn;
+@property (strong, nonatomic, readonly) UIButton *shoppingButton;
+@property (strong, nonatomic, readonly) UIButton *giftButton;
 
 @property (strong, nonatomic) UIColor *backgroundColorForNormalNormal;
 @property (strong, nonatomic) UIColor *backgroundColorForEdit;
 
 @property (copy, nonatomic) void (^onLikeButtonClickedBlock)(AUILiveRoomBottomView *sender);
+@property (copy, nonatomic) void (^onSmallWindowButtonClickedBlock)(AUILiveRoomBottomView *sender);
+@property (copy, nonatomic) void (^onShoppingButtonClickedBlock)(AUILiveRoomBottomView *sender);
+@property (copy, nonatomic) void (^onGiftButtonClickedBlock)(AUILiveRoomBottomView *sender);
 @property (copy, nonatomic) void (^onLinkMicButtonClickedBlock)(AUILiveRoomBottomView *sender);
 @property (copy, nonatomic) void (^onShareButtonClickedBlock)(AUILiveRoomBottomView *sender);
 @property (copy, nonatomic) void (^sendCommentBlock)(AUILiveRoomBottomView *sender, NSString *comment);

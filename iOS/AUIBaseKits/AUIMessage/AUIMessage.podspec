@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AUIMessage'
-  s.version          = '2.0.0'
+  s.version          = '2.2.0'
   s.summary          = 'A short description of AUIMessage.'
 
 # This description is used to generate tags and improve search results.
@@ -37,13 +37,13 @@ TODO: Add long description of the pod here.
   end
   
   s.subspec 'AliVCIM' do |ss|
-    ss.dependency 'AliVCInteractionMessage', '1.0.0'
+    ss.dependency 'AliVCInteractionMessage', '1.2.2'
     ss.dependency 'AUIMessage/Common'
     ss.source_files = 'Source/AliVCIM/*.{h,m,mm}'
   end
   
   s.subspec 'AliVCIMCompat' do |ss|
-    ss.dependency 'AliVCInteractionMessage', '1.0.0'
+    ss.dependency 'AliVCInteractionMessage', '1.2.2'
     ss.dependency 'AlivcInteraction', '1.2.1'
     ss.dependency 'AUIMessage/Common'
     ss.source_files = 'Source/AliVCIMCompat/*.{h,m,mm}'

@@ -70,11 +70,16 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
     nativeConfig.appId = appId;
     nativeConfig.appSign = appSign;
     nativeConfig.source = source ?: @"aui-message";
+    nativeConfig.extra = @{@"scene":source ?: @"aui-message"};
 #ifdef DEBUG
     nativeConfig.logLevel = AliVCIMLogLevelDebug;
 #endif
     [[AliVCIMEngine sharedEngine] setup:nativeConfig];
     [[AliVCIMEngine sharedEngine] addListener:self];
+}
+
+- (AUIMessageConfig *)getConfig {
+    return _config;
 }
 
 - (void)setConnectionDelegate:(id<AUIMessageServiceConnectionDelegate>)connectionDelegate {
@@ -203,6 +208,7 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
             if (callback) {
                 AUIMessageCreateGroupResponse *rsp = [AUIMessageCreateGroupResponse new];
                 rsp.groupId = nativeRsp.groupId;
+                rsp.alreadyExist = nativeRsp.alreadyExist;
                 callback(rsp, nil);
             }
         }
@@ -235,6 +241,41 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
             }
             else {
                 callback(error);
+            }
+        }
+    }];
+}
+
+- (void)joinGroup:(AUIMessageJoinGroupRequest *)req groupInfoCallback:(AUIMessageGetGroupInfoCallback)groupInfoCallback {
+    if (![self isLogin]) {
+        if (groupInfoCallback) {
+            groupInfoCallback(nil, [AUIMessageHelper error:AUIMessageErrorTypeInvalidState msg:@"need login"]);
+        }
+        return;
+    }
+    NSLog(@"AUIMessageServiceImpl_AliVCIM##joinGroup groupInfoCallback");
+    AliVCIMJoinGroupReq *nativeReq = [AliVCIMJoinGroupReq new];
+    nativeReq.groupId = req.groupId;
+    [[[AliVCIMEngine sharedEngine] getGroupManager] joinGroup:nativeReq completed:^(AliVCIMJoinGroupRsp * _Nullable nativeRsp, NSError * _Nullable error) {
+        NSLog(@"AUIMessageServiceImpl_AliVCIM##joinGroup groupInfoCallback result:%@", error);
+        if (nativeRsp) {
+            [self.muteStatus setObject:nativeRsp.groupInfo.muteStatus forKey:nativeRsp.groupInfo.groupId];
+        }
+        if (groupInfoCallback) {
+            if (error.code == AliVCIMErrorHasJoinGroup) {
+                AUIMessageGetGroupInfoRequest *getGroupInfoReq = [AUIMessageGetGroupInfoRequest new];
+                getGroupInfoReq.groupId = req.groupId;
+                [self getGroupInfo:getGroupInfoReq callback:groupInfoCallback];
+            }
+            else if (error) {
+                groupInfoCallback(nil, error);
+            }
+            else {
+                AUIMessageGetGroupInfoResponse *getGroupInfoRes = [AUIMessageGetGroupInfoResponse new];
+                getGroupInfoRes.groupId = nativeRsp.groupInfo.groupId;
+                getGroupInfoRes.onlineCount = nativeRsp.groupInfo.statistics.onlineCount;
+                getGroupInfoRes.pv = nativeRsp.groupInfo.statistics.pv;
+                groupInfoCallback(getGroupInfoRes, nil);
             }
         }
     }];
@@ -371,6 +412,8 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
     nativeReq.skipMuteCheck = req.skipMuteCheck;
     nativeReq.skipAudit = req.skipAudit;
     nativeReq.level = (AliVCIMMessageLevel)req.msgLevel;
+    nativeReq.noStorage = !req.storage;
+    nativeReq.repeatCount = (int)req.repeatCount;
     nativeReq.data = [AUIMessageHelper jsonStringWithDict:[req.data toData]] ?: @"{}";
     [[[AliVCIMEngine sharedEngine] getMessageManager] sendGroupMessage:nativeReq completed:^(AliVCIMSendMessageToGroupRsp * _Nullable nativeRsp, NSError * _Nullable error) {
         NSLog(@"AUIMessageServiceImpl_AliVCIM##sendMessageToGroup result:%@", error);
@@ -460,8 +503,30 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
 
 - (void)onIMEngineTokenExpired:(AliVCIMFetchAuthTokenBlock)fetchAuthTokenBlock {
     NSLog(@"AUIMessageServiceImpl_AliVCIM##onIMEngineTokenExpired");
-    if ([self.connectionDelegate respondsToSelector:@selector(onTokenExpire)]) {
-        [self.connectionDelegate onTokenExpire];
+    if ([self.connectionDelegate respondsToSelector:@selector(onTokenExpire:)]) {
+        __weak typeof(self) weakSelf = self;
+        [self.connectionDelegate onTokenExpire:^(NSError * _Nullable error) {
+            
+            if (error == nil) {
+                NSDictionary *tokenData = weakSelf.config.tokenData;
+                NSString *appToken = [tokenData objectForKey:@"app_token"];
+                NSDictionary *authData = [tokenData objectForKey:@"auth"];
+
+                AliVCIMAuthToken *nativeAuthToken = [AliVCIMAuthToken new];
+                nativeAuthToken.token = appToken;
+                nativeAuthToken.role = [authData objectForKey:@"role"];
+                nativeAuthToken.timestamp = [[authData objectForKey:@"timestamp"] longValue];
+                nativeAuthToken.nonce = [authData objectForKey:@"nonce"];
+                weakSelf.nativeAuthToken = nativeAuthToken;
+                fetchAuthTokenBlock(weakSelf.nativeAuthToken, nil);
+            }
+            else {
+                fetchAuthTokenBlock(weakSelf.nativeAuthToken, error);
+            }
+        }];
+    }
+    else {
+        fetchAuthTokenBlock(nil, [NSError errorWithDomain:@"" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"umimplementation"}]);
     }
 }
 
@@ -488,6 +553,9 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
         model.sender = sender;
         [self.listenerObserver onLeaveGroup:model];
     }
+    
+    NSLog(@"AUIMessageServiceImpl_AliVCIM##imGroup:%@ onlineCountChanged: %d", groupId, memberCount);
+    [self.listenerObserver onGroup:groupId onlineCountChanged:memberCount];
 }
 
 - (void)imGroup:(NSString *)groupId OnExited:(int)reason {

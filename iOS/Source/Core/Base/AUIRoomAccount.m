@@ -11,16 +11,34 @@
 
 @implementation AUIRoomAccount
 
-+ (AUIRoomUser *)me {
-    static AUIRoomUser *_instance = nil;
++ (AUIRoomAccount *)myAccount {
+    static AUIRoomAccount *_instance = nil;
     if (!_instance) {
-        _instance = [AUIRoomUser new];
+        _instance = [AUIRoomAccount new];
     }
     return _instance;
 }
 
++ (AUIRoomUser *)me {
+    return [self myAccount].myInfo;
+}
+
 + (NSString *)deviceId {
     return AUIMessageConfig.deviceId;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _myInfo = [AUIRoomUser new];
+        _myToken = @"";
+    }
+    return self;
+}
+
+- (void)changedAccount:(nullable AUIRoomAccount *)newAccount {
+    _myInfo = newAccount.myInfo ?: [AUIRoomUser new];
+    _myToken = newAccount.myToken;
 }
 
 @end

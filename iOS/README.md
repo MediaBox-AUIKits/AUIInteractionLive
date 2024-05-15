@@ -63,7 +63,7 @@ platform :ios, '10.0'
 target '你的App target' do
     # 根据自己的业务场景，集成合适的音视频终端SDK
     # 如果你的APP中还需要频短视频编辑功能，可以使用音视频终端全功能SDK（AliVCSDK_Standard），可以把本文件中的所有AliVCSDK_InteractiveLive替换为AliVCSDK_Standard
-    pod 'AliVCSDK_InteractiveLive', '~> 6.7.0'
+    pod 'AliVCSDK_InteractiveLive', '~> 6.10.0'
 
     # 基础UI组件
     pod 'AUIFoundation/All', :path => "./AUIInteractionLive/AUIBaseKits/AUIFoundation/"
@@ -140,12 +140,13 @@ static NSString * const kLiveServiceDomainString =  @"你的AppServer域名";
 // 在登录后进行，进行赋值
 // 如果本次启动用户不需要重新登录（用户token未过期），可以在加载登录用户后进行赋值
 
-AUIRoomUser *me = [AUIRoomUser new];
-me.userId = @"当前登录用户id";
-me.avatar = @"当前登录用户头像";
-me.nickName = @"当前登录用户昵称";
-me.token = @"当前登录用户token";   // 用于服务端用户有效性验证
-[[AUIInteractionLiveManager defaultManager] setCurrentUser:me];
+AUIRoomAccount *account = [AUIRoomAccount new];
+account.myInfo.userId = @"当前登录用户id";
+account.myInfo.avatar = @"当前登录用户头像";
+account.myInfo.nickName = @"当前登录用户昵称";
+account.myToken = @"当前登录用户token";   // 用于服务端用户有效性验证
+[[AUIInteractionLiveManager defaultManager] setMyAccount:account];
+
 
 ```
 

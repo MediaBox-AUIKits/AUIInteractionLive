@@ -1,50 +1,63 @@
 //
 //  AUIFoundation.h
-//  AlivcAIO_Demo
+//  AUIFoundation
 //
 //  Created by Bingo on 2022/5/14.
 //
 
-#ifndef AUIFoundation_h
-#define AUIFoundation_h
+#import <Foundation/Foundation.h>
 
-#import "AVGlobalTimer.h"
-#import "AVStringFormat.h"
-#import "NSString+AVHelper.h"
-#import "UIImage+AVHelper.h"
-#import "UIView+AVHelper.h"
-#import "UIViewController+AVHelper.h"
-#import "NSDictionary+AVHelper.h"
-#import "NSMutableArray+AVHelper.h"
-#import "NSMutableDictionary+AVHelper.h"
-#import "UIColor+AVHelper.h"
+//! Project version number for AUIFoundation.
+FOUNDATION_EXPORT double AUIFoundationVersionNumber;
 
-#import "AVCircularProgressView.h"
-#import "AVToastView.h"
-#import "AVProgressHUD.h"
-#import "AVActivityIndicator.h"
-#import "AVAlertController.h"
-#import "AVBaseButton.h"
-#import "AVBaseStateButton.h"
-#import "AVIgnoreSelfHitView.h"
-#import "AVSliderView.h"
-#import "AUIPickerPanel.h"
-#import "AVBlockButton.h"
-#import "AVEdgeInsetLabel.h"
-#import "AVVideoPlayProgressView.h"
+//! Project version string for AUIFoundation.
+FOUNDATION_EXPORT const unsigned char AUIFoundationVersionString[];
 
-#import "AVBaseControllPanel.h"
-#import "AVBaseCollectionControllPanel.h"
+#import <AUIFoundation/AVGlobalTimer.h>
+#import <AUIFoundation/AVStringFormat.h>
+#import <AUIFoundation/NSString+AVHelper.h>
+#import <AUIFoundation/UIImage+AVHelper.h>
+#import <AUIFoundation/UIView+AVHelper.h>
+#import <AUIFoundation/UIViewController+AVHelper.h>
+#import <AUIFoundation/NSDictionary+AVHelper.h>
+#import <AUIFoundation/NSMutableArray+AVHelper.h>
+#import <AUIFoundation/NSMutableDictionary+AVHelper.h>
+#import <AUIFoundation/UIColor+AVHelper.h>
 
-#import "AVNavigationController.h"
-#import "AVBaseViewController.h"
-#import "AVBaseTableViewController.h"
-#import "AVBaseCollectionViewController.h"
-#import "AVCommonListViewController.h"
+#import <AUIFoundation/AVCircularProgressView.h>
+#import <AUIFoundation/AVToastView.h>
+#import <AUIFoundation/AVProgressHUD.h>
+#import <AUIFoundation/AVActivityIndicator.h>
+#import <AUIFoundation/AVAlertController.h>
+#import <AUIFoundation/AVBaseButton.h>
+#import <AUIFoundation/AVBaseStateButton.h>
+#import <AUIFoundation/AVIgnoreSelfHitView.h>
+#import <AUIFoundation/AVSliderView.h>
+#import <AUIFoundation/AUIPickerPanel.h>
+#import <AUIFoundation/AVBlockButton.h>
+#import <AUIFoundation/AVEdgeInsetLabel.h>
+#import <AUIFoundation/AVVideoPlayProgressView.h>
+#import <AUIFoundation/AVNetworkStatusView.h>
+#import <AUIFoundation/AVInputView.h>
 
-#import "AVTheme.h"
-#import "AVLocalization.h"
+#import <AUIFoundation/AVCommentTextField.h>
+#import <AUIFoundation/AVCommentView.h>
 
-#import "AUIFoundationMacro.h"
+#import <AUIFoundation/AVSmallWindow.h>
 
-#endif /* AUIFoundation_h */
+#import <AUIFoundation/AVBaseControllPanel.h>
+#import <AUIFoundation/AVBaseCollectionControllPanel.h>
+
+#import <AUIFoundation/AVNavigationController.h>
+#import <AUIFoundation/AVBaseViewController.h>
+#import <AUIFoundation/AVBaseTableViewController.h>
+#import <AUIFoundation/AVBaseCollectionViewController.h>
+#import <AUIFoundation/AVCommonListViewController.h>
+
+#import <AUIFoundation/AVLoginViewController.h>
+#import <AUIFoundation/AVLoginManager.h>
+
+#import <AUIFoundation/AVTheme.h>
+#import <AUIFoundation/AVLocalization.h>
+
+#import <AUIFoundation/AUIFoundationMacro.h>

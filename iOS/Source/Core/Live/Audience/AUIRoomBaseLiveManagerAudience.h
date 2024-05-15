@@ -9,6 +9,7 @@
 #import "AUIRoomDisplayView.h"
 #import "AUIRoomUser.h"
 #import "AUIRoomLiveModel.h"
+#import "AUIRoomLiveService.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -49,6 +50,13 @@ NS_ASSUME_NONNULL_BEGIN
 // 公告
 @property (nonatomic, copy) void (^onReceivedNoticeUpdate)(NSString *notice);
 @property (copy, nonatomic, readonly) NSString *notice;
+
+// 礼物
+@property (copy, nonatomic) void (^onReceivedGift)(AUIRoomUser *sender, AUIRoomGiftModel *gift, NSInteger count);
+- (void)sendGift:(AUIRoomGiftModel *)gift completed:(void(^)(BOOL))completed;
+
+// 商品
+@property (copy, nonatomic) void (^onReceivedProduct)(AUIRoomUser *sender, AUIRoomProductModel *product);
 
 @end
 

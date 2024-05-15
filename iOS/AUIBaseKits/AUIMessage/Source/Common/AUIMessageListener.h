@@ -47,6 +47,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)onExitedGroup:(NSString *)groupId;
 
+/**
+ * 在线人数数量发生变化事件
+ */
+- (void)onGroup:(NSString *)groupId onlineCountChanged:(NSInteger)onlineCount;
+
 @end
 
 

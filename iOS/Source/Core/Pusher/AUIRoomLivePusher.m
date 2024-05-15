@@ -446,6 +446,27 @@ static AlivcLivePushFPS g_pushFPS = AlivcLivePushFPS20;
     });
 }
 
+- (void)onConnectionStatusChange:(AlivcLivePusher *)pusher connectionStatus:(AliLiveConnectionStatus)status reason:(AliLiveConnectionStatusChangeReason)reason { 
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"LiveEvent:onConnectionStatusChange");
+    });
+}
+
+
+- (void)onLastmileDetectResultWithBandWidth:(AlivcLivePusher *)pusher code:(int)code result:(AliLiveNetworkQualityProbeResult * _Nonnull)result { 
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"LiveEvent:onLastmileDetectResultWithBandWidth");
+    });
+}
+
+
+- (void)onLastmileDetectResultWithQuality:(AlivcLivePusher *)pusher networkQuality:(AlivcLiveNetworkQuality)networkQuality { 
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"LiveEvent:onLastmileDetectResultWithQuality");
+    });
+}
+
+
 #pragma mark - AlivcLivePusherCustomFilterDelegate
 
 - (void)onCreate:(AlivcLivePusher *)pusher context:(void*)context {

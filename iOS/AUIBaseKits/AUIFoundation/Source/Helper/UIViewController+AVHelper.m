@@ -6,6 +6,7 @@
 //
 
 #import "UIViewController+AVHelper.h"
+#import "UIView+AVHelper.h"
 
 @implementation UIViewController (AVHelper)
 
@@ -138,7 +139,7 @@
 }
 
 + (UIViewController *) av_topViewController {
-    UIWindow *window = UIApplication.sharedApplication.keyWindow;
+    UIWindow *window = UIView.av_keyWindow;
     if (window.windowLevel != UIWindowLevelNormal) {
         NSArray *windows = UIApplication.sharedApplication.windows;
         for (UIWindow *tmp in windows) {
@@ -165,6 +166,23 @@
         }
     }
     return nil;
+}
+
++ (void)av_setIdleTimerDisabled:(BOOL)disbaled {
+    
+    static NSInteger g_count = 0;
+    if (disbaled) {
+        g_count++;
+    }
+    else {
+        g_count--;
+        if (g_count < 0) {
+            g_count = 0;
+        }
+    }
+
+    UIApplication.sharedApplication.idleTimerDisabled = g_count > 0;
+    NSLog(@"idleTimerDisabled:%@", g_count > 0 ? @"YES" : @"NO");
 }
 
 @end

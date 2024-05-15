@@ -9,6 +9,7 @@
 #import "UIColor+AVHelper.h"
 #import "UIImage+AVHelper.h"
 #import "NSDictionary+AVHelper.h"
+#import "UIView+AVHelper.h"
 
 @interface AVColorReader : NSObject
 
@@ -197,7 +198,7 @@
 + (void)setCurrentMode:(AVThemeMode)themeMode {
     [AVTheme.currentTheme setCurrentMode:themeMode];
     if (AVTheme.currentTheme.supportsAutoMode) {
-        [self updateRootViewInterfaceStyle:[UIApplication sharedApplication].delegate.window];
+        [self updateRootViewInterfaceStyle:UIView.av_mainWindow];
     }
 }
 
@@ -364,5 +365,13 @@ MethodImplementation(colourful_fg_strong)
 MethodImplementation(colourful_fill_ultrastrong)
 MethodImplementation(colourful_fill_strong)
 MethodImplementation(colourful_fill_disabled)
+
++ (UIImage *)getCommonImage:(NSString *)key {
+    return [self imageWithCommonNamed:key withModule:@"AUIFoundation"];
+}
+
++ (UIImage *)getImage:(NSString *)key {
+    return [self imageWithNamed:key withModule:@"AUIFoundation"];
+}
 
 @end

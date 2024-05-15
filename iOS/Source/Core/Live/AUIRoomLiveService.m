@@ -9,6 +9,7 @@
 #import "AUIRoomAppServer.h"
 #import "AUIRoomAccount.h"
 #import "AUIRoomMessageService.h"
+#import "AUIRoomGiftManager.h"
 
 typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
     AUIRoomMessageTypeStartLive = 10003,
@@ -28,31 +29,9 @@ typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
     AUIRoomMessageTypeNeedOpenCamera,
     
     AUIRoomMessageTypeGift = 30001,
+    
+    AUIRoomMessageTypeProduct = 30011,
 };
-
-@implementation AUIRoomGiftModel
-
-- (instancetype)initWithData:(NSDictionary *)data {
-    self = [super init];
-    if (self) {
-        _giftId = [data objectForKey:@"id"];
-        _name = [data objectForKey:@"name"];
-        _desc = [data objectForKey:@"description"];
-        _imageUrl = [data objectForKey:@"imageUrl"];
-    }
-    return self;
-}
-
-- (NSDictionary *)toData {
-    return @{
-        @"id":_giftId ?: @"",
-        @"name":_name ?: @"",
-        @"description":_desc ?: @"",
-        @"imageUrl":_imageUrl ?: @"",
-    };
-}
-
-@end
 
 
 @interface AUIRoomLiveService () <AUIRoomMessageServiceObserver>
@@ -318,7 +297,7 @@ typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
         return;
     }
     __weak typeof(self) weakSelf = self;
-    [self.messageService queryStatistics:self.liveInfoModel.live_id completed:^(NSInteger pv, NSInteger onlineCount, NSError * _Nullable error) {
+    [self.messageService queryStatistics:self.liveInfoModel.chat_id completed:^(NSInteger pv, NSInteger onlineCount, NSError * _Nullable error) {
         if (pv > weakSelf.pv) {
             weakSelf.pv = pv;
             if (weakSelf.onReceivedPV) {
@@ -344,8 +323,26 @@ typedef NS_ENUM(NSUInteger, AUIRoomMessageType) {
         return;
     }
     
-    [self sendData:gift type:AUIRoomMessageTypeGift receiverId:self.liveInfoModel.anchor_id completed:completed];
+    // TODO: 向AppServer发送送礼物请求，服务端收到请求后进行记录，并向IMServer广播发送消息。
+    // 下面是不经过服务端的简单实现，通过IM向房间广播礼物Id
+    AUIMessageDefaultData *giftData = [[AUIMessageDefaultData alloc] initWithData:@{@"giftId" : gift.giftId, @"count":@(1)}];
+    [self sendData:giftData type:AUIRoomMessageTypeGift receiverId:nil completed:completed];
 }
+
+#pragma mark - Product
+
+- (void)sendProduct:(AUIRoomProductModel *)product completed:(void(^)(BOOL))completed {
+    if (!self.isJoined || !self.isAnchor) {
+        if (completed) {
+            completed(NO);
+        }
+        return;
+    }
+    
+    [self sendData:product type:AUIRoomMessageTypeProduct receiverId:nil completed:completed];
+}
+
+
 
 #pragma mark - Pusher state
 
@@ -695,8 +692,24 @@ static NSUInteger g_maxLinkMicCount = 6;
     }
     
     if (message.msgType == AUIRoomMessageTypeGift) {
-        if (self.onReceivedGift) {
-            self.onReceivedGift(sender, [[AUIRoomGiftModel alloc] initWithData:data]);
+        if ([sender.userId isEqualToString:AUIRoomAccount.me.userId]) {
+            return;
+        }
+        NSString *giftId = [data objectForKey:@"giftId"];
+        NSInteger count = [[data objectForKey:@"count"] intValue];
+        AUIRoomGiftModel *model = [AUIRoomGiftManager.sharedInstance getGift:giftId];
+        if (model) {
+            if (self.onReceivedGift) {
+                self.onReceivedGift(sender, model, count);
+            }
+        }
+        
+        return;
+    }
+    
+    if (message.msgType == AUIRoomMessageTypeProduct) {
+        if (self.onReceivedProduct) {
+            self.onReceivedProduct(sender, [[AUIRoomProductModel alloc] initWithData:data]);
         }
         return;
     }

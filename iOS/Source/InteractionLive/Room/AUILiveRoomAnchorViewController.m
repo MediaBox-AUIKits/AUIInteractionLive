@@ -22,15 +22,18 @@
 #import "AUILiveRoomNoticeButton.h"
 #import "AUILIveRoomNoticePanel.h"
 
+#import "AUILiveRoomShoppingPanel.h"
+#import "AUILiveRoomProductCard.h"
+
 #import "AUIRoomAccount.h"
 #import "AUIRoomBaseLiveManagerAnchor.h"
 #import "AUIRoomInteractionLiveManagerAnchor.h"
 #import "AUILiveRoomLinkMicListPanel.h"
 
 
-@interface AUILiveRoomAnchorViewController () <
-AVUIViewControllerInteractivePopGesture
->
+@interface AUILiveRoomAnchorViewController () <AVUIViewControllerInteractivePopGesture>
+
+@property (strong, nonatomic) UIImageView *backgroundView;
 
 @property (strong, nonatomic) AVBlockButton* exitButton;
 
@@ -42,6 +45,7 @@ AVUIViewControllerInteractivePopGesture
 @property (strong, nonatomic) AUILiveRoomMemberButton *membersButton;
 @property (strong, nonatomic) AUILiveRoomPushStatusView *pushStatusView;
 @property (strong, nonatomic) AUILiveRoomCommentView *liveCommentView;
+@property (strong, nonatomic) AUILiveRoomProductCard *productCard;
 @property (strong, nonatomic) AUILiveRoomAnchorBottomView *bottomView;
 
 @property (strong, nonatomic) AUILiveRoomAnchorPrestartView *livePrestartView;
@@ -60,6 +64,22 @@ AVUIViewControllerInteractivePopGesture
 
 #pragma mark -- UI控件懒加载
 
+- (UIImageView *)backgroundView {
+    if (!_backgroundView) {
+        _backgroundView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+        
+        CAGradientLayer *bgLayer = [CAGradientLayer layer];
+        bgLayer.frame = self.view.bounds;
+        bgLayer.colors = @[(id)[UIColor colorWithRed:0x39 / 255.0 green:0x1a / 255.0 blue:0x0f / 255.0 alpha:1.0].CGColor,(id)[UIColor colorWithRed:0x1e / 255.0 green:0x23 / 255.0 blue:0x26 / 255.0 alpha:1.0].CGColor];
+        bgLayer.startPoint = CGPointMake(0, 0.5);
+        bgLayer.endPoint = CGPointMake(1, 0.5);
+        [_backgroundView.layer addSublayer:bgLayer];
+        
+        [self.view addSubview:_backgroundView];
+    }
+    return _backgroundView;
+}
+
 - (AVBlockButton *)exitButton {
     if (!_exitButton) {
         AVBlockButton* button = [[AVBlockButton alloc] initWithFrame:CGRectMake(self.view.av_right - 16 - 24, AVSafeTop + 10, 24, 24)];
@@ -77,13 +97,7 @@ AVUIViewControllerInteractivePopGesture
             }
             [AVAlertController showWithTitle:tips message:@"" needCancel:YES onCompleted:^(BOOL isCanced) {
                 if (!isCanced) {
-                    AVProgressHUD *loading = [AVProgressHUD ShowHUDAddedTo:weakSelf.view animated:YES];
-                    loading.labelText = @"正在退出直播间";
-                    [weakSelf.liveManager leaveRoom:^(BOOL succ) {
-                        [loading hideAnimated:YES];
-                        UIApplication.sharedApplication.idleTimerDisabled = NO;
-                        [weakSelf.navigationController popViewControllerAnimated:YES];
-                    }];
+                    [weakSelf closeViewController:YES];
                 }
             }];
         };
@@ -212,6 +226,9 @@ AVUIViewControllerInteractivePopGesture
         _bottomView.sendCommentBlock = ^(AUILiveRoomAnchorBottomView * _Nonnull sender, NSString * _Nonnull comment) {
             [weakSelf.liveManager sendComment:comment completed:nil];
         };
+        _bottomView.onShoppingButtonClickedBlock = ^(AUILiveRoomAnchorBottomView * _Nonnull sender) {
+            [weakSelf showShoppingPanel];
+        };
     }
     return _bottomView;
 }
@@ -269,6 +286,7 @@ AVUIViewControllerInteractivePopGesture
 
 - (void)dealloc {
     NSLog(@"dealloc:AUILiveRoomAnchorViewController");
+    [UIViewController av_setIdleTimerDisabled:NO];
 }
 
 - (instancetype)initWithModel:(AUIRoomLiveInfoModel *)model withJoinList:(NSArray<AUIRoomLiveLinkMicJoinInfoModel *> *)joinList {
@@ -282,7 +300,10 @@ AVUIViewControllerInteractivePopGesture
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupBackground];
+    self.view.backgroundColor = AUIFoundationColor(@"bg_weak");
+    [self backgroundView];
+    [self liveDisplayView];
+    
     [self setupLiveManager];
     [self setupRoomUI];
     
@@ -290,22 +311,11 @@ AVUIViewControllerInteractivePopGesture
     [self.liveManager enterRoom:^(BOOL success) {
         if (!success) {
             [AVAlertController showWithTitle:nil message:@"进入直播间失败，请稍后重试~" needCancel:NO onCompleted:^(BOOL isCanced) {
-                UIApplication.sharedApplication.idleTimerDisabled = NO;
-                [weakSelf.navigationController popViewControllerAnimated:YES];
+                [weakSelf closeViewController:NO];
             }];
         }
     }];
-    UIApplication.sharedApplication.idleTimerDisabled = YES;
-}
-
-- (void)setupBackground {
-    self.view.backgroundColor = AUIFoundationColor(@"bg_weak");
-    CAGradientLayer *bgLayer = [CAGradientLayer layer];
-    bgLayer.frame = self.view.bounds;
-    bgLayer.colors = @[(id)[UIColor colorWithRed:0x39 / 255.0 green:0x1a / 255.0 blue:0x0f / 255.0 alpha:1.0].CGColor,(id)[UIColor colorWithRed:0x1e / 255.0 green:0x23 / 255.0 blue:0x26 / 255.0 alpha:1.0].CGColor];
-    bgLayer.startPoint = CGPointMake(0, 0.5);
-    bgLayer.endPoint = CGPointMake(1, 0.5);
-    [self.view.layer addSublayer:bgLayer];
+    [UIViewController av_setIdleTimerDisabled:YES];
 }
 
 - (void)setupRoomUI {
@@ -436,6 +446,21 @@ AVUIViewControllerInteractivePopGesture
     morePanel.bgViewOnShowing.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
 }
 
+- (void)closeViewController:(BOOL)leaveRoom {
+    if (leaveRoom) {
+        AVProgressHUD *loading = [AVProgressHUD ShowHUDAddedTo:self.view animated:YES];
+        loading.labelText = @"正在退出直播间";
+        __weak typeof(self) weakSelf = self;
+        [self.liveManager leaveRoom:^(BOOL succ) {
+            [loading hideAnimated:YES];
+            [weakSelf closeViewController:NO];
+        }];
+    }
+    else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
 #pragma mark - orientation
 
 - (BOOL)shouldAutorotate {
@@ -506,14 +531,18 @@ AVUIViewControllerInteractivePopGesture
         [weakSelf.membersButton updateMemberCount:pv];
     };
     
-    self.liveManager.onReceivedGift = ^(AUIRoomUser * _Nonnull sender, AUIRoomGiftModel * _Nonnull gift) {
-        // 处理接收到的礼物
+    self.liveManager.onReceivedGift = ^(AUIRoomUser * _Nonnull sender, AUIRoomGiftModel * _Nonnull gift, NSInteger count) {
+        // 有人发礼物了，播放动效
+        NSLog(@"收到来自观众（%@）的礼物：%@， 数量：%zd", sender.nickName ?: sender.userId, gift.name, count);
+    };
+    
+    self.liveManager.onReceivedProduct = ^(AUIRoomUser * _Nonnull sender, AUIRoomProductModel * _Nonnull product) {
+        [weakSelf showProductCard:product];
     };
     
     self.liveManager.onReceivedLeaveRoom = ^{
         [AVAlertController showWithTitle:@"你被移出房间了" message:@"" needCancel:NO onCompleted:^(BOOL isCanced) {
-            UIApplication.sharedApplication.idleTimerDisabled = NO;
-            [weakSelf.navigationController popViewControllerAnimated:YES];
+            [weakSelf closeViewController:NO];
         }];
     };
     
@@ -575,6 +604,39 @@ AVUIViewControllerInteractivePopGesture
     self.liveManager.roomVC = self;
     [self.liveManager setupLivePusher];
 }
+
+#pragma mark - shopping
+
+- (void)showProductCard:(AUIRoomProductModel *)product {
+    [self.productCard removeFromSuperview];
+    
+    CGFloat w = self.livingContainerView.av_width - self.liveCommentView.av_right - 16;
+    CGFloat h = w * 1.5;
+    self.productCard = [[AUILiveRoomProductCard alloc] initWithFrame:CGRectMake(self.liveCommentView.av_right + 8, self.liveCommentView.av_bottom - h, w, h)];
+    self.productCard.product = product;
+    [self.livingContainerView addSubview:self.productCard];
+    
+    __weak typeof(self) weakSelf = self;
+    self.productCard.onCloseButtonClickedBlock = ^(AUILiveRoomProductCard * _Nonnull sender) {
+        [weakSelf.productCard removeFromSuperview];
+        weakSelf.productCard = nil;
+    };
+}
+
+- (void)showShoppingPanel {
+    AUILiveRoomShoppingPanel *panel = [[AUILiveRoomShoppingPanel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 0)];
+    __weak typeof(self) weakSelf = self;
+    panel.onSelectProductBlock = ^(AUILiveRoomShoppingPanel * _Nonnull sender, AUIRoomProductModel * _Nonnull product) {
+        [weakSelf.liveManager sendProduct:product completed:^(BOOL success) {
+            if (!success) {
+                [AVToastView show:@"下发商品卡片失败" view:weakSelf.view position:AVToastViewPositionMid];
+            }
+        }];
+        [sender hide];
+    };
+    [panel showOnView:self.view];
+}
+
 
 #pragma mark - link mic
 

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic) void (^onBeautyButtonClickedBlock)(AUILiveRoomAnchorBottomView *sender);
 @property (copy, nonatomic) void (^onLinkMicButtonClickedBlock)(AUILiveRoomAnchorBottomView *sender);
 @property (copy, nonatomic) void (^sendCommentBlock)(AUILiveRoomAnchorBottomView *sender, NSString *comment);
+@property (copy, nonatomic) void (^onShoppingButtonClickedBlock)(AUILiveRoomAnchorBottomView *sender);
 
 - (instancetype)initWithFrame:(CGRect)frame linkMic:(BOOL)linkMic;
 

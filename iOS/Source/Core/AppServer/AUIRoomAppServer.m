@@ -64,7 +64,7 @@ static BOOL g_staging = NO;
     [urlRequest addValue:@"application/json" forHTTPHeaderField:@"accept"];
     [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [urlRequest addValue:[self envString] forHTTPHeaderField:@"x-live-env"];  // staging/production
-    [urlRequest addValue:[NSString stringWithFormat:@"Bearer %@", AUIRoomAccount.me.token ?: @"live"] forHTTPHeaderField:@"Authorization"];
+    [urlRequest addValue:[NSString stringWithFormat:@"Bearer %@", AUIRoomAccount.myAccount.myToken ?: @"live"] forHTTPHeaderField:@"Authorization"];
     urlRequest.HTTPMethod = @"POST";
     if (bodyDic) {
         urlRequest.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyDic options:NSJSONWritingPrettyPrinted error:nil];

@@ -209,12 +209,24 @@
     [self.liveService updateNotice:notice completed:completed];
 }
 
-- (void (^)(AUIRoomUser * _Nonnull, AUIRoomGiftModel * _Nonnull))onReceivedGift {
+- (void (^)(AUIRoomUser * _Nonnull, AUIRoomGiftModel * _Nonnull, NSInteger))onReceivedGift {
     return self.liveService.onReceivedGift;
 }
 
-- (void)setOnReceivedGift:(void (^)(AUIRoomUser * _Nonnull, AUIRoomGiftModel * _Nonnull))onReceivedGift {
+- (void)setOnReceivedGift:(void (^)(AUIRoomUser * _Nonnull, AUIRoomGiftModel * _Nonnull, NSInteger))onReceivedGift {
     self.liveService.onReceivedGift = onReceivedGift;
+}
+
+- (void (^)(AUIRoomUser * _Nonnull, AUIRoomProductModel * _Nonnull))onReceivedProduct {
+    return self.liveService.onReceivedProduct;
+}
+
+- (void)setOnReceivedProduct:(void (^)(AUIRoomUser * _Nonnull, AUIRoomProductModel * _Nonnull))onReceivedProduct {
+    self.liveService.onReceivedProduct = onReceivedProduct;
+}
+
+- (void)sendProduct:(AUIRoomProductModel *)product completed:(void (^)(BOOL))completed {
+    [self.liveService sendProduct:product completed:completed];
 }
 
 - (BOOL)isMicOpened {

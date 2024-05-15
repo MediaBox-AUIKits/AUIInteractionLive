@@ -28,6 +28,15 @@
 
 @implementation AUIMessageSendMessageToGroupRequest
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.repeatCount = 1;
+    }
+    return self;
+}
+
 @end
 
 

@@ -308,7 +308,7 @@
             obj.onLayoutUpdated();
         }
         
-        if (self.viewList.count == 1) {
+        if (self.viewList.count == 1 || self.isSmallWindow) {
             obj.showBackground = NO;
             obj.showBorder = NO;
             obj.showRadius = NO;
@@ -348,6 +348,11 @@
     if (![self.viewList containsObject:displayView]) {
         return CGRectZero;
     }
+    
+    if (self.isSmallWindow) {
+        return self.scrollView.bounds;
+    }
+    
     if (self.viewList.count == 1) {
         return self.scrollView.bounds;
     }

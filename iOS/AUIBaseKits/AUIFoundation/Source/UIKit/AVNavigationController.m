@@ -24,7 +24,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+    self.navigationBar.hidden = YES;
+
     __weak typeof(self) weakSelf = self;
     self.interactivePopGestureRecognizer.delegate = (id)weakSelf;
 }

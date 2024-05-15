@@ -49,6 +49,10 @@ static NSString *_globalGroupId = nil;
     _loginToken = config.tokenData;
 }
 
+- (AUIMessageConfig *)getConfig {
+    return _config;
+}
+
 - (void)setConnectionDelegate:(id<AUIMessageServiceConnectionDelegate>)connectionDelegate {
     _connectionDelegate = connectionDelegate;
 }
@@ -173,6 +177,10 @@ static NSString *_globalGroupId = nil;
             }
         });
     }];
+}
+
+- (void)joinGroup:(AUIMessageJoinGroupRequest *)req groupInfoCallback:(AUIMessageGetGroupInfoCallback)groupInfoCallback {
+    
 }
 
 - (void)leaveGroup:(AUIMessageLeaveGroupRequest *)req callback:(AUIMessageDefaultCallback)callback {

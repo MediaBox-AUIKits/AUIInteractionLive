@@ -122,7 +122,7 @@
     
     if (cancelTitle.length > 0) {
         UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:cancelTitle
-                                                               style:UIAlertActionStyleCancel
+                                                               style:UIAlertActionStyleDefault
                                                              handler:^(UIAlertAction * _Nonnull action) {
             if (completed) {
                 completed(YES);

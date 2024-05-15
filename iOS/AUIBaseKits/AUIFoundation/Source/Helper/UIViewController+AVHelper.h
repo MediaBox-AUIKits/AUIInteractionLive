@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIViewController *)av_topViewController;
 
++ (void)av_setIdleTimerDisabled:(BOOL)disbaled;
 
 @end
 

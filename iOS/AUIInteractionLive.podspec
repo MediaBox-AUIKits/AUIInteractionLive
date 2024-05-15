@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AUIInteractionLive'
-  s.version          = '2.3.0'
+  s.version          = '2.4.0'
   s.summary          = 'A short description of AUIInteractionLive.'
 
 # This description is used to generate tags and improve search results.
@@ -41,6 +41,7 @@ TODO: Add long description of the pod here.
     ss.dependency 'Masonry'
     ss.dependency 'MJRefresh'
     ss.dependency 'SDWebImage'
+    ss.dependency 'AFNetworking'
   end
 
   s.subspec 'AliVCSDK_Standard' do |ss|

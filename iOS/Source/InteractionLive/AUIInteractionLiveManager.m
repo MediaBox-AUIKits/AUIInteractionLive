@@ -44,7 +44,6 @@ static NSString * const kLiveServiceDomainString = @"你的AppServer域名";
     [AUIRoomAppServer setServiceUrl:kLiveServiceDomainString];
     
     //初始化IM
-    [AUIRoomMessage useAlivcIMWhenCompatMode:YES];
     [AUIRoomAppServer setIMServers:AUIRoomMessage.currentIMServers];
     
     // 初始化SDK
@@ -63,15 +62,8 @@ static NSString * const kLiveServiceDomainString = @"你的AppServer域名";
 #endif
 }
 
-- (void)setCurrentUser:(AUIRoomUser *)user {
-    AUIRoomAccount.me.userId = user.userId ?: @"";
-    AUIRoomAccount.me.avatar = user.avatar ?: @"";
-    AUIRoomAccount.me.nickName = user.nickName ?: @"";
-    AUIRoomAccount.me.token = user.token ?: @"";
-}
-
-- (AUIRoomUser *)currentUser {
-    return AUIRoomAccount.me;
+- (void)setMyAccount:(AUIRoomAccount *)account {
+    [AUIRoomAccount.myAccount changedAccount:account];
 }
 
 - (void)login:(void(^)(BOOL success))completedBlock {
@@ -112,6 +104,11 @@ static NSString * const kLiveServiceDomainString = @"你的AppServer域名";
 }
 
 - (void)createLive:(AUIRoomLiveMode)mode title:(NSString *)title notice:(NSString *)notice currentVC:(UIViewController *)currentVC completed:(void(^)(BOOL success, AUIRoomLiveInfoModel *model))completedBlock {
+    
+    if ([AVSmallWindow isShowing]) {
+        [AVSmallWindow exit:YES];
+    }
+    
     __weak typeof(self) weakSelf = self;
     AVProgressHUD *loading1 = [AVProgressHUD ShowHUDAddedTo:currentVC.view animated:YES];
     loading1.labelText = @"正在创建直播间，请等待";
@@ -159,6 +156,11 @@ static NSString * const kLiveServiceDomainString = @"你的AppServer域名";
 }
 
 - (void)joinLiveWithLiveId:(NSString *)liveId currentVC:(UIViewController *)currentVC completed:(void(^)(BOOL success))completedBlock {
+    
+    if ([AVSmallWindow isShowing]) {
+        [AVSmallWindow exit:YES];
+    }
+    
     __weak typeof(self) weakSelf = self;
     AVProgressHUD *loading = [AVProgressHUD ShowHUDAddedTo:currentVC.view animated:YES];
     loading.labelText = @"正在加入直播间，请等待";

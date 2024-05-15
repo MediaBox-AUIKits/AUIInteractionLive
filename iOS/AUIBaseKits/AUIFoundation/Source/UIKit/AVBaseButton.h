@@ -40,18 +40,18 @@ typedef void(^AVBaseButtonAction)(AVBaseButton *btn);
 @property (nonatomic, assign) BOOL disabled;
 @property (nonatomic, assign) BOOL selected;
 
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *disabledTitle;
-@property (nonatomic, copy) NSString *selectedTitle;
-@property (nonatomic, strong) UIFont *font;
+@property (nonatomic, copy, nullable) NSString *title;
+@property (nonatomic, copy, nullable) NSString *disabledTitle;
+@property (nonatomic, copy, nullable) NSString *selectedTitle;
+@property (nonatomic, strong, nullable) UIFont *font;
 
-@property (nonatomic, copy) UIColor *color;
-@property (nonatomic, copy) UIColor *disabledColor;
-@property (nonatomic, copy) UIColor *selectedColor;
+@property (nonatomic, copy, nullable) UIColor *color;
+@property (nonatomic, copy, nullable) UIColor *disabledColor;
+@property (nonatomic, copy, nullable) UIColor *selectedColor;
 
-@property (nonatomic, strong) UIImage *image;
-@property (nonatomic, strong) UIImage *disabledImage;
-@property (nonatomic, strong) UIImage *selectedImage;
+@property (nonatomic, strong, nullable) UIImage *image;
+@property (nonatomic, strong, nullable) UIImage *disabledImage;
+@property (nonatomic, strong, nullable) UIImage *selectedImage;
 
 @property (nonatomic, assign) UIEdgeInsets insets;
 

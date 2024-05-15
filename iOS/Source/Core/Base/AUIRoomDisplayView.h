@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AUIRoomDisplayLayoutView : UIView
 
+@property (nonatomic, assign) BOOL isSmallWindow;
 @property (nonatomic, assign) CGSize resolution;
 @property (nonatomic, assign) UIEdgeInsets contentInsets;
 @property (nonatomic, copy) void (^onlayoutChangedBlock)(AUIRoomDisplayLayoutView *sender);

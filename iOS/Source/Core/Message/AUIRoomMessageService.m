@@ -220,6 +220,7 @@
     req.msgType = AUIRoomMessageTypeComment;
     req.skipAudit = NO;
     req.skipMuteCheck = NO;
+    req.storage = YES;
     [self.messageService sendMessageToGroup:req callback:^(AUIMessageSendMessageToGroupResponse * _Nullable rsp, NSError * _Nullable error) {
         if (completed) {
             completed(error);
@@ -249,6 +250,7 @@
         req.msgType = type;
         req.skipAudit = YES;
         req.skipMuteCheck = YES;
+        req.storage = NO;
         [self.messageService sendMessageToGroup:req callback:^(AUIMessageSendMessageToGroupResponse * _Nullable rsp, NSError * _Nullable error) {
             if (completed) {
                 completed(error);
@@ -305,9 +307,18 @@
 
 #pragma mark - AUIMessageServiceConnectionDelegate
 
-- (void)onTokenExpire {
-    // 目前token有效期较长，如果有效期较短情况下，在当前APP生命周期出现了token过期，建议走重新登录逻辑
+- (void)onTokenExpire:(AUIMessageDefaultCallback)updateTokenCompleted {
     NSLog(@"Message Token过期了");
+    
+    __weak typeof(self) weakSelf = self;
+    [self fetchToken:^(NSDictionary *tokenData, NSError *error) {
+        if (updateTokenCompleted) {
+            if (tokenData) {
+                [[weakSelf messageService] getConfig].tokenData = tokenData;
+            }
+            updateTokenCompleted(error);
+        }
+    }];
 }
 
 #pragma mark - AUIMessageListenerProtocol

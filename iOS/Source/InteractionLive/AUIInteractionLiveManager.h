@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AUIRoomLiveModel.h"
-#import "AUIRoomUser.h"
+#import "AUIRoomAccount.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,8 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setup;
 
-- (void)setCurrentUser:(AUIRoomUser * _Nullable)user;
-- (AUIRoomUser *)currentUser;
+- (void)setMyAccount:(AUIRoomAccount * _Nullable)account;
 - (void)login:(void(^)(BOOL success))completedBlock;
 - (void)logout;
 

@@ -477,9 +477,8 @@ static NSString *g_lastLiveId = nil;
 
 + (void)loadLastLiveData {
     NSString *last_live_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"last_live_id"];
-    AUIRoomUser *me = [[AUILiveManager liveManager] currentUser];
-    if (me.userId.length > 0 && [last_live_id hasPrefix:me.userId]) {
-        g_lastLiveId = [last_live_id substringFromIndex:me.userId.length + 1];
+    if (AUIRoomAccount.me.userId.length > 0 && [last_live_id hasPrefix:AUIRoomAccount.me.userId]) {
+        g_lastLiveId = [last_live_id substringFromIndex:AUIRoomAccount.me.userId.length + 1];
     }
     else {
         g_lastLiveId = nil;
@@ -492,8 +491,7 @@ static NSString *g_lastLiveId = nil;
     }
     g_lastLiveId = lastLiveId;
     if (g_lastLiveId.length > 0) {
-        AUIRoomUser *me = [[AUILiveManager liveManager] currentUser];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%@_%@", me.userId, g_lastLiveId] forKey:@"last_live_id"];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%@_%@", AUIRoomAccount.me.userId, g_lastLiveId] forKey:@"last_live_id"];
     }
     else {
         [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"last_live_id"];

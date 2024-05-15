@@ -14,7 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *userId;
 @property (nonatomic, copy) NSString *avatar;
 @property (nonatomic, copy) NSString *nickName;
-@property (nonatomic, copy) NSString *token;
+
+- (instancetype)initWithData:(NSDictionary *)data;
+- (NSDictionary *)toData;
 
 @end
 

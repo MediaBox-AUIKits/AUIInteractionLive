@@ -20,13 +20,21 @@
 #import "AUILiveRoomLivingContainerView.h"
 #import "AUILiveRoomAudienceLinkMicButton.h"
 
+#import "AUILiveRoomShoppingPanel.h"
+#import "AUILiveRoomProductCard.h"
+
 #import "AUIRoomBaseLiveManagerAudience.h"
 #import "AUIRoomInteractionLiveManagerAudience.h"
 #import "AUIRoomAccount.h"
 #import "AUIRoomDeviceAuth.h"
 #import "AUILiveRoomActionManager.h"
 
-@interface AUILiveRoomAudienceViewController () <AVUIViewControllerInteractivePopGesture>
+#import "AUIRoomGiftPanel.h"
+#import "AUIRoomGiftPlayer.h"
+
+@interface AUILiveRoomAudienceViewController () <AVUIViewControllerInteractivePopGesture, AVSmallWindowTargetProtocol>
+
+@property (strong, nonatomic) UIImageView *backgroundView;
 
 @property (strong, nonatomic) AVBlockButton* exitButton;
 
@@ -37,6 +45,7 @@
 @property (strong, nonatomic) AUILiveRoomNoticeButton *noticeButton;
 @property (strong, nonatomic) AUILiveRoomMemberButton *membersButton;
 @property (strong, nonatomic) AUILiveRoomCommentView *liveCommentView;
+@property (strong, nonatomic) AUILiveRoomProductCard *productCard;
 @property (strong, nonatomic) AUILiveRoomBottomView *bottomView;
 
 @property (strong, nonatomic) AUILiveRoomPrestartView *livePrestartView;
@@ -51,6 +60,22 @@
 @implementation AUILiveRoomAudienceViewController
 
 #pragma mark -- UI控件加载
+
+- (UIImageView *)backgroundView {
+    if (!_backgroundView) {
+        _backgroundView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+        
+        CAGradientLayer *bgLayer = [CAGradientLayer layer];
+        bgLayer.frame = self.view.bounds;
+        bgLayer.colors = @[(id)[UIColor colorWithRed:0x39 / 255.0 green:0x1a / 255.0 blue:0x0f / 255.0 alpha:1.0].CGColor,(id)[UIColor colorWithRed:0x1e / 255.0 green:0x23 / 255.0 blue:0x26 / 255.0 alpha:1.0].CGColor];
+        bgLayer.startPoint = CGPointMake(0, 0.5);
+        bgLayer.endPoint = CGPointMake(1, 0.5);
+        [_backgroundView.layer addSublayer:bgLayer];
+        
+        [self.view addSubview:_backgroundView];
+    }
+    return _backgroundView;
+}
 
 - (AUIRoomDisplayLayoutView *)liveDisplayView {
     if (!_liveDisplayView) {
@@ -73,22 +98,15 @@
         __weak typeof(self) weakSelf = self;
         button.clickBlock = ^(AVBlockButton * _Nonnull sender) {
             
-            void (^destroyBlock)(void) = ^{
-                [weakSelf.liveManager leaveRoom:^(BOOL success) {
-                    UIApplication.sharedApplication.idleTimerDisabled = NO;
-                    [weakSelf.navigationController popViewControllerAnimated:YES];
-                }];
-            };
-            
             if (weakSelf.liveManager.liveInfoModel.status == AUIRoomLiveStatusLiving && [weakSelf linkMicManager] && [weakSelf linkMicManager].isJoinedLinkMic) {
                 [AVAlertController showWithTitle:@"是否结束与主播连麦，并退出直播间？" message:@"" needCancel:YES onCompleted:^(BOOL isCanced) {
                     if (!isCanced) {
-                        destroyBlock();
+                        [weakSelf closeViewController:YES];
                     }
                 }];
             }
             else {
-                destroyBlock();
+                [weakSelf closeViewController:YES];
             }
         };
         _exitButton = button;
@@ -216,13 +234,22 @@
         _bottomView.onLikeButtonClickedBlock = ^(AUILiveRoomBottomView * _Nonnull sender) {
             [weakSelf.liveManager sendLike];
         };
+        _bottomView.onShoppingButtonClickedBlock = ^(AUILiveRoomBottomView * _Nonnull sender) {
+            [weakSelf showShoppingPanel];
+        };
         _bottomView.onShareButtonClickedBlock = ^(AUILiveRoomBottomView * _Nonnull sender) {
             if (AUILiveRoomActionManager.defaultManager.openShare) {
                 AUILiveRoomActionManager.defaultManager.openShare(weakSelf.liveManager.liveInfoModel, weakSelf, nil);
             }
         };
+        _bottomView.onGiftButtonClickedBlock = ^(AUILiveRoomBottomView * _Nonnull sender) {
+            [weakSelf showSendGiftPanel];
+        };
         _bottomView.sendCommentBlock = ^(AUILiveRoomBottomView * _Nonnull sender, NSString * _Nonnull comment) {
             [weakSelf.liveManager sendComment:comment completed:nil];
+        };
+        _bottomView.onSmallWindowButtonClickedBlock = ^(AUILiveRoomBottomView * _Nonnull sender) {
+            [AVSmallWindow start:weakSelf];
         };
     }
     return _bottomView;
@@ -232,7 +259,7 @@
     if (!_livePrestartView) {
         _livePrestartView = [[AUILiveRoomPrestartView alloc] initWithFrame:self.view.bounds];
         _livePrestartView.hidden = YES;
-        [self.view insertSubview:_livePrestartView belowSubview:self.liveDisplayView];
+        [self.view insertSubview:_livePrestartView aboveSubview:self.liveDisplayView];
     }
     return _livePrestartView;
 }
@@ -272,6 +299,7 @@
 
 - (void)dealloc {
     NSLog(@"dealloc:AUILiveRoomAudienceViewController");
+    [UIViewController av_setIdleTimerDisabled:NO];
 }
 
 - (instancetype)initWithModel:(AUIRoomLiveInfoModel *)model withJoinList:(NSArray<AUIRoomLiveLinkMicJoinInfoModel *> *)joinList {
@@ -285,7 +313,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self setupBackground];
+    self.view.backgroundColor = AUIFoundationColor(@"bg_weak");
+    [self backgroundView];
+    [self liveDisplayView];
+
     [self setupLiveManager];
     [self setupRoomUI];
     
@@ -296,22 +327,11 @@
         }
         if (!success) {
             [AVAlertController showWithTitle:nil message:@"进入直播间失败，请稍后重试~" needCancel:NO onCompleted:^(BOOL isCanced) {
-                UIApplication.sharedApplication.idleTimerDisabled = NO;
-                [weakSelf.navigationController popViewControllerAnimated:YES];
+                [weakSelf closeViewController:NO];
             }];
         }
     }];
-    UIApplication.sharedApplication.idleTimerDisabled = YES;
-}
-
-- (void)setupBackground {
-    self.view.backgroundColor = AUIFoundationColor(@"bg_weak");
-    CAGradientLayer *bgLayer = [CAGradientLayer layer];
-    bgLayer.frame = self.view.bounds;
-    bgLayer.colors = @[(id)[UIColor colorWithRed:0x39 / 255.0 green:0x1a / 255.0 blue:0x0f / 255.0 alpha:1.0].CGColor,(id)[UIColor colorWithRed:0x1e / 255.0 green:0x23 / 255.0 blue:0x26 / 255.0 alpha:1.0].CGColor];
-    bgLayer.startPoint = CGPointMake(0, 0.5);
-    bgLayer.endPoint = CGPointMake(1, 0.5);
-    [self.view.layer addSublayer:bgLayer];
+    [UIViewController av_setIdleTimerDisabled:YES];
 }
 
 - (void)setupRoomUI {
@@ -324,6 +344,8 @@
     [self liveCommentView];
     [self bottomView];
     [self linkMicButton];
+    
+    self.bottomView.smallWinBtn.hidden = self.liveManager.liveInfoModel.mode == AUIRoomLiveModeLinkMic;  // 连麦模式下不开启小窗
     
     if (self.liveManager.liveInfoModel.status == AUIRoomLiveStatusNone) {
         [self showPrestartUI];
@@ -339,11 +361,13 @@
 - (void)showPrestartUI {
     self.livePrestartView.hidden = NO;
     self.livingContainerView.hidden = YES;
+    self.liveFinishView.hidden = YES;
 }
 
 - (void)showLivingUI {
     self.livePrestartView.hidden = YES;
     self.livingContainerView.hidden = NO;
+    self.liveFinishView.hidden = YES;
 }
 
 - (void)showFinishUI {
@@ -351,6 +375,18 @@
     self.liveFinishView.hidden = NO;
     self.liveFinishView.vodModel = self.liveManager.liveInfoModel.vod_info;
     self.livingContainerView.hidden = YES;
+}
+
+- (void)closeViewController:(BOOL)leaveRoom {
+    if (leaveRoom) {
+        __weak typeof(self) weakSelf = self;
+        [self.liveManager leaveRoom:^(BOOL success) {
+            [weakSelf closeViewController:NO];
+        }];
+    }
+    else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - orientation
@@ -393,6 +429,9 @@
     };
     self.liveManager.onReceivedStopLive = ^{
         [weakSelf showFinishUI];
+        if ([AVSmallWindow isShowing:weakSelf]) {
+            [AVSmallWindow exit:NO];
+        }
     };
     
     self.liveManager.onReceivedComment = ^(AUIRoomUser * _Nonnull sender, NSString * _Nonnull content) {
@@ -415,6 +454,15 @@
         [weakSelf.membersButton updateMemberCount:pv];
     };
     
+    self.liveManager.onReceivedGift = ^(AUIRoomUser * _Nonnull sender, AUIRoomGiftModel * _Nonnull gift, NSInteger count) {
+        // 有人发礼物了，播放动效
+        NSLog(@"收到来自观众（%@）的礼物：%@， 数量：%zd", sender.nickName ?: sender.userId, gift.name, count);
+    };
+    
+    self.liveManager.onReceivedProduct = ^(AUIRoomUser * _Nonnull sender, AUIRoomProductModel * _Nonnull product) {
+        [weakSelf showProductCard:product];
+    };
+    
     self.liveManager.onReceivedNoticeUpdate = ^(NSString * _Nonnull notice) {
         weakSelf.noticeButton.noticeContent = notice;
         [AVToastView show:@"公告已更新" view:weakSelf.view position:AVToastViewPositionMid];
@@ -422,8 +470,7 @@
     
     self.liveManager.onReceivedLeaveRoom = ^{
         [AVAlertController showWithTitle:@"你被移出房间了" message:@"" needCancel:NO onCompleted:^(BOOL isCanced) {
-            UIApplication.sharedApplication.idleTimerDisabled = NO;
-            [weakSelf.navigationController popViewControllerAnimated:YES];
+            [weakSelf closeViewController:NO];
         }];
     };
     
@@ -454,6 +501,54 @@
     
     self.liveManager.roomVC = self;
     [self.liveManager setupPullPlayer:NO];
+}
+
+#pragma mark - shopping
+
+- (void)showProductCard:(AUIRoomProductModel *)product {
+    [self.productCard removeFromSuperview];
+    
+    CGFloat w = self.livingContainerView.av_width - self.liveCommentView.av_right - 16;
+    CGFloat h = w * 1.5;
+    self.productCard = [[AUILiveRoomProductCard alloc] initWithFrame:CGRectMake(self.liveCommentView.av_right + 8, self.liveCommentView.av_bottom - h, w, h)];
+    self.productCard.product = product;
+    [self.livingContainerView addSubview:self.productCard];
+    
+    __weak typeof(self) weakSelf = self;
+    self.productCard.onCloseButtonClickedBlock = ^(AUILiveRoomProductCard * _Nonnull sender) {
+        [weakSelf.productCard removeFromSuperview];
+        weakSelf.productCard = nil;
+    };
+}
+
+- (void)showShoppingPanel {
+    AUILiveRoomShoppingPanel *panel = [[AUILiveRoomShoppingPanel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 0)];
+    panel.onSelectProductBlock = ^(AUILiveRoomShoppingPanel * _Nonnull sender, AUIRoomProductModel * _Nonnull product) {
+        // 进入购买流程
+    };
+    [panel showOnView:self.view];
+}
+
+#pragma mark - gift
+
+- (void)showSendGiftPanel {
+    AUIRoomGiftPanel *panel = [[AUIRoomGiftPanel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 0)];
+    
+    __weak typeof(self) weakSelf = self;
+    panel.onSendGiftBlock = ^(AUIRoomGiftPanel *sender, AUIRoomGiftModel * _Nonnull gift) {
+        [weakSelf.liveManager sendGift:gift completed:^(BOOL result) {
+            if (result) {
+                [weakSelf playGift:gift];
+                [sender hide];
+            }
+        }];
+    };
+    [panel showOnView:self.view];
+}
+
+- (void)playGift:(AUIRoomGiftModel *)gift {
+    AUIRoomGiftPlayer *player = [AUIRoomGiftPlayer new];
+    [player play:gift onView:self.view];
 }
 
 #pragma mark - link mic
@@ -596,5 +691,69 @@
     BOOL micOpened = [self linkMicManager].isMicOpened;
     self.linkMicButton.audioOff = !micOpened;
 }
+
+#pragma mark - AVSmallWindowTargetProtocol
+
+- (id<NSObject>)targetHolder {
+    return self;
+}
+
+- (CGRect)targetFrame {
+    CGFloat width = 120;
+    CGFloat height = width * 16 / 9.0;
+    return CGRectMake(self.view.av_width - width - 16.0, self.view.av_height - height - AVSafeBottom - 16.0, width, height);
+}
+
+- (void)onTapSmallWindow {
+    [AVSmallWindow exit:NO];
+}
+
+- (void)onStartFloat:(AVSmallWindowViewController *)vc {
+    
+    CGRect frame = [self targetFrame];
+    frame.origin = CGPointZero;
+    
+    // 添加背景
+    CAGradientLayer *bgLayer = [CAGradientLayer layer];
+    bgLayer.frame = frame;
+    bgLayer.colors = @[(id)[UIColor colorWithRed:0x39 / 255.0 green:0x1a / 255.0 blue:0x0f / 255.0 alpha:1.0].CGColor,(id)[UIColor colorWithRed:0x1e / 255.0 green:0x23 / 255.0 blue:0x26 / 255.0 alpha:1.0].CGColor];
+    bgLayer.startPoint = CGPointMake(0, 0.5);
+    bgLayer.endPoint = CGPointMake(1, 0.5);
+    [vc.view.layer addSublayer:bgLayer];
+    
+    // 添加播放视图
+    self.liveDisplayView.isSmallWindow = YES;
+    [vc.view addSubview:self.liveDisplayView];
+    self.liveDisplayView.frame = frame;
+    
+    // 添加关闭按钮
+    AVBlockButton* closeSmallWindowBtn = [[AVBlockButton alloc] initWithFrame:CGRectMake(frame.size.width - 4 - 24, 4, 24, 24)];
+    closeSmallWindowBtn.layer.cornerRadius = 12;
+    closeSmallWindowBtn.layer.masksToBounds = YES;
+    [closeSmallWindowBtn setImage:AUIRoomGetCommonImage(@"ic_living_close") forState:UIControlStateNormal];
+    [closeSmallWindowBtn setBackgroundColor:[UIColor av_colorWithHexString:@"#1C1D22" alpha:0.4] forState:UIControlStateNormal];
+    [vc.view addSubview:closeSmallWindowBtn];
+    
+    closeSmallWindowBtn.clickBlock = ^(AVBlockButton * _Nonnull sender) {
+        [AVSmallWindow exit:YES];
+    };
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)onExitFloat:(AVSmallWindowViewController *)vc needClose:(BOOL)needClose {
+    self.liveDisplayView.isSmallWindow = NO;
+    [self.view insertSubview:self.liveDisplayView aboveSubview:self.backgroundView];
+    self.liveDisplayView.frame = self.view.bounds;
+    
+    if (needClose) {
+        [self closeViewController:YES];
+    }
+    else {
+        [UIViewController.av_topViewController.navigationController pushViewController:self animated:YES];
+    }
+}
+
+
 
 @end

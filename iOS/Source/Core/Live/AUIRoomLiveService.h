@@ -8,19 +8,11 @@
 #import <Foundation/Foundation.h>
 #import "AUIRoomUser.h"
 #import "AUIRoomLiveModel.h"
+#import "AUIRoomGiftModel.h"
+#import "AUIRoomProductModel.h"
 #import "AUIRoomMessageService.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@interface AUIRoomGiftModel : NSObject<AUIMessageDataProtocol>
-
-@property (nonatomic, copy) NSString *giftId;
-@property (nonatomic, copy) NSString *name;
-@property (nonatomic, copy) NSString *desc;
-@property (nonatomic, copy) NSString *imageUrl;
-
-@end
-
 
 @interface AUIRoomLiveService : NSObject
 
@@ -59,6 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
 // 给主播送礼物
 - (void)sendGift:(AUIRoomGiftModel *)gift completed:(void(^)(BOOL))completed;
 
+// 给观众下发商品卡片
+- (void)sendProduct:(AUIRoomProductModel *)product completed:(void(^)(BOOL))completed;
+
 // 麦控
 - (void)sendCameraOpened:(BOOL)opened completed:(nullable void(^)(BOOL))completed;
 - (void)sendMicOpened:(BOOL)opened completed:(nullable void(^)(BOOL))completed;
@@ -96,7 +91,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^onReceivedPV)(NSInteger pv);
 @property (nonatomic, copy) void (^onReceivedMuteAll)(BOOL isMuteAll);
 @property (nonatomic, copy) void (^onReceivedNoticeUpdate)(NSString *notice);
-@property (nonatomic, copy) void (^onReceivedGift)(AUIRoomUser *sender, AUIRoomGiftModel *gift);
+@property (nonatomic, copy) void (^onReceivedGift)(AUIRoomUser *sender, AUIRoomGiftModel *gift, NSInteger count);
+@property (nonatomic, copy) void (^onReceivedProduct)(AUIRoomUser *sender, AUIRoomProductModel *product);
 @property (nonatomic, copy) void (^onReceivedLeaveRoom)(void);
 
 // 麦控事件

@@ -105,8 +105,7 @@
         weakSelf.baseLiveButton.selected = NO;
         weakSelf.interactionLiveButton.selected = YES;
     };
-    AUIRoomUser *me = [[AUILiveManager liveManager] currentUser];
-    self.inputLiveTitle.inputText = [NSString stringWithFormat:@"%@的直播", me.nickName];
+    self.inputLiveTitle.inputText = [NSString stringWithFormat:@"%@的直播", AUIRoomAccount.me.nickName];
 }
 
 - (void)onCreateButtonClicked {

@@ -50,7 +50,7 @@
 
 - (void)onJoinGroup:(AUIMessageModel *)model {
     if ([NSThread isMainThread]) {
-        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [self.observerList objectEnumerator];
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [[self.observerList copy] objectEnumerator];
         id<AUIMessageListenerProtocol> observer = nil;
         while ((observer = [enumerator nextObject])) {
             if ([observer respondsToSelector:@selector(onJoinGroup:)]) {
@@ -67,7 +67,7 @@
 
 - (void)onLeaveGroup:(AUIMessageModel *)model {
     if ([NSThread isMainThread]) {
-        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [self.observerList objectEnumerator];
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [[self.observerList copy] objectEnumerator];
         id<AUIMessageListenerProtocol> observer = nil;
         while ((observer = [enumerator nextObject])) {
             if ([observer respondsToSelector:@selector(onLeaveGroup:)]) {
@@ -84,7 +84,7 @@
 
 - (void)onMuteGroup:(AUIMessageModel *)model {
     if ([NSThread isMainThread]) {
-        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [self.observerList objectEnumerator];
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [[self.observerList copy] objectEnumerator];
         id<AUIMessageListenerProtocol> observer = nil;
         while ((observer = [enumerator nextObject])) {
             if ([observer respondsToSelector:@selector(onMuteGroup:)]) {
@@ -101,7 +101,7 @@
 
 - (void)onUnmuteGroup:(AUIMessageModel *)model {
     if ([NSThread isMainThread]) {
-        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [self.observerList objectEnumerator];
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [[self.observerList copy] objectEnumerator];
         id<AUIMessageListenerProtocol> observer = nil;
         while ((observer = [enumerator nextObject])) {
             if ([observer respondsToSelector:@selector(onUnmuteGroup:)]) {
@@ -118,7 +118,7 @@
 
 - (void)onMessageReceived:(AUIMessageModel *)model {
     if ([NSThread isMainThread]) {
-        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [self.observerList objectEnumerator];
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [[self.observerList copy] objectEnumerator];
         id<AUIMessageListenerProtocol> observer = nil;
         while ((observer = [enumerator nextObject])) {
             if ([observer respondsToSelector:@selector(onMessageReceived:)]) {
@@ -135,7 +135,7 @@
 
 - (void)onExitedGroup:(NSString *)groudId {
     if ([NSThread isMainThread]) {
-        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [self.observerList objectEnumerator];
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [[self.observerList copy] objectEnumerator];
         id<AUIMessageListenerProtocol> observer = nil;
         while ((observer = [enumerator nextObject])) {
             if ([observer respondsToSelector:@selector(onExitedGroup:)]) {
@@ -146,6 +146,23 @@
     else {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self onExitedGroup:groudId];
+        });
+    }
+}
+
+- (void)onGroup:(NSString *)groupId onlineCountChanged:(NSInteger)onlineCount {
+    if ([NSThread isMainThread]) {
+        NSEnumerator<id<AUIMessageListenerProtocol>>* enumerator = [[self.observerList copy] objectEnumerator];
+        id<AUIMessageListenerProtocol> observer = nil;
+        while ((observer = [enumerator nextObject])) {
+            if ([observer respondsToSelector:@selector(onGroup:onlineCountChanged:)]) {
+                [observer onGroup:groupId onlineCountChanged:onlineCount];
+            }
+        }
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self onGroup:groupId onlineCountChanged:onlineCount];
         });
     }
 }

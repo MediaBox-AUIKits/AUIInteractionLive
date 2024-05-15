@@ -108,7 +108,8 @@ GetColorMethodDefine(colourful_fill_ultrastrong)
 GetColorMethodDefine(colourful_fill_strong)
 GetColorMethodDefine(colourful_fill_disabled)
 
-
++ (UIImage *)getCommonImage:(NSString *)key;
++ (UIImage *)getImage:(NSString *)key;
 
 @end
 

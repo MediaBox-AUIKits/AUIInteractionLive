@@ -40,7 +40,7 @@ typedef void(^AUIMessageGetGroupInfoCallback)(AUIMessageGetGroupInfoResponse * _
 /**
  * Token过期事件
  */
-- (void)onTokenExpire;
+- (void)onTokenExpire:(AUIMessageDefaultCallback _Nullable)updateTokenCompleted;
 
 
 @end
@@ -102,6 +102,13 @@ typedef NS_ENUM(NSUInteger, AUIMessageServiceImplType) {
  */
 - (void)setConfig:(AUIMessageConfig *)config;
 
+/**
+ * 获取配置
+ *
+ * @return 配置参数
+ */
+- (AUIMessageConfig *)getConfig;
+
 
 /**
  * 设置连接回调
@@ -160,6 +167,15 @@ typedef NS_ENUM(NSUInteger, AUIMessageServiceImplType) {
  * @param callback 接口回调
  */
 - (void)joinGroup:(AUIMessageJoinGroupRequest *)req callback:(AUIMessageDefaultCallback _Nullable)callback;
+
+/**
+ * 加入群组，成功时会返回当前群组信息
+ *
+ * @param req      请求实体
+ * @param groupInfoCallback 接口回调
+ */
+- (void)joinGroup:(AUIMessageJoinGroupRequest *)req groupInfoCallback:(AUIMessageGetGroupInfoCallback _Nullable)groupInfoCallback;
+
 
 /**
  * 离开群组

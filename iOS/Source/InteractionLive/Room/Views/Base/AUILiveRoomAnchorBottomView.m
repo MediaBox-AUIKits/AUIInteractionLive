@@ -17,6 +17,7 @@
 @property (strong, nonatomic) UIButton *beautyButton;
 @property (strong, nonatomic) UIButton *linkMicButton;
 @property (strong, nonatomic) UIButton *moreButton;
+@property (strong, nonatomic) UIButton *shoppingButton;
 
 @property (strong, nonatomic) UILabel *linkMicNumberLabel;
 
@@ -73,7 +74,18 @@
         [self addSubview:beautyButton];
         self.beautyButton = beautyButton;
         
-        AUILiveRoomCommentTextField *commentTextField = [[AUILiveRoomCommentTextField alloc] initWithFrame:CGRectMake(16, startY, 120, 36)];
+        CGFloat left = 16;
+        BOOL shopping = NO;  // 如果是电商场景，下发链接，可以把shopping设置为true，并添加按钮图标资源
+        if (shopping) {
+            UIButton* shoppingButton = [[UIButton alloc] initWithFrame:CGRectMake(left, startY, 36, 36)];
+            [shoppingButton setImage:AUIRoomGetCommonImage(@"ic_living_bottom_shopping") forState:UIControlStateNormal];
+            [shoppingButton addTarget:self action:@selector(shoppingButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+            [self addSubview:shoppingButton];
+            _shoppingButton = shoppingButton;
+            left = shoppingButton.av_right + 12;
+        }
+        
+        AUILiveRoomCommentTextField *commentTextField = [[AUILiveRoomCommentTextField alloc] initWithFrame:CGRectMake(left, startY, 120, 36)];
         commentTextField.layer.masksToBounds = YES;
         commentTextField.layer.cornerRadius = 18;
         [self addSubview:commentTextField];
@@ -129,21 +141,31 @@
     }
 }
 
+- (void)shoppingButtonAction:(UIButton *)sender {
+    if (self.onShoppingButtonClickedBlock) {
+        self.onShoppingButtonClickedBlock(self);
+    }
+}
+
 - (void)willEditBlock:(CGRect)keyboardEndFrame {
     self.moreButton.hidden = YES;
+    self.shoppingButton.hidden = YES;
     self.linkMicButton.hidden = YES;
     self.beautyButton.hidden = YES;
     self.backgroundColor = AUIFoundationColor(@"bg_weak");
     self.commentTextField.av_width = self.av_width - 16 * 2;
+    self.commentTextField.av_left = 16;
     self.transform = CGAffineTransformMakeTranslation(0, -keyboardEndFrame.size.height + self.av_height - (self.commentTextField.av_height + 10 * 2));
 }
 
 - (void)endEditBlock {
     self.moreButton.hidden = NO;
+    self.shoppingButton.hidden = NO;
     self.linkMicButton.hidden = NO;
     self.beautyButton.hidden = NO;
     self.backgroundColor = UIColor.clearColor;
     self.commentTextField.av_width = 120;
+    self.commentTextField.av_left = self.shoppingButton == nil ? 16 : self.shoppingButton.av_right + 12;
     self.transform = CGAffineTransformIdentity;
 }
 

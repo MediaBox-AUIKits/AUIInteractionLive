@@ -65,9 +65,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, nonatomic, readonly) NSString *notice;
 - (void)updateNotice:(NSString *)notice completed:(nullable void(^)(BOOL))completed;
 
-// Gift
-@property (copy, nonatomic) void (^onReceivedGift)(AUIRoomUser *sender, AUIRoomGiftModel *gift);
+// 收到礼物
+@property (copy, nonatomic) void (^onReceivedGift)(AUIRoomUser *sender, AUIRoomGiftModel *gift, NSInteger count);
 
+
+// 商品卡片
+@property (copy, nonatomic) void (^onReceivedProduct)(AUIRoomUser *sender, AUIRoomProductModel *product);
+- (void)sendProduct:(AUIRoomProductModel *)product completed:(void(^)(BOOL))completed;
 
 @property (assign, nonatomic, readonly) BOOL isMicOpened;
 @property (assign, nonatomic, readonly) BOOL isCameraOpened;

@@ -1,0 +1,16 @@
+{
+    "warning":"⚠️警告：本文件里记录的所有模板仅用于演示，请勿用于商业化",
+    "id": "1",
+    "name": "普通礼物",
+    "gifts": [
+        {
+            "id": "1",
+            "name": "大火箭",
+            "width": 750.0,
+            "height": 812.0,
+            "info": "送给你一个大大的火箭",
+            "sourceUrl": "https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/451478451674.mp4",
+            "imageUrl": "https://img.alicdn.com/imgextra/i2/O1CN011EJecO1wtDt4FGfsm_!!6000000006365-2-videocover-80-91.png"
+        }
+    ]
+}

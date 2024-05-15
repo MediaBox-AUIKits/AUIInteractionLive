@@ -188,4 +188,24 @@
     return self.liveService.notice;
 }
 
+- (void (^)(AUIRoomUser * _Nonnull, AUIRoomGiftModel * _Nonnull, NSInteger))onReceivedGift {
+    return self.liveService.onReceivedGift;
+}
+
+- (void)setOnReceivedGift:(void (^)(AUIRoomUser * _Nonnull, AUIRoomGiftModel * _Nonnull, NSInteger))onReceivedGift {
+    self.liveService.onReceivedGift = onReceivedGift;
+}
+
+- (void)sendGift:(AUIRoomGiftModel *)gift completed:(void (^)(BOOL))completed {
+    [self.liveService sendGift:gift completed:completed];
+}
+
+- (void (^)(AUIRoomUser * _Nonnull, AUIRoomProductModel * _Nonnull))onReceivedProduct {
+    return self.liveService.onReceivedProduct;
+}
+
+- (void)setOnReceivedProduct:(void (^)(AUIRoomUser * _Nonnull, AUIRoomProductModel * _Nonnull))onReceivedProduct {
+    self.liveService.onReceivedProduct = onReceivedProduct;
+}
+
 @end

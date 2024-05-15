@@ -20,6 +20,8 @@ typedef void (^AVTraitCollectionDidChangedHandler)(void);
 
 @interface UIView (AVHelper)
 
+@property (nonatomic, class, readonly, nullable) UIWindow *av_keyWindow;  //
+@property (nonatomic, class, readonly, nullable) UIWindow *av_mainWindow;
 @property (nonatomic, assign, class, readonly) BOOL av_isIphoneX;  // 是否为刘海屏
 @property (nonatomic, assign, class, readonly) UIEdgeInsets av_windowSafeArea;  // 窗口安全区域
 @property (nonatomic, assign, class, readonly) CGFloat av_safeTop;

@@ -12,8 +12,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AUIRoomAccount : NSObject
 
-+ (AUIRoomUser *)me;
+
+@property (nonatomic, copy, readonly) AUIRoomUser *myInfo;
+@property (nonatomic, copy) NSString *myToken;
 @property (nonatomic, copy, readonly, class) NSString *deviceId;
+
+- (void)changedAccount:(nullable AUIRoomAccount *)newAccount;
+
++ (AUIRoomAccount *)myAccount;
++ (AUIRoomUser *)me;
+
 
 @end
 

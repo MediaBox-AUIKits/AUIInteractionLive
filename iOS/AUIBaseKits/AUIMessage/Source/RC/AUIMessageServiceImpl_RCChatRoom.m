@@ -45,6 +45,10 @@ static NSString * const kRCAppKey = @"你的AppKey";
     _config = config;
 }
 
+- (AUIMessageConfig *)getConfig {
+    return _config;
+}
+
 - (void)setConnectionDelegate:(id<AUIMessageServiceConnectionDelegate>)connectionDelegate {
     _connectionDelegate = connectionDelegate;
 }
@@ -85,7 +89,7 @@ static NSString * const kRCAppKey = @"你的AppKey";
         }
         return;
     }
-
+    
     self.userInfo = userInfo;
     [[RCIMClient sharedRCIMClient] connectWithToken:token timeLimit:15 dbOpened:^(RCDBErrorCode code) {
         
@@ -151,7 +155,7 @@ static NSString * const kRCAppKey = @"你的AppKey";
         }
         return;
     }
-
+    
     // 注意：1、聊天室id不存在情况下会进行创建并自动加入  2、聊天室存在自动销毁机制，需要服务端加入保活列表，建议创建聊天室由服务端来做
     NSString *groupId = req.groupId.length > 0 ? req.groupId : NSUUID.UUID.UUIDString.lowercaseString;
     [[RCChatRoomClient sharedChatRoomClient] joinChatRoom:groupId messageCount:-1 success:^{
@@ -191,6 +195,9 @@ static NSString * const kRCAppKey = @"你的AppKey";
             }
         });
     }];
+}
+
+- (void)joinGroup:(AUIMessageJoinGroupRequest *)req groupInfoCallback:(AUIMessageGetGroupInfoCallback)groupInfoCallback {
 }
 
 - (void)leaveGroup:(AUIMessageLeaveGroupRequest *)req callback:(AUIMessageDefaultCallback)callback {

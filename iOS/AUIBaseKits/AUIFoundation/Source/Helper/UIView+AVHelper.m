@@ -52,14 +52,65 @@
 
 @implementation UIView (AVHelper)
 
++ (UIWindow *)av_keyWindow {
+    UIWindow *keyWindow = nil;
+    if (@available(iOS 13.0, *)) {
+        UIWindowScene *scene = (UIWindowScene *)[UIApplication sharedApplication].connectedScenes.allObjects.firstObject;
+        if ([scene isKindOfClass:scene.class]) {
+            for (UIWindow *win in scene.windows) {
+                if (win.isKeyWindow) {
+                    keyWindow = win;
+                    break;
+                }
+            }
+        }
+        
+        if (!keyWindow) {
+            for (UIWindow *win in UIApplication.sharedApplication.windows) {
+                if (win.isKeyWindow) {
+                    keyWindow = win;
+                    break;
+                }
+            }
+        }
+        
+    } else {
+        keyWindow = UIApplication.sharedApplication.keyWindow;
+    }
+    return keyWindow;
+}
+
++ (UIWindow *)av_mainWindow {
+    UIWindow *mainWindow = nil;
+    if (@available(iOS 13.0, *)) {
+        UIWindowScene *windowScene = nil;
+        for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+            if (scene.activationState == UISceneActivationStateForegroundActive) {
+                windowScene = (UIWindowScene *)scene;
+                break;
+            }
+        }
+        if (windowScene && [windowScene.delegate respondsToSelector:@selector(window)]) {
+            mainWindow = [(id<UIWindowSceneDelegate>)windowScene.delegate window];
+        }
+    }
+    if (mainWindow == nil) {
+        if ([UIApplication.sharedApplication.delegate respondsToSelector:@selector(window)]) {
+            mainWindow = UIApplication.sharedApplication.delegate.window;
+        }
+    }
+    
+    return mainWindow;
+}
+
 + (BOOL)av_isIphoneX {
     BOOL iPhoneX = NO;
     if (UIDevice.currentDevice.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {//判断是否是手机
         return iPhoneX;
     }
     if (@available(iOS 11.0, *)) {
-        UIWindow *mainWindow = [[UIApplication sharedApplication].delegate window];
-        if (mainWindow.safeAreaInsets.bottom > 0.0) {
+        UIWindow *mainWindow = self.av_mainWindow;
+        if (mainWindow && mainWindow.safeAreaInsets.bottom > 0.0) {
             iPhoneX = YES;
         }
     }
@@ -71,8 +122,8 @@
         return UIEdgeInsetsZero;
     }
     if (@available(iOS 11.0, *)) {
-        UIWindow *mainWindow = [[UIApplication sharedApplication].delegate window];
-        return mainWindow.safeAreaInsets;
+        UIWindow *mainWindow = self.av_mainWindow;
+        return mainWindow == nil ? UIEdgeInsetsZero : mainWindow.safeAreaInsets;
     }
     return UIEdgeInsetsZero;
 }

@@ -337,13 +337,13 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoDao, RoomInfoEntity
 
         RoomInfoEntity roomInfoEntity = new RoomInfoEntity();
         roomInfoEntity.setId(roomUpdateRequestDto.getId());
-        if (StringUtils.isNotEmpty(roomInfoEntity.getTitle())) {
+        if (StringUtils.isNotEmpty(roomUpdateRequestDto.getTitle())) {
             roomInfoEntity.setTitle(roomUpdateRequestDto.getTitle());
         }
-        if (StringUtils.isNotEmpty(roomInfoEntity.getNotice())) {
+        if (StringUtils.isNotEmpty(roomUpdateRequestDto.getNotice())) {
             roomInfoEntity.setNotice(roomUpdateRequestDto.getNotice());
         }
-        if (StringUtils.isNotEmpty(roomInfoEntity.getExtendsInfo())) {
+        if (StringUtils.isNotEmpty(roomUpdateRequestDto.getExtendsInfo())) {
             roomInfoEntity.setExtendsInfo(roomUpdateRequestDto.getExtendsInfo());
         }
         roomInfoEntity.setUpdatedAt(new Date());

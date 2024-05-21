@@ -3,6 +3,7 @@ package com.aliyuncs.aui.common.utils;
 import io.jsonwebtoken.*;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Date;
 
@@ -13,7 +14,14 @@ import java.util.Date;
 @UtilityClass
 public class JwtUtils {
 
-    private static final String SECRET = "#ab2dfsc23@al2l";
+    // 运行前先随机配置个jwt密钥
+    private static final String SECRET = "";
+
+    public static void check() {
+        if (StringUtils.isEmpty(SECRET)) {
+            throw new RuntimeException("Must config Jwt secret. please open class file: com.aliyuncs.aui.common.utils.JwtUtils, then config field SECRET");
+        }
+    }
 
     /**
      * 生成jwt token

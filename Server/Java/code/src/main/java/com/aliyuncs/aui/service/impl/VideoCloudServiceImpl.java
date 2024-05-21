@@ -129,7 +129,7 @@ public class VideoCloudServiceImpl implements VideoCloudService {
             role = "";
         }
         String nonce = UUID.randomUUID().toString();
-        long timestamp = DateUtils.addHours(new Date(), 1).getTime() / 1000;
+        long timestamp = DateUtils.addDays(new Date(), 2).getTime() / 1000;
         String signContent = String.format("%s%s%s%s%s%s", appId, appKey, imTokenRequestDto.getUserId(), nonce, timestamp, role);
         String appToken = org.apache.commons.codec.digest.DigestUtils.sha256Hex(signContent);
 

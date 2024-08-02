@@ -284,14 +284,14 @@ export declare namespace AliVCInteraction {
   
   interface ImCancelMuteAllReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
   
   interface ImCancelMuteUserReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
@@ -302,14 +302,14 @@ export declare namespace AliVCInteraction {
   
   interface ImCloseGroupReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
   
   interface ImCreateGroupReq {
 	  /**
-	   * @param group_id 群组id，【可选】id为空的话，会由sdk内部生成
+	   * @param groupId 群组id，【可选】id为空的话，会由sdk内部生成
 	   */
 	  groupId?: string;
 	  /**
@@ -324,27 +324,29 @@ export declare namespace AliVCInteraction {
   
   interface ImCreateGroupRsp {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param already_exists 是否已经创建过
+	   * @param alreadyExist 是否已经创建过
 	   */
 	  alreadyExist: boolean;
   }
   
   interface ImDeleteMessageReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param msg_id 消息id
+	   * @param messageId 消息id
 	   */
 	  messageId: string;
   }
   
-  class ImEngine extends EventEmitter<ImSdkListener> {
+  let ImEngine: typeof ImEngine_2;
+  
+  class ImEngine_2 extends EventEmitter<ImSdkListener> {
 	  private wasmIns;
 	  private wasmEngine;
 	  private wasmInterface;
@@ -356,17 +358,18 @@ export declare namespace AliVCInteraction {
 	  private supportsWebRtc;
 	  private supportWASM;
 	  constructor();
-	  static engine: ImEngine;
+	  static engine: ImEngine_2;
 	  /**
 	   * @brief 获取 SDK 引擎实例（单例）
 	   * @returns ImEngine
 	   */
-	  static createEngine(): ImEngine;
+	  static createEngine(): ImEngine_2;
 	  /**
 	   * 当前 SDK 是否支持，支持 WASM 或者 ASM
 	   * @returns
 	   */
 	  static isSupport(): boolean;
+	  static getSdkVersion(): string;
 	  private initTransport;
 	  private initAppEvent;
 	  /**
@@ -487,23 +490,23 @@ export declare namespace AliVCInteraction {
   
   interface ImGroupInfo {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param group_name 群组名称
+	   * @param groupName 群组名称
 	   */
 	  groupName: string;
 	  /**
-	   * @param group_name 群组透传信息
+	   * @param groupMeta 群组透传信息
 	   */
 	  groupMeta: string;
 	  /**
-	   * @param createtime 创建时间
+	   * @param createTime 创建时间
 	   */
 	  createTime: number;
 	  /**
-	   * @param createtime 创建者id
+	   * @param creator 创建者id
 	   */
 	  creator: string;
 	  /**
@@ -515,22 +518,22 @@ export declare namespace AliVCInteraction {
 	   */
 	  statistics: ImGroupStatistics;
 	  /**
-	   * @param mute_status 群禁言信息
+	   * @param muteStatus 群禁言信息
 	   */
 	  muteStatus: ImGroupMuteStatus;
   }
   
   interface ImGroupInfoStatus {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param group_meta 群组扩展信息
+	   * @param groupMeta 群组扩展信息
 	   */
 	  groupMeta: string;
 	  /**
-	   * @param admin_list 管理员列表
+	   * @param adminList 管理员列表
 	   */
 	  adminList: string[];
   }
@@ -566,19 +569,19 @@ export declare namespace AliVCInteraction {
   
   interface ImGroupMuteStatus {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param mute_all 是否全员禁言
+	   * @param muteAll 是否全员禁言
 	   */
 	  muteAll: boolean;
 	  /**
-	   * @param mute_user_list 禁言用户ID列表
+	   * @param muteUserList 禁言用户ID列表
 	   */
 	  muteUserList: string[];
 	  /**
-	   * @param white_user_list 白名单用户ID列表
+	   * @param whiteUserList 白名单用户ID列表
 	   */
 	  whiteUserList: string[];
   }
@@ -589,11 +592,11 @@ export declare namespace AliVCInteraction {
 	   */
 	  pv: number;
 	  /**
-	   * @param online_count 在线人数
+	   * @param onlineCount 在线人数
 	   */
 	  onlineCount: number;
 	  /**
-	   * @param msg_amount 消息数量
+	   * @param msgAmount 消息数量
 	   */
 	  msgAmount: {
 		  [key: string]: number;
@@ -602,21 +605,21 @@ export declare namespace AliVCInteraction {
   
   interface ImJoinGroupReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
   
   interface ImLeaveGroupReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
   
   interface ImListGroupUserReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
@@ -624,7 +627,7 @@ export declare namespace AliVCInteraction {
 	   */
 	  sortType?: ImSortType;
 	  /**
-	   * @param nextpagetoken 默认表示第一页,遍历时服务端会返回，客户端获取下一页时，应带上
+	   * @param nextPageToken 默认表示第一页,遍历时服务端会返回，客户端获取下一页时，应带上
 	   */
 	  nextPageToken?: number;
 	  /**
@@ -639,15 +642,15 @@ export declare namespace AliVCInteraction {
   
   interface ImListGroupUserRsp {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param nextpagetoken 下一页的token
+	   * @param nextPageToken 下一页的token
 	   */
 	  nextPageToken: number;
 	  /**
-	   * @deprecated 请使用 nextpagetoken
+	   * @deprecated 请使用 nextPageToken
 	   */
 	  nextpagetoken?: number;
 	  /**
@@ -662,7 +665,7 @@ export declare namespace AliVCInteraction {
   
   interface ImListHistoryMessageReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
@@ -670,15 +673,15 @@ export declare namespace AliVCInteraction {
 	   */
 	  type: number;
 	  /**
-	   * @param nextpagetoken 不传时表示第一页,遍历时服务端会返回，客户端获取下一页时，应带上
+	   * @param nextPageToken 不传时表示第一页,遍历时服务端会返回，客户端获取下一页时，应带上
 	   */
 	  nextPageToken?: number;
 	  /**
-	   * @param sorttype 排序类型，默认为时间递增
+	   * @param sortType 排序类型，默认为时间递增
 	   */
 	  sortType?: ImSortType;
 	  /**
-	   * @param page_size 取值范围 10~30
+	   * @param pageSize 取值范围 10~30
 	   */
 	  pageSize?: number;
 	  /**
@@ -693,26 +696,26 @@ export declare namespace AliVCInteraction {
   
   interface ImListHistoryMessageRsp {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param nextpagetoken 不传时表示第一页,遍历时服务端会返回，客户端获取下一页时，应带上
+	   * @param nextPageToken 不传时表示第一页,遍历时服务端会返回，客户端获取下一页时，应带上
 	   */
 	  nextPageToken?: number;
 	  /**
-	   *@param hasmore 是否有更多数据
+	   *@param hasMore 是否有更多数据
 	   */
 	  hasMore: boolean;
 	  /**
-	   *@param message_list 返回消息列表
+	   *@param messageList 返回消息列表
 	   **/
 	  messageList: ImMessage[];
   }
   
   interface ImListMessageReq {
 	  /**
-	   * @param group_id 话题id，聊天插件实例id
+	   * @param groupId 话题id，聊天插件实例id
 	   */
 	  groupId: string;
 	  /**
@@ -728,7 +731,7 @@ export declare namespace AliVCInteraction {
 	   */
 	  nextpagetoken?: number;
 	  /**
-	   * @param sorttype 排序类型，默认为时间递增
+	   * @param sortType 排序类型，默认为时间递增
 	   */
 	  sortType?: ImSortType;
 	  /**
@@ -747,8 +750,7 @@ export declare namespace AliVCInteraction {
   
   interface ImListMessageRsp {
 	  /**
-  
-	   * @param group_id 群组id
+	   ** @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
@@ -764,47 +766,47 @@ export declare namespace AliVCInteraction {
 	   */
 	  hasMore: boolean;
 	  /**
-	   *@param message_list 返回消息列表
+	   *@param messageList 返回消息列表
 	   **/
 	  messageList: ImMessage[];
   }
   
   interface ImListMuteUsersReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
   
   interface ImListMuteUsersRsp {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param mute_all 是否全员禁言
+	   * @param muteAll 是否全员禁言
 	   */
 	  muteAll: boolean;
 	  /**
-	   * @param mute_user_list 禁言用户ID列表
+	   * @param muteUserList 禁言用户ID列表
 	   */
 	  muteUserList: string[];
 	  /**
-	   * @param white_user_list 白名单用户ID列表
+	   * @param whiteUserList 白名单用户ID列表
 	   */
 	  whiteUserList: string[];
   }
   
   interface ImListRecentGroupUserReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
   
   interface ImListRecentGroupUserRsp {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
@@ -834,11 +836,11 @@ export declare namespace AliVCInteraction {
   
   interface ImListRecentMessageRsp {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param message_list 返回消息列表
+	   * @param messageList 返回消息列表
 	   */
 	  messageList: ImMessage[];
   }
@@ -861,11 +863,11 @@ export declare namespace AliVCInteraction {
   
   interface ImMessage {
 	  /**
-	   * @param group_id 话题id,聊天插件实例id
+	   * @param groupId 话题id,聊天插件实例id
 	   */
 	  groupId?: string;
 	  /**
-	   * @param message_id 消息id
+	   * @param messageId 消息id
 	   */
 	  messageId: string;
 	  /**
@@ -893,11 +895,11 @@ export declare namespace AliVCInteraction {
 	   **/
 	  level: ImMessageLevel;
 	  /**
-	   * @param repeat_count 消息统计数量增长值，默认1，主要用于聚合同类型消息。
+	   * @param repeatCount 消息统计数量增长值，默认1，主要用于聚合同类型消息。
 	   */
 	  repeatCount: number;
 	  /**
-	   * @param totalmsgs 同类型的消息数量
+	   * @param totalMsgs 同类型的消息数量
 	   */
 	  totalMsgs: number;
   }
@@ -929,29 +931,39 @@ export declare namespace AliVCInteraction {
   
   interface ImModifyGroupReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
-	   * @param groupMeta 群信息扩展字段，不修改留空
+	   * @param forceUpdateGroupMeta 为true表示强制刷新groupMeta信息，若groupMeta为空则表示清空；
+	   *                             为false，则只有groupMeta不空才更新groupMeta信息
+	   */
+	  forceUpdateGroupMeta?: boolean;
+	  /**
+	   * @param groupMeta 群信息扩展字段
 	   */
 	  groupMeta?: string;
 	  /**
-	   * @param admins 群管理员ID，不修改留空
+	   * @param forceUpdateAdmins 为true表示强制刷新admins信息，若admins为空则表示清空；
+	   *                          为false，则只有admins不空才更新admins信息
+	   */
+	  forceUpdateAdmins?: boolean;
+	  /**
+	   * @param admins 群管理员ID列表，最多设置3个管理员
 	   */
 	  admins?: string[];
   }
   
   interface ImMuteAllReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
   
   interface ImMuteUserReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
 	  /**
@@ -962,7 +974,7 @@ export declare namespace AliVCInteraction {
   
   interface ImQueryGroupReq {
 	  /**
-	   * @param group_id 群组id
+	   * @param groupId 群组id
 	   */
 	  groupId: string;
   }
@@ -1031,7 +1043,7 @@ export declare namespace AliVCInteraction {
   
   interface ImSendMessageToGroupReq {
 	  /**
-	   * @param group_id 话题id,聊天插件实例id
+	   * @param groupId 话题id,聊天插件实例id
 	   */
 	  groupId: string;
 	  /**
@@ -1043,11 +1055,11 @@ export declare namespace AliVCInteraction {
 	   */
 	  data: string;
 	  /**
-	   * @param skip_mute_check 跳过禁言检测，true:忽略被禁言用户，还可发消息；false：当被禁言时，消息无法发送，默认为false，即为不跳过禁言检测。
+	   * @param skipMuteCheck 跳过禁言检测，true:忽略被禁言用户，还可发消息；false：当被禁言时，消息无法发送，默认为false，即为不跳过禁言检测。
 	   */
 	  skipMuteCheck?: boolean;
 	  /**
-	   * @param skip_audit 跳过安全审核，true:发送的消息不经过阿里云安全审核服务审核；false：发送的消息经过阿里云安全审核服务审核，审核失败则不发送；
+	   * @param skipAudit 跳过安全审核，true:发送的消息不经过阿里云安全审核服务审核；false：发送的消息经过阿里云安全审核服务审核，审核失败则不发送；
 	   */
 	  skipAudit?: boolean;
 	  /**
@@ -1055,11 +1067,11 @@ export declare namespace AliVCInteraction {
 	   */
 	  level?: ImMessageLevel;
 	  /**
-	   * @param no_storage 为true时，表示该消息不需要存储，也无法拉取查询
+	   * @param noStorage 为true时，表示该消息不需要存储，也无法拉取查询
 	   */
 	  noStorage?: boolean;
 	  /**
-	   * @param repeat_count 消息统计数量增长值，默认1，主要用于聚合同类型消息，只发送一次请求，例如点赞场景
+	   * @param repeatCount 消息统计数量增长值，默认1，主要用于聚合同类型消息，只发送一次请求，例如点赞场景
 	   */
 	  repeatCount?: number;
   }

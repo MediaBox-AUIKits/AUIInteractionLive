@@ -18,7 +18,7 @@ export default (api: IApi) => {
       `<link rel="stylesheet" href="https://g.alicdn.com/apsara-media-box/imp-web-player/2.20.1/skins/default/aliplayer-min.css" />`,
       `<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-web-player/2.20.1/aliplayer-min.js"></script>`,
       `<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-web-live-push/6.4.9/alivc-live-push.js"></script>`,
-      `<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-interaction/1.3.0/alivc-im.iife.js"></script>`,
+      `<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/apsara-media-box/imp-interaction/1.3.1/alivc-im.iife.js"></script>`,
     ];
 
     $('#root').after(afterArr);

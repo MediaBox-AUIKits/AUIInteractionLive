@@ -175,7 +175,7 @@ public class LiveStartComponent extends FrameLayout implements ComponentHolder {
             liveService.addEventHandler(new SimpleLiveEventHandler() {
                 @Override
                 public void onPusherEvent(LiveEvent event, @Nullable Map<String, Object> extras) {
-                    if (isOwner() && event == LiveEvent.PUSH_STARTED) {
+                    if (isOwner() && event == LiveEvent.FIRST_FRAME_PUSHED) {
                         // 推流成功后, 通知观众端拉流, 服务端更新状态
                         getMessageService().startLive(null);
                         StartLiveRequest request = new StartLiveRequest();

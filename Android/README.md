@@ -100,9 +100,11 @@ maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
 #### gradle依赖
 
 ```groovy
-implementation "com.aliyun.sdk.android:AliVCInteractionMessage:1.0.0"
-implementation 'com.aliyun.aio:AliVCSDK_InteractiveLive:6.7.0'
+implementation "com.aliyun.sdk.android:AliVCInteractionMessage:1.3.1"
+implementation 'com.aliyun.aio:AliVCSDK_InteractiveLive:6.14.0'
 ```
+
+> 如果您的 APP 中还需要短视频编辑功能，请使用音视频终端全功能SDK（AliVCSDK_Standard），请将 AliVCSDK_InteractiveLive 全量替换为 AliVCSDK_Standard。
 
 #### 混淆配置
 

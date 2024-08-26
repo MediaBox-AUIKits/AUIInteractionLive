@@ -1,6 +1,7 @@
 package com.aliyun.auipusher.manager;
 
 import static android.os.Environment.MEDIA_MOUNTED;
+import static com.alivc.auicommon.common.base.util.CommonUtil.showToast;
 import static com.alivc.live.pusher.AlivcLivePushCameraTypeEnum.CAMERA_TYPE_BACK;
 import static com.alivc.live.pusher.AlivcLivePushCameraTypeEnum.CAMERA_TYPE_FRONT;
 
@@ -28,12 +29,9 @@ import com.alivc.auicommon.core.utils.AssetUtil;
 import com.alivc.component.custom.AlivcLivePushCustomFilter;
 import com.alivc.live.annotations.AlivcLiveMode;
 import com.alivc.live.annotations.AlivcLiveNetworkQuality;
-import com.alivc.live.annotations.AlivcLivePushKickedOutType;
-import com.alivc.live.annotations.AlivcLiveRecordMediaEvent;
 import com.alivc.live.player.AlivcLivePlayConfig;
 import com.alivc.live.player.AlivcLivePlayer;
 import com.alivc.live.player.annotations.AlivcLivePlayError;
-import com.alivc.live.player.annotations.AlivcLivePlayVideoStreamType;
 import com.alivc.live.pusher.AlivcAudioAACProfileEnum;
 import com.alivc.live.pusher.AlivcEncodeModeEnum;
 import com.alivc.live.pusher.AlivcFpsEnum;
@@ -71,17 +69,21 @@ import java.util.Map;
 /**
  * 媒体推流服务
  */
-public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
+public class LiveLinkMicPushManager {
 
     private static final String TAG = LiveLinkMicPushManager.class.getSimpleName();
 
     private final Context mContext;
     private final Map<String, MultiAlivcLivePlayer> mAlivcLivePlayerMap = new HashMap<>();
-    //多人连麦混流
-    private final ArrayList<AlivcLiveMixStream> mMultiInteractLiveMixStreamsArray = new ArrayList<>();
-    //多人连麦 Config
-    private final AlivcLiveTranscodingConfig mMixInteractLiveTranscodingConfig = new AlivcLiveTranscodingConfig();
-    private final int mAudiencelayoutArgs = 180;//设置布局样式，先默认180dp
+
+    AlivcLiveBaseListener liveBaseListener = new AlivcLiveBaseListener() {
+        @Override
+        public void onLicenceCheck(AlivcLivePushConstants.AlivcLiveLicenseCheckResultCode result, String reason) {
+            if (result != AlivcLivePushConstants.AlivcLiveLicenseCheckResultCode.AlivcLiveLicenseCheckResultCodeSuccess) {
+                showToast(mContext, "license error: " + result + ", " + reason);
+            }
+        }
+    };
 
     AlivcLivePushErrorListener pushErrorListener = new AlivcLivePushErrorListener() {
         @Override
@@ -172,49 +174,9 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         @Override
         public void onPushStatistics(AlivcLivePusher alivcLivePusher, AlivcLivePushStatsInfo info) {
             Map<String, Object> extras = new HashMap<>();
-            extras.put("v_bitrate", info.getVideoUploadBitrate());
-            extras.put("a_bitrate", info.getAudioUploadBitrate());
+            extras.put("v_bitrate", info.videoUploadBitrate);
+            extras.put("a_bitrate", info.audioUploadBitrate);
             onEvent(LiveEvent.UPLOAD_BITRATE_UPDATED, extras);
-        }
-
-        @Override
-        public void onSetLiveMixTranscodingConfig(AlivcLivePusher alivcLivePusher, boolean b, String s) {
-
-        }
-
-        @Override
-        public void onKickedOutByServer(AlivcLivePusher pusher, AlivcLivePushKickedOutType kickedOutType) {
-
-        }
-
-        @Override
-        public void onMicrophoneVolumeUpdate(AlivcLivePusher pusher, int volume) {
-
-        }
-
-        @Override
-        public void onLocalRecordEvent(AlivcLiveRecordMediaEvent mediaEvent, String storagePath) {
-
-        }
-
-        @Override
-        public void onScreenFramePushState(AlivcLivePusher pusher, boolean isPushing) {
-
-        }
-
-        @Override
-        public void onRemoteUserEnterRoom(AlivcLivePusher pusher, String userId, boolean isOnline) {
-
-        }
-
-        @Override
-        public void onRemoteUserAudioStream(AlivcLivePusher pusher, String userId, boolean isPushing) {
-
-        }
-
-        @Override
-        public void onRemoteUserVideoStream(AlivcLivePusher pusher, String userId, AlivcLivePlayVideoStreamType videoStreamType, boolean isPushing) {
-
         }
     };
 
@@ -347,19 +309,18 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
             mALivcLivePusher = new AlivcLivePusher();
         }
         // 注册sdk
-        AlivcLiveBase.setListener(this);
+        AlivcLiveBase.setListener(liveBaseListener);
         AlivcLiveBase.registerSDK();
 
         // 初始化推流配置类
         mAlivcLivePushConfig = new AlivcLivePushConfig();
+        mAlivcLivePushConfig.setLivePushMode(AlivcLiveMode.AlivcLiveInteractiveMode);
         // 设置H5兼容模式
         // 互动模式下，是否需要与Web 连麦互通，则必须使用H5兼容模式,否则，Web用户查看Native用户将是黑屏。
         mAlivcLivePushConfig.setH5CompatibleMode(true);
         mAlivcLivePushConfig.setExtraInfo(LivePushGlobalConfig.LIVE_PUSH_CONFIG_EXTRA_INFO);
         mAlivcLivePushConfig.setPreviewDisplayMode(AlivcPreviewDisplayMode.ALIVC_LIVE_PUSHER_PREVIEW_ASPECT_FILL);
-        mAlivcLivePushConfig.setLivePushMode(AlivcLiveMode.AlivcLiveInteractiveMode);
         // 分辨率540P，最大支持720P
-//        mAlivcLivePushConfig.setResolution(AlivcResolutionEnum.RESOLUTION_540P);
         mAlivcLivePushConfig.setResolution(LivePushGlobalConfig.CONFIG_RESOLUTION);
         // 建议用户使用20fps
         mAlivcLivePushConfig.setFps(AlivcFpsEnum.FPS_20);
@@ -374,17 +335,6 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         mAlivcLivePushConfig.setPausePushImage(getPushPauseImagePath());
         mALivcLivePusher = new AlivcLivePusher();
         mALivcLivePusher.init(mContext, mAlivcLivePushConfig);
-        mALivcLivePusher.setLivePushErrorListener(new AlivcLivePushErrorListener() {
-            @Override
-            public void onSystemError(AlivcLivePusher alivcLivePusher, AlivcLivePushError alivcLivePushError) {
-                Log.d(TAG, "onSystemError: ");
-            }
-
-            @Override
-            public void onSDKError(AlivcLivePusher alivcLivePusher, AlivcLivePushError alivcLivePushError) {
-                Log.d(TAG, "onSDKError: ");
-            }
-        });
         mALivcLivePusher.setLivePushInfoListener(pushInfoListener);
         mALivcLivePusher.setLivePushNetworkListener(pushNetworkListener);
         mALivcLivePusher.setLivePushErrorListener(pushErrorListener);
@@ -790,77 +740,7 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         }
     }
 
-    @Override
-    public void onLicenceCheck(AlivcLivePushConstants.AlivcLiveLicenseCheckResultCode alivcLiveLicenseCheckResultCode, String s) {
-
-    }
     // endregion listener
-
-    public void setLiveMixTranscodingConfig(String anchorId, String audience) {
-        if (TextUtils.isEmpty(anchorId) && TextUtils.isEmpty(audience)) {
-            if (mALivcLivePusher != null) {
-                mALivcLivePusher.setLiveMixTranscodingConfig(null);
-            }
-            return;
-        }
-        AlivcLiveTranscodingConfig transcodingConfig = new AlivcLiveTranscodingConfig();
-        AlivcLiveMixStream anchorMixStream = new AlivcLiveMixStream();
-        if (mAlivcLivePushConfig != null) {
-            anchorMixStream.setUserId(anchorId);
-            anchorMixStream.setX(0);
-            anchorMixStream.setY(0);
-            anchorMixStream.setWidth(mAlivcLivePushConfig.getWidth());
-            anchorMixStream.setHeight(mAlivcLivePushConfig.getHeight());
-            anchorMixStream.setZOrder(1);
-            Log.d(TAG, "AlivcRTC anchorMixStream --- " + anchorMixStream.getUserId() + ", " + anchorMixStream.getWidth() + ", " + anchorMixStream.getHeight()
-                    + ", " + anchorMixStream.getX() + ", " + anchorMixStream.getY() + ", " + anchorMixStream.getZOrder());
-        }
-        AlivcLiveMixStream audienceMixStream = new AlivcLiveMixStream();
-        if (mAudienceFrameLayout != null) {
-            audienceMixStream.setUserId(audience);
-            audienceMixStream.setX((int) mAudienceFrameLayout.getX() / 3);
-            audienceMixStream.setY((int) mAudienceFrameLayout.getY() / 3);
-            audienceMixStream.setWidth(mAudienceFrameLayout.getWidth() / 2);
-            audienceMixStream.setHeight(mAudienceFrameLayout.getHeight() / 2);
-
-            audienceMixStream.setZOrder(2);
-            Log.d(TAG, "AlivcRTC audienceMixStream --- " + audienceMixStream.getUserId() + ", " + audienceMixStream.getWidth() + ", " + audienceMixStream.getHeight()
-                    + ", " + audienceMixStream.getX() + ", " + audienceMixStream.getY() + ", " + audienceMixStream.getZOrder());
-        }
-        ArrayList<AlivcLiveMixStream> mixStreams = new ArrayList<>();
-        mixStreams.add(anchorMixStream);
-        mixStreams.add(audienceMixStream);
-        transcodingConfig.setMixStreams(mixStreams);
-        if (mALivcLivePusher != null) {
-            mALivcLivePusher.setLiveMixTranscodingConfig(transcodingConfig);
-        }
-    }
-
-    public void addAnchorMixTranscodingConfig(String anchorId) {
-        if (TextUtils.isEmpty(anchorId)) {
-            if (mALivcLivePusher != null) {
-                mALivcLivePusher.setLiveMixTranscodingConfig(null);
-            }
-            return;
-        }
-
-        AlivcLiveMixStream anchorMixStream = new AlivcLiveMixStream();
-        if (mAlivcLivePushConfig != null) {
-            anchorMixStream.setUserId(anchorId);
-            anchorMixStream.setX(0);
-            anchorMixStream.setY(0);
-            anchorMixStream.setWidth(mAlivcLivePushConfig.getWidth());
-            anchorMixStream.setHeight(mAlivcLivePushConfig.getHeight());
-            anchorMixStream.setZOrder(1);
-        }
-
-        mMultiInteractLiveMixStreamsArray.add(anchorMixStream);
-        mMixInteractLiveTranscodingConfig.setMixStreams(mMultiInteractLiveMixStreamsArray);
-
-        if (mALivcLivePusher != null) {
-            mALivcLivePusher.setLiveMixTranscodingConfig(mMixInteractLiveTranscodingConfig);
-        }
-    }
 
     public boolean isPushing() {
         return mALivcLivePusher.isPushing();
@@ -907,10 +787,6 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
         setPullView(pullUrl, frameLayout, false);
     }
 
-    public void clearLiveMixTranscodingConfig() {
-        mALivcLivePusher.setLiveMixTranscodingConfig(null);
-    }
-
     public void release() {
         try {
             stopPull();
@@ -922,119 +798,105 @@ public class LiveLinkMicPushManager implements AlivcLiveBaseListener {
                 alivcLivePlayer.destroy();
             }
             mAlivcLivePlayerMap.clear();
-
-            mMultiInteractLiveMixStreamsArray.clear();
-            mMixInteractLiveTranscodingConfig.setMixStreams(null);
-            mALivcLivePusher.setLiveMixTranscodingConfig(mMixInteractLiveTranscodingConfig);
+            clearLiveMixTranscodingConfig();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
     }
 
-    public void addAudienceMixTranscodingConfig(String audience, FrameLayout frameLayout) {
-        if (TextUtils.isEmpty(audience)) {
-            return;
-        }
+    // ------------------ 单混切换 [start] ------------------
 
-        // 去重处理
-        for (AlivcLiveMixStream stream : mMultiInteractLiveMixStreamsArray) {
-            if (TextUtils.equals(stream.getUserId(), audience)) {
-                // 已经有, 不再处理
-                return;
-            }
-        }
+    // 该逻辑一般在主播侧发起操作，用于操作CDN拉流观众的旁路流的布局
+    // 单流：旁路CDN流，仅一路主播流，铺满全屏，观众看到的画面就是主播的画面
+    // 混流：主播侧，将当前的自己的窗口，和连麦观众、PK主播的窗口，按照指定的窗口布局规则，进行混流，观众看到的画面是混流布局后的画面
+    // 对应接口：AlivcLivePusher#setLiveMixTranscodingConfig
+    // 注意：
+    // 1. 该接口需保证在主播回调 onFirstFramePushed 以后，即主播端已推流成功，再进行调用
+    // 2. 开启自动旁路功能以后，会默认自动推一路主播的旁路流到CDN，用于普通观众的拉流；此功能可在控制台进行开关，默认打开
+    // 3. 如果主播还在推流，但不再需要混流，请务必传入 null 进行取消；因为当发起混流后，云端混流模块就会开始工作，不及时取消混流可能会引起不必要的计费损失
 
-        AlivcLiveMixStream audienceMixStream = new AlivcLiveMixStream();
-        audienceMixStream.setUserId(audience);
-        audienceMixStream.setX((int) frameLayout.getX());
-        if (mMultiInteractLiveMixStreamsArray != null && mMultiInteractLiveMixStreamsArray.size() > 0) {
-            audienceMixStream.setY((int) frameLayout.getY() + mMultiInteractLiveMixStreamsArray.size() * mAudiencelayoutArgs);
-        }
-        audienceMixStream.setWidth(mAudiencelayoutArgs);
-        audienceMixStream.setHeight(mAudiencelayoutArgs);
-        audienceMixStream.setZOrder(2);
-        Log.d(TAG, "AlivcRTC audienceMixStream --- " + audienceMixStream.getUserId() + ", " + audienceMixStream.getWidth() + ", " + audienceMixStream.getHeight()
-                + ", " + audienceMixStream.getX() + ", " + audienceMixStream.getY() + ", " + audienceMixStream.getZOrder());
-        mMultiInteractLiveMixStreamsArray.add(audienceMixStream);
-        mMixInteractLiveTranscodingConfig.setMixStreams(mMultiInteractLiveMixStreamsArray);
+    // 混流切单流
+    public void clearLiveMixTranscodingConfig() {
         if (mALivcLivePusher != null) {
-            mALivcLivePusher.setLiveMixTranscodingConfig(mMixInteractLiveTranscodingConfig);
+            mALivcLivePusher.setLiveMixTranscodingConfig(null);
         }
     }
 
+    // 单流切混流
     public void updateMixItems(List<MixItem> mixItems) {
-        if (mALivcLivePusher == null || CollectionUtil.isEmpty(mixItems)) {
+        if (mALivcLivePusher == null) {
+            return;
+        }
+
+        // 如果当前混流列表为空，或者有且仅有一个推流用户，默认单流模式，不需要混流操作
+        if (CollectionUtil.isEmpty(mixItems) || mixItems.size() == 1) {
+            clearLiveMixTranscodingConfig();
             return;
         }
 
         ArrayList<AlivcLiveMixStream> mixStreams = new ArrayList<>();
 
         // 主播
-        if (mixItems.size() == 1) {
-            AlivcLiveMixStream anchorMixStream = CollectionUtil.getFirst(mMultiInteractLiveMixStreamsArray);
-            if (anchorMixStream != null) {
-                mixStreams.add(anchorMixStream);
+        int canvasWidth = mAlivcLivePushConfig.getWidth();
+        int canvasHeight = mAlivcLivePushConfig.getHeight();
+        float canvasRatio = canvasWidth * 1f / canvasHeight;
+
+        int screenWidth = AppContext.getContext().getResources().getDisplayMetrics().widthPixels;
+        int screenHeight = AppContext.getContext().getResources().getDisplayMetrics().heightPixels;
+        float screenRatio = screenWidth * 1f / screenHeight;
+
+        boolean isHeightGrid = screenRatio < canvasRatio;
+
+        Logger.i(TAG, String.format("canvas.size=(%s, %s)", canvasWidth, canvasHeight));
+        Logger.i(TAG, String.format("canvasRatio=%s", canvasRatio));
+        Logger.i(TAG, String.format("grid.size=(%s, %s)", screenWidth, screenHeight));
+        Logger.i(TAG, String.format("screenRatio=%s", screenRatio));
+        Logger.i(TAG, String.format("isHeightGrid=%s", isHeightGrid));
+
+        for (int i = 0; i < mixItems.size(); i++) {
+            MixItem mixItem = mixItems.get(i);
+            int[] location = new int[2];
+            View renderContainer = mixItem.renderContainer;
+            if (renderContainer == null) {
+                continue;
             }
-        } else {
-            int canvasWidth = mAlivcLivePushConfig.getWidth();
-            int canvasHeight = mAlivcLivePushConfig.getHeight();
-            float canvasRatio = canvasWidth * 1f / canvasHeight;
 
-            int screenWidth = AppContext.getContext().getResources().getDisplayMetrics().widthPixels;
-            int screenHeight = AppContext.getContext().getResources().getDisplayMetrics().heightPixels;
-            float screenRatio = screenWidth * 1f / screenHeight;
+            renderContainer.getLocationOnScreen(location);
+            int xInGrid = location[0];
+            int yInGrid = location[1];
 
-            boolean isHeightGrid = screenRatio < canvasRatio;
+            AlivcLiveMixStream mixStream = new AlivcLiveMixStream();
+            mixStream.setUserId(mixItem.userId);
 
-            Logger.i(TAG, String.format("canvas.size=(%s, %s)", canvasWidth, canvasHeight));
-            Logger.i(TAG, String.format("canvasRatio=%s", canvasRatio));
-            Logger.i(TAG, String.format("grid.size=(%s, %s)", screenWidth, screenHeight));
-            Logger.i(TAG, String.format("screenRatio=%s", screenRatio));
-            Logger.i(TAG, String.format("isHeightGrid=%s", isHeightGrid));
+            float scaleRatio = isHeightGrid
+                    ? (canvasHeight * 1f / screenHeight)
+                    : (canvasWidth * 1f / screenWidth);
 
-            for (int i = 0; i < mixItems.size(); i++) {
-                MixItem mixItem = mixItems.get(i);
-                int[] location = new int[2];
-                View renderContainer = mixItem.renderContainer;
-                if (renderContainer == null) {
-                    continue;
-                }
+            int finalWidth = (int) (renderContainer.getWidth() * scaleRatio);
+            int finalHeight = (int) (renderContainer.getHeight() * scaleRatio);
 
-                renderContainer.getLocationOnScreen(location);
-                int xInGrid = location[0];
-                int yInGrid = location[1];
+            int scaledScreenWidth = (int) (screenWidth * scaleRatio);
+            int scaledScreenHeight = (int) (screenHeight * scaleRatio);
+            mixStream.setX((int) (xInGrid * scaleRatio) + (canvasWidth - scaledScreenWidth) / 2);
+            mixStream.setY((int) (yInGrid * scaleRatio) + (canvasHeight - scaledScreenHeight) / 2);
+            mixStream.setWidth(finalWidth);
+            mixStream.setHeight(finalHeight);
 
-                AlivcLiveMixStream mixStream = new AlivcLiveMixStream();
-                mixStream.setUserId(mixItem.userId);
+            mixStream.setZOrder(mixItem.isAnchor ? 1 : 2);
+            mixStreams.add(mixStream);
 
-                float scaleRatio = isHeightGrid
-                        ? (canvasHeight * 1f / screenHeight)
-                        : (canvasWidth * 1f / screenWidth);
-
-                int finalWidth = (int) (renderContainer.getWidth() * scaleRatio);
-                int finalHeight = (int) (renderContainer.getHeight() * scaleRatio);
-
-                int scaledScreenWidth = (int) (screenWidth * scaleRatio);
-                int scaledScreenHeight = (int) (screenHeight * scaleRatio);
-                mixStream.setX((int) (xInGrid * scaleRatio) + (canvasWidth - scaledScreenWidth) / 2);
-                mixStream.setY((int) (yInGrid * scaleRatio) + (canvasHeight - scaledScreenHeight) / 2);
-                mixStream.setWidth(finalWidth);
-                mixStream.setHeight(finalHeight);
-
-                mixStream.setZOrder(mixItem.isAnchor ? 1 : 2);
-
-                mixStreams.add(mixStream);
-
-                Logger.i(TAG, String.format(Locale.getDefault(),
-                        "\t%02d: xInGrid=%s, yInGrid=%s", i, xInGrid, yInGrid));
-                Logger.i(TAG, String.format(Locale.getDefault(),
-                        "\t%02d: %s", i, JSON.toJSONString(mixStream)));
-            }
+            Logger.i(TAG, String.format(Locale.getDefault(),
+                    "\t%02d: xInGrid=%s, yInGrid=%s", i, xInGrid, yInGrid));
+            Logger.i(TAG, String.format(Locale.getDefault(),
+                    "\t%02d: %s", i, JSON.toJSONString(mixStream)));
         }
 
-        mMixInteractLiveTranscodingConfig.setMixStreams(mixStreams);
-        mALivcLivePusher.setLiveMixTranscodingConfig(mMixInteractLiveTranscodingConfig);
+        AlivcLiveTranscodingConfig mixInteractLiveTranscodingConfig = new AlivcLiveTranscodingConfig();
+        mixInteractLiveTranscodingConfig.setMixStreams(mixStreams);
+        mALivcLivePusher.setLiveMixTranscodingConfig(mixInteractLiveTranscodingConfig);
     }
+
+    // ------------------ 单混切换 [end] ------------------
 
     /**
      * 创建 AlivcLivePlayer，用于多人连麦互动

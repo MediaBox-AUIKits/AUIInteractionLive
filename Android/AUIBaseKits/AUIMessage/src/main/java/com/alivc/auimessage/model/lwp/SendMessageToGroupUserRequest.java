@@ -47,6 +47,11 @@ public class SendMessageToGroupUserRequest implements Serializable {
      */
     public boolean skipMuteCheck;
 
+    /**
+     * 是否跳过存储
+     */
+    public boolean noStorage = true;
+
     @Override
     public String toString() {
         return "SendMessageToGroupUserRequest{" +

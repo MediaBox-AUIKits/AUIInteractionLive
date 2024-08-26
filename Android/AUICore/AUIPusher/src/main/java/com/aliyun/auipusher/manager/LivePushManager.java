@@ -1,6 +1,7 @@
 package com.aliyun.auipusher.manager;
 
 import static android.os.Environment.MEDIA_MOUNTED;
+import static com.alivc.auicommon.common.base.util.CommonUtil.showToast;
 import static com.alivc.live.pusher.AlivcLivePushCameraTypeEnum.CAMERA_TYPE_BACK;
 import static com.alivc.live.pusher.AlivcLivePushCameraTypeEnum.CAMERA_TYPE_FRONT;
 
@@ -56,12 +57,21 @@ import java.util.Map;
 /**
  * 媒体推流服务
  */
-public class LivePushManager implements AlivcLiveBaseListener {
+public class LivePushManager {
 
     private static final String TAG = LivePushManager.class.getSimpleName();
     private final Context mContext;
-    AlivcLivePushErrorListener pushErrorListener = new AlivcLivePushErrorListener() {
 
+    AlivcLiveBaseListener liveBaseListener = new AlivcLiveBaseListener() {
+        @Override
+        public void onLicenceCheck(AlivcLivePushConstants.AlivcLiveLicenseCheckResultCode result, String reason) {
+            if (result != AlivcLivePushConstants.AlivcLiveLicenseCheckResultCode.AlivcLiveLicenseCheckResultCodeSuccess) {
+                showToast(mContext, "license error: " + result + ", " + reason);
+            }
+        }
+    };
+
+    AlivcLivePushErrorListener pushErrorListener = new AlivcLivePushErrorListener() {
         @Override
         public void onSystemError(AlivcLivePusher livePusher, AlivcLivePushError error) {
             if (error != null) {
@@ -88,7 +98,6 @@ public class LivePushManager implements AlivcLiveBaseListener {
     private Callback callback;
     // region listener
     AlivcLivePushInfoListener pushInfoListener = new AlivcLivePushInfoListener() {
-
         @Override
         public void onPreviewStarted(AlivcLivePusher alivcLivePusher) {
             onEvent(LiveEvent.PREVIEW_STARTED);
@@ -156,49 +165,9 @@ public class LivePushManager implements AlivcLiveBaseListener {
         @Override
         public void onPushStatistics(AlivcLivePusher alivcLivePusher, AlivcLivePushStatsInfo info) {
             Map<String, Object> extras = new HashMap<>();
-            extras.put("v_bitrate", info.getVideoUploadBitrate());
-            extras.put("a_bitrate", info.getAudioUploadBitrate());
+            extras.put("v_bitrate", info.videoUploadBitrate);
+            extras.put("a_bitrate", info.audioUploadBitrate);
             onEvent(LiveEvent.UPLOAD_BITRATE_UPDATED, extras);
-        }
-
-        @Override
-        public void onSetLiveMixTranscodingConfig(AlivcLivePusher alivcLivePusher, boolean b, String s) {
-
-        }
-
-        @Override
-        public void onKickedOutByServer(AlivcLivePusher pusher, AlivcLivePushKickedOutType kickedOutType) {
-
-        }
-
-        @Override
-        public void onMicrophoneVolumeUpdate(AlivcLivePusher pusher, int volume) {
-
-        }
-
-        @Override
-        public void onLocalRecordEvent(AlivcLiveRecordMediaEvent mediaEvent, String storagePath) {
-
-        }
-
-        @Override
-        public void onScreenFramePushState(AlivcLivePusher pusher, boolean isPushing) {
-
-        }
-
-        @Override
-        public void onRemoteUserEnterRoom(AlivcLivePusher pusher, String userId, boolean isOnline) {
-
-        }
-
-        @Override
-        public void onRemoteUserAudioStream(AlivcLivePusher pusher, String userId, boolean isPushing) {
-
-        }
-
-        @Override
-        public void onRemoteUserVideoStream(AlivcLivePusher pusher, String userId, AlivcLivePlayVideoStreamType videoStreamType, boolean isPushing) {
-
         }
     };
     AlivcLivePushNetworkListener pushNetworkListener = new AlivcLivePushNetworkListener() {
@@ -348,7 +317,7 @@ public class LivePushManager implements AlivcLiveBaseListener {
         AlivcLiveBase.setLogDirPath(logPath, maxPartFileSizeInKB);
 
         // 注册sdk
-        AlivcLiveBase.setListener(this);
+        AlivcLiveBase.setListener(liveBaseListener);
         AlivcLiveBase.registerSDK();
 
         mALivcLivePusher.init(mContext, alivcLivePushConfig);
@@ -867,10 +836,6 @@ public class LivePushManager implements AlivcLiveBaseListener {
         }
     }
 
-    @Override
-    public void onLicenceCheck(AlivcLivePushConstants.AlivcLiveLicenseCheckResultCode alivcLiveLicenseCheckResultCode, String s) {
-
-    }
     // endregion listener
 
     private void initBeautyManager() {

@@ -374,6 +374,7 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
         sendMessageToGroupReq.skipMuteCheck = req.skipMuteCheck;
         sendMessageToGroupReq.skipAudit = req.skipAudit;
         sendMessageToGroupReq.data = req.data;
+        sendMessageToGroupReq.noStorage = req.noStorage;
 
         messageInterface.sendGroupMessage(sendMessageToGroupReq, new ValueCallbackAdapter<>(callback, new Function<ImSendMessageToGroupRsp, SendMessageToGroupResponse>() {
             @Override
@@ -848,6 +849,11 @@ public class MessageServiceImpl extends Observable<MessageListener> implements M
                 messageListener.onMessageReceived(messageModel);
             }
         });
+    }
+
+    @Override
+    public void onDeleteGroupMessage(String msgId, String groupId) {
+        Logger.i(TAG, "[Callback] onDeleteGroupMessage: " + msgId + ", " + groupId);
     }
 
     private static class ValueCallbackAdapter<T, R> implements ImSdkValueCallback<T> {

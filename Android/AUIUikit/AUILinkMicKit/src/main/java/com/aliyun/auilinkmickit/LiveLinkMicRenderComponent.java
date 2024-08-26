@@ -62,7 +62,10 @@ import java.util.Set;
  */
 public class LiveLinkMicRenderComponent extends FrameLayout implements MultiComponentHolder {
 
-    public static final Object PAYLOAD_REFRESH_MIC_STATUS = new Object();
+    // 麦克风状态刷新
+    private static final Object PAYLOAD_REFRESH_MIC_STATUS = new Object();
+    // 摄像头状态刷新
+    private static final Object PAYLOAD_REFRESH_CAMERA_STATUS = new Object();
 
     private static final int SPAN_COUNT = 6;
 
@@ -107,8 +110,15 @@ public class LiveLinkMicRenderComponent extends FrameLayout implements MultiComp
                 new RecyclerViewHelper.HolderRenderer<LinkMicItemModel>() {
                     @Override
                     public void render(RecyclerViewHelper<LinkMicItemModel> viewHelper, final RecyclerViewHelper.ViewHolder holder, LinkMicItemModel model, int position, int itemCount, List<Object> payloads) {
+                        // 局部刷新摄像头状态，不做 ViewHolder 的刷新操作
+                        if (payloads.contains(PAYLOAD_REFRESH_CAMERA_STATUS)) {
+                            // SDK内部已自动重新订阅，如果外部重新订阅，可能会造成同时存在两个canvas
+                            return;
+                        }
+
+                        // 局部刷新麦克风状态，不做 ViewHolder 的刷新操作
                         if (payloads.contains(PAYLOAD_REFRESH_MIC_STATUS)) {
-                            // 局部刷新麦克风状态
+                            // 只更新 ViewHolder 上面的麦克风状态图标
                             holder.getView(R.id.item_mic).setSelected(model.micOpened);
                             return;
                         }
@@ -234,15 +244,6 @@ public class LiveLinkMicRenderComponent extends FrameLayout implements MultiComp
             });
 
             liveContext.getMessageService().addMessageListener(new SimpleOnMessageListener() {
-
-                @Override
-                public void onStartLive(AUIMessageModel<StartLiveModel> message) {
-                    if (isOwner()) {
-                        // 混流
-                        pushManager.addAnchorMixTranscodingConfig(liveContext.getLiveModel().anchorId);
-                    }
-                }
-
                 @Override
                 public void onStopLive(AUIMessageModel<StopLiveModel> message) {
                     postEvent(Actions.LEAVE_LINK_MIC);
@@ -412,8 +413,9 @@ public class LiveLinkMicRenderComponent extends FrameLayout implements MultiComp
                         for (int i = 0; i < dataList.size(); i++) {
                             LinkMicItemModel model = dataList.get(i);
                             if (TextUtils.equals(model.userId, message.senderInfo.userId)) {
+                                // 更新表格视图
                                 model.cameraOpened = message.data.cameraOpened;
-                                recyclerViewHelper.updateData(i);
+                                recyclerViewHelper.updateData(i, PAYLOAD_REFRESH_CAMERA_STATUS);
                             }
                         }
                     }

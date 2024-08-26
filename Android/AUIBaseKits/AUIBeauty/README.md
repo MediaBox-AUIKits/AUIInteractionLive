@@ -142,7 +142,7 @@ dependencies {
     api "com.aliyun.maliang.android:queen_menu:6.7.0-official-pro-tiny"
 
     // 一体化SDK，包含基础美颜功能
-    implementation "com.aliyun.aio:AliVCSDK_InteractiveLive:6.7.0"
+    implementation "com.aliyun.aio:AliVCSDK_InteractiveLive:6.14.0"
 
     // 此处引用外部独立版本高级功能Queen
     implementation "com.aliyun.maliang.android:queen:6.7.0-official-pro"

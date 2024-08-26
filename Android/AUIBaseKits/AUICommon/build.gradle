@@ -24,6 +24,6 @@ android {
 dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     api "android.arch.lifecycle:extensions:1.1.1"
-    api "com.alibaba:fastjson:1.1.72.android"
+    api "com.alibaba:fastjson:1.1.76.android"
     implementation 'androidx.leanback:leanback:1.0.0'
 }

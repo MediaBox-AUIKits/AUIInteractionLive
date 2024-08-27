@@ -24,6 +24,8 @@ typedef NS_ENUM(NSUInteger, AUIBeautyProcessMode) {
 
 - (int)processGLTextureWithTextureID:(int)textureID withWidth:(int)width withHeight:(int)height;
 
+@property (nonatomic, assign) BOOL isNeedFlip;
+
 @end
 
 // 模式2： 处理PixelBuffer，

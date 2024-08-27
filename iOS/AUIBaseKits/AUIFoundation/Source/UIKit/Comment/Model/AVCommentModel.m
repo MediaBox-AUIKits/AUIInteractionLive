@@ -89,7 +89,7 @@
 + (UIImage *)anchorFlagImage {
     static UIImage *_image = nil;
     if (!_image) {
-        _image = [self flagImage:@"主播" fontSize:12 textColor:[self anchorFlagForegroundColor] bgColor:[self anchorFlagBackgroundColor] cornerRadius:2 minWidth:20 height:18];
+        _image = [self flagImage:AUIFoundationLocalizedString(@"Host") fontSize:12 textColor:[self anchorFlagForegroundColor] bgColor:[self anchorFlagBackgroundColor] cornerRadius:2 minWidth:20 height:18];
     }
     return _image;
 }
@@ -97,7 +97,7 @@
 + (UIImage *)meFlagImage {
     static UIImage *_image = nil;
     if (!_image) {
-        _image = [self flagImage:@"自己" fontSize:12 textColor:[self meFlagForegroundColor] bgColor:[self meFlagBackgroundColor] cornerRadius:2 minWidth:20 height:18];
+        _image = [self flagImage:AUIFoundationLocalizedString(@"Myself") fontSize:12 textColor:[self meFlagForegroundColor] bgColor:[self meFlagBackgroundColor] cornerRadius:2 minWidth:20 height:18];
     }
     return _image;
 }

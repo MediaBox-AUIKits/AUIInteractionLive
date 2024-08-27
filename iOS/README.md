@@ -63,7 +63,7 @@ platform :ios, '10.0'
 target '你的App target' do
     # 根据自己的业务场景，集成合适的音视频终端SDK
     # 如果你的APP中还需要频短视频编辑功能，可以使用音视频终端全功能SDK（AliVCSDK_Standard），可以把本文件中的所有AliVCSDK_InteractiveLive替换为AliVCSDK_Standard
-    pod 'AliVCSDK_InteractiveLive', '~> 6.10.0'
+    pod 'AliVCSDK_InteractiveLive', '~> 6.14.0'
 
     # 基础UI组件
     pod 'AUIFoundation/All', :path => "./AUIInteractionLive/AUIBaseKits/AUIFoundation/"

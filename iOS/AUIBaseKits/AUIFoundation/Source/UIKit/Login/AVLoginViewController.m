@@ -19,13 +19,13 @@
     [super viewDidLoad];
     
     self.hiddenMenuButton = YES;
-    self.titleView.text = @"登录";
+    self.titleView.text = AUIFoundationLocalizedString(@"Account Login");
     
     AVBlockButton *btn = [[AVBlockButton alloc] initWithFrame:CGRectMake(20.0, self.contentView.av_height - UIView.av_safeBottom - 44.0, self.contentView.av_width - 40.0, 44.0)];
     btn.layer.cornerRadius = 22.0;
     btn.layer.masksToBounds = YES;
     btn.enabled = NO;
-    [btn setTitle:@"登录" forState:UIControlStateNormal];
+    [btn setTitle:AUIFoundationLocalizedString(@"Login") forState:UIControlStateNormal];
     [btn setBackgroundColor:AVTheme.colourful_fill_strong forState:UIControlStateNormal];
     [btn setBackgroundColor:AVTheme.colourful_fill_disabled forState:UIControlStateDisabled];
     [btn setTitleColor:AVTheme.text_strong forState:UIControlStateNormal];
@@ -37,8 +37,8 @@
     };
     
     _inputIdView = [[AVInputView alloc] initWithFrame:CGRectMake(16.0, 30.0, self.contentView.av_width - 32.0, 70.0)];
-    _inputIdView.titleLabel.text = @"我的用户ID";
-    _inputIdView.placeLabel.text = @"请输入字母、数字、下划线";
+    _inputIdView.titleLabel.text = AUIFoundationLocalizedString(@"My Login ID");
+    _inputIdView.placeLabel.text = AUIFoundationLocalizedString(@"Please enter letters, numbers, or '_'");
     _inputIdView.inputTextChanged = ^(AVInputView * _Nonnull inputView) {
         btn.enabled = inputView.inputText.length > 0;
     };
@@ -51,19 +51,19 @@
 
 - (void)tryLogin:(NSString *)uid {
     if (![AVLoginManager.shared validateUid:uid]) {
-        [AVAlertController show:@"用户ID仅支持字母、数字和下划线" vc: self];
+        [AVAlertController show:AUIFoundationLocalizedString(@"User ID only supports letters, numbers, and underscores") vc: self];
         return;
     }
     
     AVProgressHUD *hud = [AVProgressHUD ShowHUDAddedTo:self.view animated:YES];
     hud.backgroundColor = AVTheme.tsp_fill_medium;
     hud.iconType = AVProgressHUDIconTypeLoading;
-    hud.labelText = @"登录中...";
+    hud.labelText = AUIFoundationLocalizedString(@"Logging in...");
     
     [AVLoginManager.shared login:uid completed:^(NSError * _Nullable error) {
         [hud hideAnimated:NO];
         if (error) {
-            [AVAlertController show:@"登录失败" vc: self];
+            [AVAlertController show:AUIFoundationLocalizedString(@"Login failed") vc: self];
         }
         else {
             if (self.loginSuccessBlock) {

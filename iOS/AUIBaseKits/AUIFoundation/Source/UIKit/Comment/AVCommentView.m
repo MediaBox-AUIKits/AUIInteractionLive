@@ -33,7 +33,7 @@
         if (needShowNewCommentTips) {
             _showNewCommentTipsButton = [[UIButton alloc] initWithFrame:CGRectZero];
             _showNewCommentTipsButton.titleEdgeInsets = UIEdgeInsetsMake(0, 4, 0, 0);
-            [_showNewCommentTipsButton setTitle:@"你有新消息" forState:UIControlStateNormal];
+            [_showNewCommentTipsButton setTitle:AUIFoundationLocalizedString(@"You have new messages") forState:UIControlStateNormal];
             [_showNewCommentTipsButton setTitleColor:[UIColor av_colorWithHexString:@"#FCFCFD"] forState:UIControlStateNormal];
             _showNewCommentTipsButton.titleLabel.font = AVGetRegularFont(14);
             [_showNewCommentTipsButton setImage:AUIFoundationCommonImage(@"ic_comment_tips") forState:UIControlStateNormal];

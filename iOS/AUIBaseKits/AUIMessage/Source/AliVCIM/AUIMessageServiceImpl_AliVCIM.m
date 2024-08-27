@@ -48,22 +48,14 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
     return AUIMessageServiceImplTypeAlivcIM;
 }
 
-- (void)setConfig:(AUIMessageConfig *)config {
-    _config = config;
+- (AliVCIMEngineConfig *)createEngineConfig:(NSDictionary *)tokenData {
+    if (tokenData.count == 0) {
+        return nil;
+    }
     
-    NSDictionary *tokenData = _config.tokenData;
     NSString *appId = [tokenData objectForKey:@"app_id"];
     NSString *appSign = [tokenData objectForKey:@"app_sign"];
-    NSString *appToken = [tokenData objectForKey:@"app_token"];
     NSString *source = [tokenData objectForKey:@"source"];
-    NSDictionary *authData = [tokenData objectForKey:@"auth"];
-
-    AliVCIMAuthToken *nativeAuthToken = [AliVCIMAuthToken new];
-    nativeAuthToken.token = appToken;
-    nativeAuthToken.role = [authData objectForKey:@"role"];
-    nativeAuthToken.timestamp = [[authData objectForKey:@"timestamp"] longValue];
-    nativeAuthToken.nonce = [authData objectForKey:@"nonce"];
-    _nativeAuthToken = nativeAuthToken;
     
     AliVCIMEngineConfig *nativeConfig = [AliVCIMEngineConfig new];
     nativeConfig.deviceId = AUIMessageConfig.deviceId;
@@ -71,11 +63,45 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
     nativeConfig.appSign = appSign;
     nativeConfig.source = source ?: @"aui-message";
     nativeConfig.extra = @{@"scene":source ?: @"aui-message"};
+    return nativeConfig;
+}
+
+- (AliVCIMAuthToken *)createAuthToken:(NSDictionary *)tokenData {
+    if (tokenData.count == 0) {
+        return nil;
+    }
+    
+    NSString *appToken = [tokenData objectForKey:@"app_token"];
+    NSDictionary *authData = [tokenData objectForKey:@"auth"];
+
+    AliVCIMAuthToken *nativeAuthToken = [AliVCIMAuthToken new];
+    nativeAuthToken.token = appToken;
+    nativeAuthToken.role = [authData objectForKey:@"role"];
+    nativeAuthToken.timestamp = [[authData objectForKey:@"timestamp"] longValue];
+    nativeAuthToken.nonce = [authData objectForKey:@"nonce"];
+    return nativeAuthToken;
+}
+
+- (void)setConfig:(AUIMessageConfig *)config {
+    AliVCIMEngineConfig *oldNativeConfig = [self createEngineConfig:_config.tokenData];
+    
+    AliVCIMEngineConfig *newNativeConfig = [self createEngineConfig:config.tokenData];
 #ifdef DEBUG
-    nativeConfig.logLevel = AliVCIMLogLevelDebug;
+    newNativeConfig.logLevel = AliVCIMLogLevelDebug;
 #endif
-    [[AliVCIMEngine sharedEngine] setup:nativeConfig];
+    
+    if (![oldNativeConfig.appId isEqualToString:newNativeConfig.appId] ||
+        ![oldNativeConfig.appSign isEqualToString:newNativeConfig.appSign]) {
+        [[AliVCIMEngine sharedEngine] destroy];
+    }
+    
+    
+    [[AliVCIMEngine sharedEngine] setup:newNativeConfig];
     [[AliVCIMEngine sharedEngine] addListener:self];
+    
+    _config = config;
+    NSLog(@"AUIMessageServiceImpl_AliVCIM##setConfig: %@", _config.tokenData);
+    _nativeAuthToken = [self createAuthToken:_config.tokenData];;
 }
 
 - (AUIMessageConfig *)getConfig {
@@ -508,16 +534,7 @@ static void parseUserExtension(NSString *userExtension, id<AUIUserProtocol> user
         [self.connectionDelegate onTokenExpire:^(NSError * _Nullable error) {
             
             if (error == nil) {
-                NSDictionary *tokenData = weakSelf.config.tokenData;
-                NSString *appToken = [tokenData objectForKey:@"app_token"];
-                NSDictionary *authData = [tokenData objectForKey:@"auth"];
-
-                AliVCIMAuthToken *nativeAuthToken = [AliVCIMAuthToken new];
-                nativeAuthToken.token = appToken;
-                nativeAuthToken.role = [authData objectForKey:@"role"];
-                nativeAuthToken.timestamp = [[authData objectForKey:@"timestamp"] longValue];
-                nativeAuthToken.nonce = [authData objectForKey:@"nonce"];
-                weakSelf.nativeAuthToken = nativeAuthToken;
+                weakSelf.nativeAuthToken = [weakSelf createAuthToken:weakSelf.config.tokenData];
                 fetchAuthTokenBlock(weakSelf.nativeAuthToken, nil);
             }
             else {

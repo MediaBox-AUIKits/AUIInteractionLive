@@ -24,6 +24,8 @@
 
 @implementation AUIBeautyQueenController
 
+@synthesize isNeedFlip = _isNeedFlip;
+
 - (instancetype)initWithPresentView:(UIView *)presentView processMode:(AUIBeautyProcessMode)processMode {
     self = [super init];
     if (self) {
@@ -90,7 +92,9 @@
         configInfo.withContext = contextMode;
         configInfo.autoSettingImgAngle = autoSettingImgAngle;
         configInfo.runOnCustomThread = runOnCustomThread;
+//        configInfo.enableDebugLog = YES;
         self.beautyEngine = [[QueenEngine alloc] initWithConfigInfo:configInfo];
+//        [self.beautyEngine showFaceDetectPoint:YES];
     }
     
     if (NSThread.isMainThread) {
@@ -138,6 +142,10 @@
     }
     else if (orientation == 2) {
         screenRotation = 90;
+    }
+    
+    if (self.isNeedFlip && (g_screenRotation == 0 || g_screenRotation == 180)) {
+        screenRotation += 180;
     }
     
     @synchronized (self) {

@@ -137,19 +137,20 @@
 "ManualAdjustment"="Manual Adjustment";
 "Back"="Back";
 
-"Filterly1"="Innocent";
-"Filterly2"="Detached";
-"Filterly3"="Nostalgic";
-"Filterly4"="Blues";
-"Filterly5"="Romantic";
-"Filterly6"="Fresh";
-"Filterly7"="Lively";
+"Filter.ly1"="Innocent";
+"Filter.ly2"="Detached";
+"Filter.ly3"="Nostalgic";
+"Filter.ly4"="Blues";
+"Filter.ly5"="Romantic";
+"Filter.ly6"="Fresh";
+"Filter.ly7"="Lively";
 
 "ScreenMattingOriginal"="Original";
 "ScreenMattingGreenScreen"="Green";
 "ScreenMattingBlueScreen"="Blue";
 "ScreenMattingGreenScreenAuto"="Green (Auto)";
 "ScreenMattingBlueScreenAuto"="Blue (Auto)";
+"ScreenMattingGreenScreenAutoBgTransparent"="Transparent";
 
 "FeatureOff"="Off";
 "FeatureOn"="On";

@@ -7,7 +7,7 @@ platform :ios, '10.0'
 def aliyun_video_sdk
     # 根据自己的业务场景，集成合适的音视频终端SDK
     # 如果你的APP中还需要频短视频编辑功能，可以使用音视频终端全功能SDK（AliVCSDK_Standard），可以把本文件中的所有AliVCSDK_InteractiveLive替换为AliVCSDK_Standard
-    pod 'AliVCSDK_InteractiveLive', '~> 6.10.0'
+    pod 'AliVCSDK_InteractiveLive', '~> 6.14.0'
 end
 
 def aliyun_aui_interaction_live

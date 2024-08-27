@@ -49,6 +49,11 @@ typedef NS_ENUM(NSInteger, AQUPanelSkinStyle) {
 @property (nonatomic, assign) AQUPanelSkinStyle panelSkinStyle;
 
 /**
+ * 面板隐藏回调
+ */
+@property (nonatomic, copy) void(^panelDidHiddenHandler)(BOOL byTouchBackground);
+
+/**
  * 贴纸名字本地化字符串前缀
  */
 @property (nonatomic, copy) NSString *stickerItemNameLocalizedStrPreFix;

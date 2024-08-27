@@ -95,6 +95,7 @@
     NSInteger count = self.inputTextView.text.length;
     self.clearButton.hidden = count == 0;
     self.placeLabel.hidden = count != 0;
+    self.inputCountLabel.hidden = count == 0;
     self.inputCountLabel.text = [NSString stringWithFormat:@"%zd/%zd", count, self.maxInputCount];
     if (self.inputTextChanged) {
         self.inputTextChanged(self);

@@ -18,10 +18,12 @@
 
 ### **文档**
 
-[AUI Kits低代码应用方案](https://help.aliyun.com/document_detail/2391314.html)
+[音视频终端SDK](https://help.aliyun.com/zh/apsara-video-sdk/)
 
-[音视频终端SDK](https://help.aliyun.com/product/261167.html)
+[AUI Kits低代码应用方案](https://help.aliyun.com/zh/apsara-video-sdk/use-cases/aui-kits-application-solution/)
+
+[MediaBox-AUIKits](https://github.com/orgs/MediaBox-AUIKits/repositories)
 
 ### **FAQ**
 
-如果您在使用AUI Kits有任何问题或建议，欢迎通过钉钉搜索群号35685013712加入AUI客户支持群。
+如果您在使用 AUI Kits 有任何问题或建议，欢迎通过提交工单获取技术支持。

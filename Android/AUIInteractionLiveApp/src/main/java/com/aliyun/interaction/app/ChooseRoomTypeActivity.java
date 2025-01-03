@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.alivc.auicommon.common.base.callback.Callbacks;
@@ -31,7 +32,7 @@ public class ChooseRoomTypeActivity extends AppBaseActivity {
 
     private Button createRoomBtn;//创建直播间
 
-    private int typeLive = 0;//直播类型 0 基础直播 1 连麦直播
+    private LiveMode typeLive = LiveMode.Common;//直播类型 0 基础直播 1 连麦直播
 
     private TextView noticeTips;
 
@@ -41,12 +42,19 @@ public class ChooseRoomTypeActivity extends AppBaseActivity {
 
     private RadioButton linkMicLiveModleBtn;//连麦直播
 
+    private RadioGroup liveGroup;
+    private TextView toTitleTextView;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ExStatusBarUtils.setStatusBarColor(this, AppUtil.getColor(R.color.bus_login_status_bar_color));
+        ExStatusBarUtils.setStatusBarColor(this, AppUtil.getColor(R.color.black_back));
         setContentView(R.layout.activity_choose_room);
+
+
+        toTitleTextView = findViewById(R.id.toTitleTextView);
+        liveGroup = findViewById(R.id.live_group);
         liveroomTitleEdt = findViewById(R.id.liveroom_title);
         liveroomTitleEdt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -95,7 +103,7 @@ public class ChooseRoomTypeActivity extends AppBaseActivity {
         baseLiveModleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                typeLive = 0;
+                typeLive = LiveMode.Standard;
                 linkMicLiveModleBtn.setChecked(false);
                 baseLiveModleBtn.setChecked(true);
             }
@@ -104,7 +112,7 @@ public class ChooseRoomTypeActivity extends AppBaseActivity {
         linkMicLiveModleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                typeLive = 1;
+                typeLive = LiveMode.Microphone;
                 linkMicLiveModleBtn.setChecked(true);
                 baseLiveModleBtn.setChecked(false);
             }
@@ -126,6 +134,31 @@ public class ChooseRoomTypeActivity extends AppBaseActivity {
             }
         });
         liveroomTitleEdt.setText(String.format("%s%s", Const.getUserId(), getString(R.string.default_room_tip)));
+        if (null != getIntent()) {
+            if (getIntent().getIntExtra("live_mode", 2) == 0) {
+                typeLive = LiveMode.Standard;
+            }
+            if (getIntent().getIntExtra("live_mode", 2) == 1) {
+                typeLive = LiveMode.Microphone;
+            }
+        }
+        switch (typeLive) {
+            case Microphone:
+                createRoomBtn.setText("创建连麦直播间");
+                toTitleTextView.setText("连麦直播间列表");
+                liveGroup.setVisibility(View.GONE);
+                break;
+            case Standard:
+                createRoomBtn.setText("创建标准直播间");
+                toTitleTextView.setText("标准直播间列表");
+                liveGroup.setVisibility(View.GONE);
+                break;
+            default:
+                createRoomBtn.setText("创建直播间");
+                toTitleTextView.setText("直播间列表");
+                liveGroup.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     /**
@@ -144,7 +177,7 @@ public class ChooseRoomTypeActivity extends AppBaseActivity {
         param.nick = Const.getUserId();
         param.title = liveroomTitleEdt.getText().toString();
         param.notice = liveroomTipsEdt.getText().toString();
-        param.model = typeLive;
+        param.model = (typeLive.value() == 2 ? 0 : typeLive.value());
         final Callbacks.Lambda<String> callback = new Callbacks.Lambda<>(new Callbacks.Lambda.CallbackWrapper<String>() {
             @Override
             public void onCall(boolean success, String data, String errorMsg) {

@@ -1,0 +1,171 @@
+ext {
+    //==Android Third party,include Application Layer,SDK Layer==
+
+    //Build Gradle Plugin
+    externalAndroidBuildGradlePlugin = 'com.android.tools.build:gradle:7.1.2'
+    externalAndroidKotlinPlugin = 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
+
+    //kotlin std lib
+    externalKotlinStdLibJdk = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+    externalKotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+
+    //Android support Libraries
+    externalAndroidXAppcompat = 'androidx.appcompat:appcompat:1.4.1'
+    externalAndroidXRecyclerView = 'androidx.recyclerview:recyclerview:1.0.0'
+    externalAndroidXConstraintlayout = 'androidx.constraintlayout:constraintlayout:2.1.3'
+    externalAndroidXCardview = 'androidx.cardview:cardview:1.0.0'
+    externalAndroidDesign = 'com.google.android.material:material:1.6.0'
+    externalAndroidMultiDex = 'androidx.multidex:multidex:2.0.1'
+    externalAndroidX = 'androidx.appcompat:appcompat:1.2.0'
+    externalAndroidAnnotation = 'androidx.annotation:annotation:1.1.0'
+    externalAndroidXCoreKtx = 'androidx.core:core-ktx:1.7.0'
+    externalAndroidXCollectionKtx = 'androidx.collection:collection-ktx:1.2.0'
+    externalAndroidXFragmentKtx = 'androidx.fragment:fragment-ktx:1.4.1'
+    externalAndroidXActivityKtx = 'androidx.activity:activity-ktx:1.4.0'
+    externalAndroidXLiveDataKtx = 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    externalAndroidXRuntimeKtx = 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    externalAndroidXViewModelKtx = 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    externalAndroidViewPager2 = 'androidx.viewpager2:viewpager2:1.0.0'
+
+    //Test related third party libraries
+    externalAndroidTestEspressoCore = 'com.android.support.test.espresso:espresso-core:2.2.2'
+    externalAndroidTestRunner = 'com.android.support.test:runner:0.4.1'
+    externalHamcrestLibrary = 'org.hamcrest:hamcrest-library:1.3'
+    externalMockito = 'org.mockito:mockito-core:1.10.19'
+    externalJunit = 'junit:junit:4.+'
+    externalTestJunit = 'androidx.test.ext:junit:1.1.3'
+    externalEspresso = 'androidx.test.espresso:espresso-core:3.4.0'
+
+    externalDexmakerDx = 'com.crittercism.dexmaker:dexmaker-dx:1.4'
+    externalDexmakerMockito = 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
+
+    //Application Layer
+    externalEventBus = 'org.greenrobot:eventbus:3.1.1'
+    externalAliyunOSS = 'com.aliyun.dpa:oss-android-sdk:+'
+    externalPagerSlidingTabStrip = 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    externalEasyPermissions = 'pub.devrel:easypermissions:3.0.0'
+    externalOrmLiteAndroid = 'com.j256.ormlite:ormlite-android:4.48'
+    externalGlide = 'com.github.bumptech.glide:glide:4.13.0'
+    externalGlideAnnotation = 'com.github.bumptech.glide:annotations:4.13.0'
+    externalGlideProcessor = 'com.github.bumptech.glide:compiler:4.13.0'
+    externalGlideOkHttp = 'com.github.bumptech.glide:okhttp3-integration:4.12.0@aar'
+    externalSimpleZXing = 'com.acker:simplezxing:1.6'
+    externalPicasso = 'com.squareup.picasso:picasso:2.5.2'
+    externalLeakcanary = 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+
+    externalCrashReporter = 'com.taobao.android:crashreporter:3.0.4.1@aar'
+    externalUtdid = 'com.taobao.android:utdid4all:1.1.5@jar'
+    externalTbest  = 'com.taobao.android:tbrest:1.0.0.23@aar'
+
+    //SDK Layer
+    externalJSR305 = 'com.google.code.findbugs:jsr305:3.0.0'
+    externalOKHTTP = 'com.squareup.okhttp3:okhttp:4.8.1'
+    externalOKIO = 'com.squareup.okio:okio:1.12.0'
+    externalGSON = 'com.google.code.gson:gson:2.8.0'
+    externalMqtt = 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    externalHttpCore = 'org.apache.httpcomponents:httpcore:5.1.3'
+    externalFaceUnity = 'com.faceunity:nama:6.0.0-lite'
+    externalAliyunRace = 'com.aliyun.race:AliyunRace:1.2.0'
+    externalSqlCipher ='net.zetetic:android-database-sqlcipher:3.5.7'
+    externalFileDownloader = 'com.liulishuo.filedownloader:library:1.4.1'
+    externalImageZoom = 'it.sephiroth.android.library.imagezoom:library:1.0.4'
+    externalPermissionX = 'com.guolindev.permissionx:permissionx:1.6.0'
+    externalOKHTTPLogInterceptor = 'com.squareup.okhttp3:logging-interceptor:4.8.1'
+    externalRetrofit = 'com.squareup.retrofit2:retrofit:2.9.0'
+    externalRetrofitGsonConverter = 'com.squareup.retrofit2:converter-gson:2.9.0'
+    externalDialogPlus = 'com.orhanobut:dialogplus:1.11@aar'
+    externalCircleImageView = 'de.hdodenhof:circleimageview:3.1.0'
+    externalHawk = 'com.orhanobut:hawk:2.0.1'
+    externalRecyclerViewAdapterHelper = 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
+    externalStatusBarUtil ='com.jaeger.statusbarutil:library:1.5.1'
+    externalStyleableToast = 'io.github.muddz:styleabletoast:2.4.0'
+    externalRipplebackground = 'com.skyfishjy.ripplebackground:library:1.0.1'
+    externalSmartRefreshLayutKernel = 'com.scwang.smart:refresh-layout-kernel:2.0.3'      //核心必须依赖
+    externalSmartRefreshLayutHeader = 'com.scwang.smart:refresh-header-classics:2.0.3'    //经典刷新头
+    externalSmartRefreshLayutFooter = 'com.scwang.smart:refresh-footer-classics:2.0.3'    //经典加载
+    externalRxJava = 'io.reactivex.rxjava3:rxjava:3.1.8'
+    externalRxAndroid = 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    externalRxJavaRetrofit = 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
+
+    externalARouter = 'com.alibaba:arouter-api:1.5.2'
+    externalARouterCompiler = 'com.alibaba:arouter-compiler:1.5.2'
+
+    //Aliyun SDK
+    externalAnt = 'org.apache.ant:ant:1.9.16'
+    externalFatAarPlugin = 'com.github.kezong:fat-aar:1.3.8'
+    externalWupPlugin = 'digital.wup:android-maven-publish:3.6.2'
+    externalAliyunVodUpload = 'com.aliyun.video.android:upload:1.6.6'
+    externalAliyunOSS = 'com.aliyun.dpa:oss-android-sdk:2.9.11'
+    externalAliyunQueen = 'com.aliyun.maliang.android:queen:6.8.1-official-pro'
+    externalAliyunQueenUI = 'com.aliyun.maliang.android:queen_menu:6.8.1-official-pro-tiny'
+    externalAliyunQueenFramwork = 'com.aliyun.maliang.android:queen_aio_framework:6.7.0-official'
+    externalAnimoji = 'com.aliyun.animoji:animoji:1.2@aar'
+    externalRtsSDK = 'com.aliyun.rts.android:RtsSDK:2.6.0'
+
+    if(project.hasProperty("svideoIndependent") && "true".equalsIgnoreCase(svideoIndependent)){
+        externalAlivcFFmpeg =  'com.aliyun.video.android:AlivcFFmpeg:4.3.6.0-part-SNAPSHOT'
+    }else{
+        externalAlivcFFmpeg =  'com.aliyun.video.android:AlivcFFmpeg:4.3.6'
+    }
+
+    externalSvideopro = 'com.aliyun.video.android:svideopro:6.7.0'
+    externalSvideostandard = 'com.aliyun.video.android:svideostandard:6.7.0'
+    externalSvideosnap = 'com.aliyun.video.android:svideosnap:6.7.0'
+    externalPlayerFull = 'com.aliyun.sdk.android:AliyunPlayer:6.21.0-full'
+    externalPlayerPart = 'com.aliyun.sdk.android:AliyunPlayer:6.21.0-part'
+    externalARTC = 'com.aliyun.sdk.android:AlivcArtc:6.21.0'
+    externalAlivcConan = 'com.alivc.conan:AlivcConan:1.0.5'
+    externalAlivcCore = 'com.aliyun.video.android:core:1.2.2'
+    externalLivePusherInteractive = "com.alivc.pusher:AlivcLivePusher_Interactive:6.17.0"
+    externalLivePusher = "com.alivc.pusher:AlivcLivePusher:6.17.0"
+    externalAllInOne = 'com.aliyun.aio:AliVCSDK_Standard:6.20.0'
+
+    externalAUIRoomEngine = 'com.aliyun.auikits.android:roomengine:1.3.0'
+
+    is_all_in_one = false
+    if (new File("${rootDir}/aioDebug.gradle").exists()) { //内部调试代码，发布删除 -- 注释勿动
+        apply from: "${rootDir}/aioDebug.gradle" //内部调试代码，发布删除 -- 注释勿动
+        if (this.ext.isAioDebug) {              //内部调试代码，发布删除 -- 注释勿动
+            externalAllInOne = project(':all-in-one')      //内部调试代码，发布删除 -- 注释勿动
+            is_all_in_one = true                //内部调试代码，发布删除 -- 注释勿动
+        }                                       //内部调试代码，发布删除 -- 注释勿动
+    } else { //内部调试代码，发布删除 -- 注释勿动
+        //内部调试代码，发布删除 -- 注释勿动
+        apply from: 'https://code.alibaba-inc.com/apsara-media-box/imp-android-gradle-config/raw/v6.7.0/aio/media_box_debug_config.gradle'
+        //内部调试代码，发布删除 -- 注释勿动
+        if (this.ext.has('is_source_debug') && this.ext.is_source_debug) {  //内部调试代码，发布删除 -- 注释勿动
+            externalAllInOne = project(':all-in-one')      //内部调试代码，发布删除 -- 注释勿动
+            is_all_in_one = true  //内部调试代码，发布删除 -- 注释勿动
+        }    //内部调试代码，发布删除 -- 注释勿动
+    } //内部调试代码，发布删除 -- 注释勿动
+
+    if ("true".equalsIgnoreCase(allInOne) || is_all_in_one) {
+        externalAlivcFFmpeg = externalAllInOne
+        externalSvideopro = externalAllInOne
+        externalSvideostandard = externalAllInOne
+        externalSvideosnap = externalAllInOne
+        externalPlayerFull = externalAllInOne
+        externalPlayerPart = externalAllInOne
+        externalRtsSDK = externalAllInOne
+        externalARTC = externalAllInOne
+        externalAlivcConan = externalAllInOne
+        externalAlivcCore = externalAllInOne
+        externalLivePusherInteractive = externalAllInOne
+        externalLivePusher = externalAllInOne
+    }
+
+
+    androidMinSdkVersion = 21
+    androidTargetSdkVersion = 33
+    androidCompileSdkVersion = 33
+    androidBuildToolsVersion = "33.0.2"
+
+    //Android SDK/Tools Version
+    externalCompileSdkVersion = androidCompileSdkVersion
+    externalBuildToolsVersion = androidBuildToolsVersion
+    //The MinSdkVersion of the product you can add like this: externalSVideoMinSdkVersion 15
+    externalMinSdkVersion = androidMinSdkVersion
+    externalPlayerMinSdkVersion = androidMinSdkVersion
+    externalLiveMinSdkVersion = androidMinSdkVersion
+    externalTargetSdkVersion = androidTargetSdkVersion
+}

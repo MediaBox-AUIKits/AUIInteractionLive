@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply from: './dependencies.gradle'
 
 // Cannot make method static, @runchen.brc
@@ -14,7 +14,6 @@ String getEnvValue(key, defValue) {
     return defValue
 }
 
-ext.MTL_buildId = getEnvValue("MUPP_BUILD_ID", 'localbuild')
 ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", 'internal')
 
 android {
@@ -37,11 +36,8 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.aliyun.interaction.app"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 2
-        versionName '2.0.0'
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
@@ -54,21 +50,6 @@ android {
         }
     }
 
-    buildTypes {
-        release {
-            zipAlignEnabled true
-            minifyEnabled false
-            shrinkResources false
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-rules-app.pro'
-            consumerProguardFiles 'proguard-rules.pro' //子模块
-            buildConfigField "Boolean", "DEBUGGING_FEATURES", "false"
-        }
-        debug {
-            buildConfigField "Boolean", "DEBUGGING_FEATURES", "false"
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -78,10 +59,5 @@ android {
         abortOnError false
         checkReleaseBuilds false
         disable 'MissingTranslation'
-    }
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            outputFileName = "${project.name}-${variant.buildType.name}-${MTL_buildId}.apk"
-        }
     }
 }

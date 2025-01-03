@@ -3,11 +3,13 @@ package com.aliyun.interaction.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alivc.auicommon.common.base.callback.Callbacks;
 import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auicommon.common.base.util.CollectionUtil;
@@ -29,6 +32,7 @@ import com.aliyun.aliinteraction.uikit.uibase.util.ExStatusBarUtils;
 import com.aliyun.aliinteraction.uikit.uibase.util.LastLiveSp;
 import com.aliyun.aliinteraction.uikit.uibase.util.ViewUtil;
 import com.aliyun.auiappserver.AppServerApi;
+import com.aliyun.auiappserver.AppServerTokenManager;
 import com.aliyun.auiappserver.model.ListLiveRequest;
 import com.aliyun.auiappserver.model.LiveModel;
 import com.aliyun.auipusher.LiveRole;
@@ -41,6 +45,7 @@ import java.util.List;
  * @author puke
  * @version 2021/5/11
  */
+@Route(path = "/interaction/roomlist")
 public class RoomListActivity extends AppBaseActivity {
 
     private static final String TAG = RoomListActivity.class.getSimpleName();
@@ -52,14 +57,16 @@ public class RoomListActivity extends AppBaseActivity {
     private TabInfo roomType2TabInfo = new TabInfo();
     private Adapter adapter;
     private boolean isRequesting;
+    private LiveMode typeLive = LiveMode.Common;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_room_list);
-        ExStatusBarUtils.setStatusBarColor(this, AppUtil.getColor(R.color.bus_login_status_bar_color));
-
+        ExStatusBarUtils.setStatusBarColor(this, AppUtil.getColor(R.color.black_back));
+        ExStatusBarUtils.setStatusBarTextColorBlack(this, false);
+        TextView toTitleTextView = findViewById(R.id.to_title_live);
         loading = findViewById(R.id.loading);
         backBtn = findViewById(R.id.back_btn);
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +98,7 @@ public class RoomListActivity extends AppBaseActivity {
         adapter = new Adapter();
         recyclerView.setAdapter(adapter);
 
-        notifyRadioChange();
+        initParam();
 
         refreshLayout = findViewById(R.id.refresh_layout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -106,11 +113,62 @@ public class RoomListActivity extends AppBaseActivity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent(context, ChooseRoomTypeActivity.class);
-                        context.startActivity(intent);
+                        Intent intent = new Intent(RoomListActivity.this, ChooseRoomTypeActivity.class);
+                        intent.putExtra("live_mode", typeLive.value());
+                        startActivity(intent);
                     }
                 }
         );
+        if (null != getIntent()) {
+            if (getIntent().getIntExtra("live_mode", 2) == 0) {
+                typeLive = LiveMode.Standard;
+            }
+            if (getIntent().getIntExtra("live_mode", 2) == 1) {
+                typeLive = LiveMode.Microphone;
+            }
+        }
+        switch (typeLive) {
+            case Microphone:
+                startCreateRoomButtonText.setText("创建连麦直播间");
+                toTitleTextView.setText("连麦直播间列表");
+                break;
+            case Standard:
+                startCreateRoomButtonText.setText("创建标准直播间");
+                toTitleTextView.setText("标准直播间列表");
+                break;
+            default:
+                startCreateRoomButtonText.setText("创建直播间");
+                toTitleTextView.setText("直播间列表");
+                break;
+        }
+    }
+
+
+    private void initParam() {
+        if (null != getIntent()) {
+            String userId = getIntent().getStringExtra("user_id");
+            if (null == userId || "".equals(userId)) {
+                Log.e("BUGGER", "请求数据valid");
+                notifyRadioChange();
+                return;
+            }
+            Log.e("BUGGER", "请求数据");
+            Const.setUserId(userId);
+            AppServerTokenManager.login(userId, userId, new InteractionCallback<Void>() {
+                @Override
+                public void onSuccess(Void data) {
+                    notifyRadioChange();
+                }
+
+                @Override
+                public void onError(InteractionError interactionError) {
+                    Toast.makeText(RoomListActivity.this, "请求异常", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Log.e("BUGGER", "请求数据valid");
+            notifyRadioChange();
+        }
     }
 
     /**

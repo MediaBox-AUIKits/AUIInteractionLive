@@ -1,0 +1,29 @@
+dependencies {
+    implementation fileTree(dir: "../libs", include: ["*.jar", "*.aar"])
+    // 外部依赖
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.leanback:leanback:1.0.0'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation externalARouter
+    annotationProcessor externalARouterCompiler
+
+    // 本地依赖
+    api project(':AUIUikit:AUIBaseKit')
+    implementation project(':AUIUikit:AUILikeKit')
+    implementation project(':AUIUikit:AUIBarrageKit')
+    implementation project(':AUIUikit:AUINoticeKit')
+    implementation project(':AUIUikit:AUIPlayerKit')
+    implementation project(':AUIUikit:AUIPusherKit')
+    implementation project(':AUIUikit:AUILinkMicKit')
+    implementation project(':AUIUikit:AUIBeautyKit')
+    implementation project(':AUIUikit:AUIEnterpriseKit')
+
+    // 开发依赖
+    rootProject.allprojects {
+        if (it.name == 'debugger') {
+            implementation it
+            println('debugger setup')
+        }
+    }
+}

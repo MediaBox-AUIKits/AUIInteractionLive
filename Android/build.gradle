@@ -9,8 +9,9 @@ buildscript {
         // 如果没有引用AUIMessageImpl-RongCloud，此maven源可删除
         maven { url "https://maven.rongcloud.cn/repository/maven-releases/" }
     }
+    apply from: './AndroidThirdParty/config.gradle'
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:7.1.2'
     }
 }
 

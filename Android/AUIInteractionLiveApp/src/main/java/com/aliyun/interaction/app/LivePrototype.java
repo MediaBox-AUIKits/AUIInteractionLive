@@ -42,7 +42,6 @@ public class LivePrototype implements Serializable {
 
     private static final String TAG = LivePrototype.class.getSimpleName();
     private static final byte[] sInstanceLock = new byte[0];
-
     private static LivePrototype sInstance;
 
     private LivePrototype() {

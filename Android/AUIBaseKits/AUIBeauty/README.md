@@ -10,7 +10,7 @@
 
 **1、申请License**
 
-参考文档：[License管理](https://help.aliyun.com/document_detail/2391301.html)
+参考文档：[管理License](https://help.aliyun.com/zh/apsara-video-sdk/user-guide/license-authorization-and-management)
 
 **2、配置License**
 
@@ -138,14 +138,14 @@ private void destroyBeautyManager() {
 dependencies {
     api project(':AUIBaseKits:AUIBeauty:live_beauty')
 
-    // 美颜UI面板
-    api "com.aliyun.maliang.android:queen_menu:6.7.0-official-pro-tiny"
+    // 美颜UI面板（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAliyunQueenUI 最新版本）
+    api "com.aliyun.maliang.android:queen_menu:${latest_version}"
 
-    // 一体化SDK，包含基础美颜功能
-    implementation "com.aliyun.aio:AliVCSDK_InteractiveLive:6.14.0"
+    // 一体化SDK，包含基础美颜功能（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAllInOne 最新版本）
+    implementation "com.aliyun.aio:AliVCSDK_InteractiveLive:${latest_version}"
 
-    // 此处引用外部独立版本高级功能Queen
-    implementation "com.aliyun.maliang.android:queen:6.7.0-official-pro"
+    // 此处引用外部独立版本高级功能Queen（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAliyunQueen 最新版本）
+    implementation "com.aliyun.maliang.android:queen:${latest_version}"
 }
 ```
 
@@ -167,26 +167,24 @@ BeautyInterface为抽象化的美颜接口类，客户可以基于该接口类�
 
 ## 四、重要更新
 
-* v4.4.4~v6.1.0：基础直播下的美颜，处理逻辑参考BeautySDKType.QUEEN，即：QueenBeautyImpl；互动直播下的美颜，处理逻辑参考BeautySDKType.INTERACT_QUEEN，即：InteractQueenBeautyImpl；
-
-* v6.2.0~v6.6.0：互动直播下的美颜，与基础直播下的美颜，完成统一，处理逻辑保持一致，即：QueenBeautyImpl；
-
-* v6.7.0开始，一体化SDK只包含基础美颜功能，高级美颜功能需要单独集成美颜SDK，详见模块文档；
+* v6.7.0开始，一体化SDK只包含基础美颜功能，高级美颜功能需要单独集成美颜SDK，详见模块文档。
 
 ## 五、用户指引
 
 ### **文档**
 
-[AUI Kits低代码应用方案](https://help.aliyun.com/document_detail/2391314.html)
+[音视频终端SDK](https://help.aliyun.com/zh/apsara-video-sdk/)
 
-[音视频终端SDK](https://help.aliyun.com/product/261167.html)
+[AUI Kits低代码应用方案](https://help.aliyun.com/zh/apsara-video-sdk/use-cases/aui-kits-application-solution/)
 
-[美颜特效SDK](https://help.aliyun.com/document_detail/2392303.html)
+[MediaBox-AUIKits](https://github.com/orgs/MediaBox-AUIKits/repositories)
 
-[美颜特效SDK通用问题](https://help.aliyun.com/document_detail/2400372.html)
+[美颜特效SDK](https://help.aliyun.com/zh/apsara-video-sdk/developer-reference/queen-sdk-new/)
+
+[美颜特效SDK通用问题](https://help.aliyun.com/zh/apsara-video-sdk/support/faq-related-to-queen-sdk)
 
 ### **FAQ**
 
-如果您在使用AUI Kits有任何问题或建议，欢迎通过钉钉搜索群号35685013712加入AUI客户支持群。
+如果您在使用 AUI Kits 有任何问题或建议，欢迎通过提交工单获取技术支持。
 
 您在美颜特效SDK使用过程中有任何问题或建议，请通过开发者支持群联系我们，钉钉搜索群号34197869加入。

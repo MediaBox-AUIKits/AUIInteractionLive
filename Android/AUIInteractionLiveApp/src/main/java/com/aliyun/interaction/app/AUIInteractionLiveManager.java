@@ -1,6 +1,5 @@
 package com.aliyun.interaction.app;
 
-import com.aliyun.aliinteraction.app.BuildConfig;
 import com.aliyun.auiappserver.RetrofitManager;
 import com.aliyun.common.AlivcBase;
 
@@ -14,8 +13,6 @@ public class AUIInteractionLiveManager {
 
     private static final String TAG_PROJECT_INTERACTION_LIVE = "aui-live-interaction";
 
-    private static final String BUILD_IM_TYPE_RONGCLOUD = "rongcloud";
-
     private AUIInteractionLiveManager() {
     }
 
@@ -28,10 +25,6 @@ public class AUIInteractionLiveManager {
     }
 
     private static void setupAppServerUrl() {
-        if (BUILD_IM_TYPE_RONGCLOUD.equals(BuildConfig.BUILD_IM_TYPE)) {
-            RetrofitManager.setAppServerUrl(RetrofitManager.Const.APP_SERVER_URL_RONG_CLOUD);
-        } else {
-            RetrofitManager.setAppServerUrl(RetrofitManager.Const.APP_SERVER_URL_ALIVC);
-        }
+        RetrofitManager.setAppServerUrl(RetrofitManager.Const.APP_SERVER_URL_DEFAULT);
     }
 }

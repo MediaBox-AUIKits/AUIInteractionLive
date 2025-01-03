@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -27,6 +27,6 @@ android {
 dependencies {
     implementation project(':AUIUikit:AUIBaseKit')
 
-    // 美颜UI面板
-    api "com.aliyun.maliang.android:queen_menu:6.7.0-official-pro-tiny"
+    // 美颜UI面板（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAliyunQueenUI 最新版本）
+    api externalAliyunQueenUI
 }

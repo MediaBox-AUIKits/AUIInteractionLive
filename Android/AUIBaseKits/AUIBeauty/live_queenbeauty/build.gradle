@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -30,12 +30,13 @@ dependencies {
 
     api project(':AUIBaseKits:AUIBeauty:live_beauty')
 
-    // 美颜UI面板
-    api "com.aliyun.maliang.android:queen_menu:6.7.0-official-pro-tiny"
+    // 美颜UI面板（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAliyunQueenUI 最新版本）
+    api externalAliyunQueenUI
 
-    // 一体化SDK，包含基础美颜功能
-    implementation "com.aliyun.aio:AliVCSDK_InteractiveLive:6.14.0"
+    // 一体化SDK，包含基础美颜功能（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAllInOne 最新版本）
+    // 建议使用最新版本，详情参考官网：https://help.aliyun.com/zh/apsara-video-sdk/download-sdks
+    implementation externalAllInOne
 
-    // 此处引用外部独立版本高级功能Queen
-    implementation "com.aliyun.maliang.android:queen:6.7.0-official-pro"
+    // 此处引用外部独立版本高级功能Queen（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAliyunQueen 最新版本）
+    implementation externalAliyunQueen
 }

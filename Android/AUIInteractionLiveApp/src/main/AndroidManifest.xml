@@ -19,14 +19,13 @@
     <application
         android:name="com.aliyun.interaction.app.InteractionLiveApplication"
         android:allowBackup="true"
-        android:icon="${appIcon}"
-        android:label="${appLabel}"
-        android:roundIcon="${appIconRound}"
+        android:icon="@mipmap/ic_launcher_general"
+        android:roundIcon="@mipmap/ic_launcher_general"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:replace="android:icon,android:label,android:theme"
         tools:targetApi="m">
+        <activity android:name="com.aliyun.interaction.app.LiveEnterpriseActivity" />
         <activity
             android:name="com.aliyun.interaction.app.MainActivity"
             android:exported="true">
@@ -46,13 +45,10 @@
         <activity
             android:name="com.aliyun.interaction.app.RoomListActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="com.aliyun.interaction.app.ChooseRoomTypeActivity"
-            android:screenOrientation="portrait" />
-
-        <!--   TODO 请在此处填写申请到的license相关信息     -->
-        <!--   接入License：https://help.aliyun.com/document_detail/2391513.html     -->
+            android:screenOrientation="portrait" /> <!-- TODO 请在此处填写申请到的license相关信息 -->
+        <!-- 接入License：https://help.aliyun.com/zh/apsara-video-sdk/user-guide/access-to-license -->
         <meta-data
             android:name="com.aliyun.alivc_license.licensekey"
             android:value=""

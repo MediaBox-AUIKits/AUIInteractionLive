@@ -11,7 +11,7 @@ import com.aliyun.auipusher.listener.MultiInteractLivePushPullListener;
 /**
  * AlivcLivePlayer 封装类，用于多人连麦互动
  */
-public class MultiAlivcLivePlayer extends AlivcLivePlayerImpl {
+public class MultiAlivcLivePlayer extends AlivcLivePlayerImpl  {
 
     private MultiInteractLivePushPullListener mListener;
     private boolean mIsPlaying = false;
@@ -36,7 +36,6 @@ public class MultiAlivcLivePlayer extends AlivcLivePlayerImpl {
                 }
             }
 
-            @Override
             public void onError(AlivcLivePlayError alivcLivePlayError, String s) {
                 mIsPlaying = false;
                 if (mListener != null) {

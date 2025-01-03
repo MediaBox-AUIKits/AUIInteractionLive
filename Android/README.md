@@ -2,7 +2,7 @@
 阿里云 · AUI Kits 互动直播场景（竖屏样式）
 
 ## 介绍
-AUI Kits 互动直播场景（[竖屏样式](https://help.aliyun.com/document_detail/2401430.html)）集成工具是阿里云提供的跨平台直播服务，为业务方提供娱乐、秀场、电商等场景的能力，借助视频直播稳定、流畅、灵活的产品能力，以低代码的方式助力业务方快速发布直播应用。
+AUI Kits 互动直播场景（[竖屏样式](https://help.aliyun.com/zh/apsara-video-sdk/use-cases/portrait-mode-for-android)）集成工具是阿里云提供的跨平台直播服务，为业务方提供娱乐、秀场、电商等场景的能力，借助视频直播稳定、流畅、灵活的产品能力，以低代码的方式助力业务方快速发布直播应用。
 
 
 ## 源码说明
@@ -22,15 +22,20 @@ AUI Kits 互动直播场景（[竖屏样式](https://help.aliyun.com/document_de
 ```
 
 ### 环境要求
-Android 5.0（SDK API Level 21）及以上版本。
+* Gradle 7.5-bin，插件版本7.1.2
 
-建议使用Android Studio 4.0以及以上版本。
+* **JDK 11**
 
-Android 5.0或以上版本的真机，暂不支持模拟器调试。
+> JDK 11设置方法：Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle -> Gradle JDK -> 选择 11（如果没有11，请升级你的Android Studio版本）
+
+* 适用于 Android 5.0（Lollipop，SDK API Level 21）及以上版本的设备。
+
+* 推荐使用 Android Studio 4.0 或更高版本的开发环境。
+* 建议使用运行 Android 5.0 或更高版本的真机进行调试，暂不支持模拟器调试。
 
 ### 前提条件
-* 您已经搭建AppServer并获取了访问域名。搭建步骤，请参见官网文档[服务端集成](https://help.aliyun.com/document_detail/2401417.html)
-* 您已获取[音视频终端SDK](https://help.aliyun.com/product/261167.html)的直播推流和播放器的License授权和License Key；获取方法，请参见官网文档[获取License](https://help.aliyun.com/document_detail/2391512.html)
+* 您已经搭建AppServer并获取了访问域名。搭建步骤，请参见官网文档[服务端配置与运行](https://help.aliyun.com/zh/apsara-video-sdk/use-cases/how-to-integrate-the-server-side-into-live-streaming)
+* 您已获取[音视频终端SDK](https://help.aliyun.com/zh/apsara-video-sdk/)的直播推流和播放器的License授权和License Key；获取方法，请参见官网文档[获取License](https://help.aliyun.com/zh/apsara-video-sdk/user-guide/license-authorization-and-management)
 
 ## 跑通Demo（可选）
 
@@ -55,7 +60,7 @@ Android 5.0或以上版本的真机，暂不支持模拟器调试。
 ### 配置License
 MediaBox AUI Kits和MediaBox SDKs拥有统一的License获取方式。您可以在控制台申请如直播推流、短视频、播放器、美颜特效等模块的License使用权限，也可以对各个模块的License进行管理。
 
-配置License的前提是您已获取音视频终端SDK的直播推流和播放器的License授权和License Key。获取方法，请参考文档[获取License](https://help.aliyun.com/document_detail/2391512.html)。
+配置License的前提是您已获取音视频终端SDK的直播推流和播放器的License授权和License Key。获取方法，请参考文档[获取License](https://help.aliyun.com/zh/apsara-video-sdk/user-guide/license-authorization-and-management)。
 
 1. 在AUIInteractionLiveApp/src/main/AndroidManifest.xml里配置 license key
 
@@ -100,11 +105,16 @@ maven { url 'https://maven.aliyun.com/nexus/content/repositories/releases' }
 #### gradle依赖
 
 ```groovy
-implementation "com.aliyun.sdk.android:AliVCInteractionMessage:1.3.1"
-implementation 'com.aliyun.aio:AliVCSDK_InteractiveLive:6.14.0'
+// 互动信令SDK
+implementation "com.aliyun.sdk.android:AliVCInteractionMessage:${latest_version}"
+// 一体化SDK（请参考 AndroidThirdParty 目录下的 config.gradle 文件，获取 externalAllInOne 最新版本）
+// 建议使用最新版本，详情参考官网：https://help.aliyun.com/zh/apsara-video-sdk/download-sdks
+implementation "com.aliyun.aio:AliVCSDK_InteractiveLive:${latest_version}"
 ```
 
-> 如果您的 APP 中还需要短视频编辑功能，请使用音视频终端全功能SDK（AliVCSDK_Standard），请将 AliVCSDK_InteractiveLive 全量替换为 AliVCSDK_Standard。
+> 如果您的 APP 中需要短视频编辑功能，请使用音视频终端全功能SDK（AliVCSDK_Standard）
+>
+> 如果您的 APP 中不需要短视频编辑功能，请使用音视频终端互动直播SDK（AliVCSDK_InteractiveLive）
 
 #### 混淆配置
 
@@ -141,17 +151,14 @@ implementation 'com.aliyun.aio:AliVCSDK_InteractiveLive:6.14.0'
 
 ## 常见问题
 
-[Android端集成AUI Kits常见问题](https://help.aliyun.com/document_detail/2401413.html)
+[Android端集成AUI Kits常见问题](https://help.aliyun.com/zh/apsara-video-sdk/support/faq-for-low-code-integration-tools-for-android)
 
 ## 技术支持
 
-如果您在使用AUI Kits有任何问题或建议，欢迎通过钉钉搜索群号35685013712加入AUI客户支持群。
+如果您在使用 AUI Kits 有任何问题或建议，欢迎通过提交工单获取技术支持。
 
-[音视频终端SDK](https://help.aliyun.com/product/261167.html)
+[音视频终端SDK](https://help.aliyun.com/zh/apsara-video-sdk/)
 
-[AUI Kits低代码应用方案](https://help.aliyun.com/document_detail/2391314.html)
-
-[低代码（含UI）集成](https://help.aliyun.com/zh/live/user-guide/integrate-aui-kits/)
+[AUI Kits低代码应用方案](https://help.aliyun.com/zh/apsara-video-sdk/use-cases/aui-kits-application-solution/)
 
 [MediaBox-AUIKits](https://github.com/orgs/MediaBox-AUIKits/repositories)
-

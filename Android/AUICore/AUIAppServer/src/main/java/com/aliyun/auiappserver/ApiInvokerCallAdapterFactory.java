@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.alivc.auicommon.common.base.AppContext;
+import com.alivc.auicommon.common.base.log.Logger;
 import com.alivc.auimessage.MessageServiceFactory;
 import com.alivc.auimessage.listener.InteractionCallback;
 import com.alivc.auimessage.listener.InteractionUICallback;
@@ -75,6 +76,7 @@ class ApiInvokerCallAdapterFactory extends CallAdapter.Factory {
                         @Override
                         public void onResponse(@NonNull Call<R> call, @NonNull Response<R> response) {
                             int httpCode = response.code();
+                            Logger.w("ApiRequest", "[RESP] " + call.request().url() + " [" + httpCode + "][" + response.message() + "]");
                             switch (httpCode) {
                                 case 200:
                                     R body = response.body();
@@ -119,7 +121,9 @@ class ApiInvokerCallAdapterFactory extends CallAdapter.Factory {
 
                         @Override
                         public void onFailure(@NonNull Call<R> call, @NonNull Throwable t) {
-                            if (isNetworkInvalid(AppContext.getContext())) {
+                            boolean networkInvalid = isNetworkInvalid(AppContext.getContext());
+                            Logger.e("ApiRequest", "[RESP] " + call.request().url() + " [networkInvalid: " + networkInvalid + "][" + t.getMessage() + "]");
+                            if (networkInvalid) {
                                 uiCallback.onError(new InteractionError("当前网络不可用，请检查后再试"));
                             } else {
                                 uiCallback.onError(new InteractionError(t.getMessage()));

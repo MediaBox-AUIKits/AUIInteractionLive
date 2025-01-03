@@ -2,7 +2,7 @@
 <resources>
     <color name="generalAlphaGrayBg">#4d000000</color>
     <color name="bus_login_status_bar_color">#F86939</color>
-
+    <color name="black_back">#1C1D22</color>
     <color name="colorGray333">#333333</color>
     <color name="colorGray999">#999999</color>
 

@@ -26,11 +26,11 @@ def BUILD_IM_TYPE_ALIVC_IM = "alivcim"
 ext.BUILD_IM_TYPE = getEnvValue("BUILD_IM_TYPE", BUILD_IM_TYPE_ALIVC_IM)
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 

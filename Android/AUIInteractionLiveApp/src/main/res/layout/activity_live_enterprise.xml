@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/generalAlphaGrayBg"
+    android:clipChildren="false"
+    android:keepScreenOn="true"
+    tools:ignore="HardcodedText,SmallSp">
+
+    <!-- 企业直播播放组件 -->
+    <com.aliyun.auienterprisekit.AliyunPlayerComponent
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white" />
+
+</RelativeLayout>

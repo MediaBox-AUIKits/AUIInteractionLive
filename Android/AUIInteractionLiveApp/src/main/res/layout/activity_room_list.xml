@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,13 +11,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/black_back"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:background="@color/white">
+            android:background="@color/black_back">
 
             <ImageView
                 android:id="@+id/back_btn"
@@ -25,15 +26,17 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="16dp"
-                android:background="@drawable/assist_config_icon_back" />
+                android:background="@drawable/assist_config_icon_back"
+                android:backgroundTint="@color/white"/>
 
             <TextView
+                android:id="@+id/to_title_live"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="@string/list_room"
-                android:textColor="#3A3D48"
+                android:textColor="@color/white"
                 android:textSize="16dp" />
 
             <TextView
@@ -44,7 +47,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
                 android:text="@string/before_live"
-                android:textColor="#3A3D48"
+                android:textColor="@color/white"
                 android:textSize="14dp" />
 
         </RelativeLayout>

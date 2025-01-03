@@ -2,6 +2,8 @@ package com.aliyun.auiappserver;
 
 import android.text.TextUtils;
 
+import com.alivc.auicommon.common.base.log.Logger;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -15,7 +17,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @SuppressWarnings({"FieldMayBeFinal"})
 public class RetrofitManager {
-
     private static Retrofit sRetrofit;
     private static String sAPPServerUrl;
     private static String sEnv = "production";
@@ -54,7 +55,9 @@ public class RetrofitManager {
                                     if (!TextUtils.isEmpty(appServerToken)) {
                                         headerBuilder.addHeader("Authorization", "Bearer " + appServerToken);
                                     }
-                                    return chain.proceed(headerBuilder.build());
+                                    Request request = headerBuilder.build();
+                                    Logger.i("ApiRequest", "[REQ] " + request.url() + " [" + sEnv + "]");
+                                    return chain.proceed(request);
                                 }
                             })
                             .build()
@@ -69,18 +72,11 @@ public class RetrofitManager {
      */
     public static class Const {
         /**
-         * 互动直播-内部IM使用的APP Server地址
+         * The default URL for the APP Server.
+         * This URL is used for both Interactive Live and Enterprise Live services.
+         * <p>
+         * Note: Ensure this URL is updated according to the server configuration you deploy.
          */
-        public static final String APP_SERVER_URL_ALIVC = "";
-
-        /**
-         * 互动直播-融云IM使用的APP Server地址
-         */
-        public static final String APP_SERVER_URL_RONG_CLOUD = "";
-
-        /**
-         * 企业直播-内部IM使用的APP Server地址
-         */
-        public static final String APP_SERVER_URL_ENTERPRISE = "";
+        public static final String APP_SERVER_URL_DEFAULT = "";
     }
 }

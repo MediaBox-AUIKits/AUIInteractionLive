@@ -7,6 +7,8 @@ if (debuggerPath != null && new File(debuggerPath).exists()) {
     project(':debugger').projectDir = new File(debuggerPath)
 }
 
+include ':AndroidThirdParty'
+
 include ':AUIBaseKits:AUICommon'
 include ':AUIBaseKits:AUIBeauty:live_beauty'
 include ':AUIBaseKits:AUIBeauty:live_queenbeauty'
@@ -20,7 +22,7 @@ include ':AUICore:AUILiveMessage'
 include ':AUICore:AUIAppServer'
 include ':AUICore:AUIPusher'
 
-include ':AUIUikit:AUIPusherKit'
+include ':AUIUikit:AUIPusherKit'    
 include ':AUIUikit:AUIBarrageKit'
 include ':AUIUikit:AUINoticeKit'
 include ':AUIUikit:AUILinkMicKit'

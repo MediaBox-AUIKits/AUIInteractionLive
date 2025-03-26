@@ -111,33 +111,18 @@ ext {
     externalSvideopro = 'com.aliyun.video.android:svideopro:6.7.0'
     externalSvideostandard = 'com.aliyun.video.android:svideostandard:6.7.0'
     externalSvideosnap = 'com.aliyun.video.android:svideosnap:6.7.0'
-    externalPlayerFull = 'com.aliyun.sdk.android:AliyunPlayer:6.21.0-full'
-    externalPlayerPart = 'com.aliyun.sdk.android:AliyunPlayer:6.21.0-part'
+    externalPlayerFull = 'com.aliyun.sdk.android:AliyunPlayer:7.1.0-full'
+    externalPlayerPart = 'com.aliyun.sdk.android:AliyunPlayer:7.1.0-part'
     externalARTC = 'com.aliyun.sdk.android:AlivcArtc:6.21.0'
     externalAlivcConan = 'com.alivc.conan:AlivcConan:1.0.5'
     externalAlivcCore = 'com.aliyun.video.android:core:1.2.2'
     externalLivePusherInteractive = "com.alivc.pusher:AlivcLivePusher_Interactive:6.17.0"
     externalLivePusher = "com.alivc.pusher:AlivcLivePusher:6.17.0"
-    externalAllInOne = 'com.aliyun.aio:AliVCSDK_Standard:6.20.0'
+    externalAllInOne = 'com.aliyun.aio:AliVCSDK_Standard:7.0.0'
 
     externalAUIRoomEngine = 'com.aliyun.auikits.android:roomengine:1.3.0'
 
     is_all_in_one = false
-    if (new File("${rootDir}/aioDebug.gradle").exists()) { //内部调试代码，发布删除 -- 注释勿动
-        apply from: "${rootDir}/aioDebug.gradle" //内部调试代码，发布删除 -- 注释勿动
-        if (this.ext.isAioDebug) {              //内部调试代码，发布删除 -- 注释勿动
-            externalAllInOne = project(':all-in-one')      //内部调试代码，发布删除 -- 注释勿动
-            is_all_in_one = true                //内部调试代码，发布删除 -- 注释勿动
-        }                                       //内部调试代码，发布删除 -- 注释勿动
-    } else { //内部调试代码，发布删除 -- 注释勿动
-        //内部调试代码，发布删除 -- 注释勿动
-        apply from: 'https://code.alibaba-inc.com/apsara-media-box/imp-android-gradle-config/raw/v6.7.0/aio/media_box_debug_config.gradle'
-        //内部调试代码，发布删除 -- 注释勿动
-        if (this.ext.has('is_source_debug') && this.ext.is_source_debug) {  //内部调试代码，发布删除 -- 注释勿动
-            externalAllInOne = project(':all-in-one')      //内部调试代码，发布删除 -- 注释勿动
-            is_all_in_one = true  //内部调试代码，发布删除 -- 注释勿动
-        }    //内部调试代码，发布删除 -- 注释勿动
-    } //内部调试代码，发布删除 -- 注释勿动
 
     if ("true".equalsIgnoreCase(allInOne) || is_all_in_one) {
         externalAlivcFFmpeg = externalAllInOne

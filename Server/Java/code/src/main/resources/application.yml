@@ -28,13 +28,14 @@ biz:
     access:
       key: "*********"
       secret: "*********"
+      region_id: cn-shanghai
   live_im:
     app_id: TY3****
   # 新IM应用信息
   new_im:
     appId: "0c8xxxxx"
     appKey: "586fxxxxxx"
-    appSign:	"232sfxxxxxx"
+    appSign: "232sfxxxxxx"
   live_stream:
     push_url: push.*****.vip
     pull_url: pull.*****.vip

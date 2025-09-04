@@ -83,6 +83,8 @@ biz:
     access:
       key: daeewe*****
       secret: we2wewe******
+      # live服务和vod服务的接入区域
+      region_id: cn-shanghai
   # IM服务的应用Id
   live_im:
       app_id: TY3****

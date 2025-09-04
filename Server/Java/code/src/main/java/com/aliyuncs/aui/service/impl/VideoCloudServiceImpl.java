@@ -1,10 +1,12 @@
 package com.aliyuncs.aui.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.aliyuncs.CommonRequest;
-import com.aliyuncs.CommonResponse;
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.IAcsClient;
+import com.aliyun.live20161101.models.*;
+import com.aliyun.teaopenapi.models.Config;
+import com.aliyun.teaopenapi.models.OpenApiRequest;
+import com.aliyun.teaopenapi.models.Params;
+import com.aliyun.teautil.models.RuntimeOptions;
+import com.aliyun.vod20170321.models.*;
 import com.aliyuncs.aui.dto.LinkInfo;
 import com.aliyuncs.aui.dto.PullLiveInfo;
 import com.aliyuncs.aui.dto.PushLiveInfo;
@@ -16,14 +18,6 @@ import com.aliyuncs.aui.dto.res.RoomInfoDto;
 import com.aliyuncs.aui.service.VideoCloudService;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
-import com.aliyuncs.http.FormatType;
-import com.aliyuncs.http.MethodType;
-import com.aliyuncs.live.model.v20161101.*;
-import com.aliyuncs.profile.DefaultProfile;
-import com.aliyuncs.vod.model.v20170321.GetPlayInfoRequest;
-import com.aliyuncs.vod.model.v20170321.GetPlayInfoResponse;
-import com.aliyuncs.vod.model.v20170321.SearchMediaRequest;
-import com.aliyuncs.vod.model.v20170321.SearchMediaResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -55,6 +49,8 @@ public class VideoCloudServiceImpl implements VideoCloudService {
     private String accessKeyId;
     @Value("${biz.openapi.access.secret}")
     private String accessKeySecret;
+    @Value("${biz.openapi.access.region_id}")
+    private String regionId;
     @Value("${biz.live_im.app_id}")
     private String imAppId;
     @Value("${biz.live_stream.push_url}")
@@ -85,13 +81,36 @@ public class VideoCloudServiceImpl implements VideoCloudService {
     @Value("${biz.new_im.appSign}")
     private String appSign;
 
-    private IAcsClient client;
+    private com.aliyun.live20161101.Client liveClient;
+
+    private com.aliyun.vod20170321.Client vodClient;
 
     @PostConstruct
     public void init() {
 
-        DefaultProfile profile = DefaultProfile.getProfile("cn-shanghai", accessKeyId, accessKeySecret);
-        client = new DefaultAcsClient(profile);
+        // 工程代码建议使用更安全的无AK方式，凭据配置方式请参见：https://help.aliyun.com/document_detail/378657.html。
+
+        Config liveConfig = new Config().setAccessKeyId(accessKeyId).setAccessKeySecret(accessKeySecret);
+        // Endpoint 请参考 https://api.aliyun.com/product/live
+        liveConfig.setRegionId(regionId);
+        // liveConfig.setEndpoint("live.aliyuncs.com");
+        try {
+            liveClient = new com.aliyun.live20161101.Client(liveConfig);
+        } catch (Exception e) {
+            log.error("init VideoCloudService error. error:{}", e.getMessage());
+        }
+
+
+        Config vodConfig = new Config().setAccessKeyId(accessKeyId).setAccessKeySecret(accessKeySecret);
+        // Endpoint 请参考 https://api.aliyun.com/product/vod
+        vodConfig.setRegionId(regionId);
+        // vodConfig.setEndpoint("vod.cn-shanghai.aliyuncs.com");
+        try {
+            vodClient = new com.aliyun.vod20170321.Client(vodConfig);
+        } catch (Exception e) {
+            log.error("init VideoCloudService error. error:{}", e.getMessage());
+        }
+
     }
 
     @Override
@@ -106,11 +125,11 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         log.info("getImToken, request:{}", JSONObject.toJSONString(imTokenRequestDto));
 
         try {
-            GetMessageTokenResponse response = client.getAcsResponse(request);
+            GetMessageTokenResponse response = liveClient.getMessageToken(request);
             log.info("getImToken, response:{}, consume:{}", JSONObject.toJSONString(response), (System.currentTimeMillis() - start));
 
-            return ImTokenResponseDto.builder().accessToken(response.getResult().getAccessToken())
-                    .refreshToken(response.getResult().getRefreshToken()).build();
+            return ImTokenResponseDto.builder().accessToken(response.getBody().getResult().getAccessToken())
+                    .refreshToken(response.getBody().getResult().getRefreshToken()).build();
         } catch (ServerException e) {
             log.error("getImToken ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
         } catch (ClientException e) {
@@ -159,9 +178,9 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         log.info("createMessageGroup, request:{}", JSONObject.toJSONString(request));
 
         try {
-            CreateMessageGroupResponse createMessageGroupResponse = client.getAcsResponse(request);
+            CreateMessageGroupResponse createMessageGroupResponse = liveClient.createMessageGroup(request);
             log.info("createMessageGroup, response:{}, consume:{}", JSONObject.toJSONString(createMessageGroupResponse), (System.currentTimeMillis() - start));
-            return createMessageGroupResponse.getResult().getGroupId();
+            return createMessageGroupResponse.getBody().getResult().getGroupId();
         } catch (ServerException e) {
             log.error("createMessageGroup ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
         } catch (ClientException e) {
@@ -179,13 +198,15 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         request.setAppId(appId);
         request.setGroupId(groupId);
         request.setCreatorId(creatorId);
+        // 如果涉及新加坡区域，则需要指定
+        //request.setDataCenter("ap-southeast-1");
 
         log.info("createNewImMessageGroup, request:{}", JSONObject.toJSONString(request));
 
         try {
-            CreateLiveMessageGroupResponse acsResponse = client.getAcsResponse(request);
+            CreateLiveMessageGroupResponse acsResponse = liveClient.createLiveMessageGroup(request);
             log.info("createNewImMessageGroup, response:{}, consume:{}", JSONObject.toJSONString(acsResponse), (System.currentTimeMillis() - start));
-            return acsResponse.getGroupId();
+            return acsResponse.getBody().getGroupId();
         } catch (ServerException e) {
             log.error("createNewImMessageGroup ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
         } catch (ClientException e) {
@@ -247,13 +268,12 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         long start = System.currentTimeMillis();
         SearchMediaRequest request = new SearchMediaRequest();
         request.setMatch(String.format("Title='%s'", title));
-        request.setAcceptFormat(FormatType.JSON);
 
         try {
-            SearchMediaResponse acsResponse = client.getAcsResponse(request);
+            SearchMediaResponse acsResponse = vodClient.searchMedia(request);
             log.info("searchMediaByTitle, title:{}, response:{}, consume:{}", title, JSONObject.toJSONString(acsResponse), (System.currentTimeMillis() - start));
-            if (CollectionUtils.isNotEmpty(acsResponse.getMediaList())) {
-                return acsResponse.getMediaList().get(0).getMediaId();
+            if (CollectionUtils.isNotEmpty(acsResponse.getBody().getMediaList())) {
+                return acsResponse.getBody().getMediaList().get(0).getMediaId();
             }
         } catch (ServerException e) {
             log.error("searchMediaByTitle ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
@@ -273,10 +293,10 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         GetPlayInfoRequest request = new GetPlayInfoRequest();
         request.setVideoId(mediaId);
         try {
-            GetPlayInfoResponse acsResponse = client.getAcsResponse(request);
+            GetPlayInfoResponse acsResponse = vodClient.getPlayInfo(request);
             List<RoomInfoDto.PlayInfo> playInfos = new ArrayList<>();
             RoomInfoDto.PlayInfo playInfoTmp = null;
-            for (GetPlayInfoResponse.PlayInfo playInfo : acsResponse.getPlayInfoList()) {
+            for (GetPlayInfoResponseBody.GetPlayInfoResponseBodyPlayInfoListPlayInfo playInfo : acsResponse.getBody().getPlayInfoList().getPlayInfo()) {
                 playInfoTmp = new RoomInfoDto.PlayInfo();
                 BeanUtils.copyProperties(playInfo, playInfoTmp);
                 playInfoTmp.setPlayUrl(playInfo.getPlayURL());
@@ -311,17 +331,17 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         request.setGroupId(groupId);
 
         try {
-            DescribeLiveMessageGroupResponse response = client.getAcsResponse(request);
+            DescribeLiveMessageGroupResponse response = liveClient.describeLiveMessageGroup(request);
             log.info("getNewImGroupDetails, response:{}, consume:{}", JSONObject.toJSONString(response), (System.currentTimeMillis() - start));
 
-            if (response.getDelete() != null && response.getDelete()) {
+            if (response.getBody().getDelete() != null && response.getBody().getDelete()) {
                 // 表示群已删除
                 log.warn("getNewImGroupDetails, groupId:{} is deleted", groupId);
                 return null;
             }
             return RoomInfoDto.Metrics.builder()
-                    .pv(response.getTotalTimes())
-                    .onlineCount(response.getOnlineUserCounts())
+                    .pv(response.getBody().getTotalTimes())
+                    .onlineCount(response.getBody().getOnlineUserCounts())
                     .build();
         } catch (ServerException e) {
             log.error("getNewImGroupDetails ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
@@ -339,21 +359,38 @@ public class VideoCloudServiceImpl implements VideoCloudService {
 
         long start = System.currentTimeMillis();
 
-        CommonRequest request = new CommonRequest();
-        request.setSysMethod(MethodType.POST);
+        Params params = new Params()
+                .setAction("GetGroupStatistics")
+                .setVersion("2016-11-01")
+                .setProtocol("HTTPS")
+                .setMethod("POST")
+                .setAuthType("AK")
+                .setStyle("RPC")
+                .setPathname("/")
+                .setReqBodyType("json")
+                .setBodyType("json");
+        java.util.Map<String, Object> queries = new java.util.HashMap<>();
+        queries.put("AppId", imAppId);
+        queries.put("GroupId", groupId);
 
-        request.setSysVersion("2016-11-01");
-        request.setSysAction("GetGroupStatistics");
-        request.setSysDomain(LIVE_OPEN_API_DOMAIN);
-        request.putQueryParameter("AppId", imAppId);
-        request.putQueryParameter("GroupId", groupId);
+        RuntimeOptions runtime = new RuntimeOptions();
+
 
         try {
-            CommonResponse response = client.getCommonResponse(request);
-            log.info("getGroupDetails, response:{}, consume:{}", response.getData(), (System.currentTimeMillis() - start));
-            JSONObject jsonObject = JSONObject.parseObject(response.getData());
-            if (jsonObject.containsKey("Result")) {
-                return JSONObject.parseObject(jsonObject.getJSONObject("Result").toJSONString(), RoomInfoDto.Metrics.class);
+            OpenApiRequest request = new com.aliyun.teaopenapi.models.OpenApiRequest()
+                    .setQuery(com.aliyun.openapiutil.Client.query(queries));
+            Map<String, ?> response = liveClient.callApi(params, request, runtime);
+            log.info("getGroupDetails, response:{}, consume:{}", JSONObject.toJSONString(response), (System.currentTimeMillis() - start));
+            if (response != null) {
+                if (response.containsKey("statusCode")) {
+                    Integer statusCode = (Integer) response.get("statusCode");
+                    if (200 == statusCode) {
+                        Map<String, Object> body = (Map<String, Object>) response.get("body");
+                        if (body.containsKey("Result")) {
+                            return JSONObject.parseObject(JSONObject.toJSONString(body.get("Result")), RoomInfoDto.Metrics.class);
+                        }
+                    }
+                }
             }
         } catch (ServerException e) {
             log.error("getGroupDetails ServerException. ErrCode:{}, ErrMsg:{}, RequestId:{}", e.getErrCode(), e.getErrMsg(), e.getRequestId());
@@ -376,13 +413,13 @@ public class VideoCloudServiceImpl implements VideoCloudService {
         request.setUserIdList(Arrays.asList(anchorId));
 
         try {
-            ListMessageGroupUserByIdResponse acsResponse = client.getAcsResponse(request);
+            ListMessageGroupUserByIdResponse acsResponse = liveClient.listMessageGroupUserById(request);
             log.info("getUserInfo, response:{}, consume:{}", JSONObject.toJSONString(acsResponse), (System.currentTimeMillis() - start));
-            if (CollectionUtils.isEmpty(acsResponse.getResult().getUserList())) {
+            if (CollectionUtils.isEmpty(acsResponse.getBody().getResult().getUserList())) {
                 log.info("getUserInfo is empty. groupId:{}, anchorId:{}", groupId, anchorId);
                 return null;
             }
-            ListMessageGroupUserByIdResponse.Result.UserListItem userListItem = acsResponse.getResult().getUserList().get(0);
+            ListMessageGroupUserByIdResponseBody.ListMessageGroupUserByIdResponseBodyResultUserList userListItem = acsResponse.getBody().getResult().getUserList().get(0);
             RoomInfoDto.UserStatus userStatus = new RoomInfoDto.UserStatus();
             userStatus.setMute(userListItem.getIsMute());
             userStatus.setMuteSource(userListItem.getMuteBy());
@@ -447,7 +484,7 @@ public class VideoCloudServiceImpl implements VideoCloudService {
 
     public String getSpecialRtcAuth(String channelId, String userId, long timestamp) {
 
-        String rtcAuthStr = String.format("%s%s%s%s%d", "79a51aa1-7127-4f32-90ce-cdfe618835d9", "181a27773a0f06f6042800ede171279e", channelId, userId, timestamp);
+        String rtcAuthStr = String.format("%s%s%s%s%d", liveMicAppId, liveMicAppKey, channelId, userId, timestamp);
         String rtcAuth = getSHA256(rtcAuthStr);
         log.info("getRtcAuth. rtcAuthStr:{}, rtcAuth:{}", rtcAuthStr, rtcAuth);
         return rtcAuth;

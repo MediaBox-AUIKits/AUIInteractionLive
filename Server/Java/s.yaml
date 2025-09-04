@@ -53,6 +53,7 @@ services:
         runtime: custom
         cpu: 2
         memorySize: 4096
+        diskSize: 512
         timeout: 10
         instanceConcurrency: 100
         customRuntimeConfig:
